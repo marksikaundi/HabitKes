@@ -21,16 +21,26 @@ export default function TabLayout() {
         tabBarBackground: TabBarBackground,
         tabBarShowLabel: false,
         tabBarStyle: {
-          height: Platform.OS === "ios" ? 85 : 70,
-          paddingBottom: Platform.OS === "ios" ? 25 : 15,
-          paddingTop: 10,
-          borderTopWidth: 1,
-          borderTopColor: Colors[colorScheme ?? "light"].border,
+          height: Platform.OS === "ios" ? 70 : 60,
+          paddingBottom: Platform.OS === "ios" ? 10 : 8,
+          paddingTop: 12,
+          marginBottom: Platform.OS === "ios" ? 20 : 15,
+          marginHorizontal: 16,
+          borderRadius: 20,
+          borderTopWidth: 0,
           backgroundColor: Colors[colorScheme ?? "light"].surface,
-          position: 'relative', // Remove absolute positioning
+          position: 'absolute',
+          bottom: Platform.OS === "ios" ? 25 : 20,
+          left: 0,
+          right: 0,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.15,
+          shadowRadius: 12,
+          elevation: 8,
         },
         tabBarIconStyle: {
-          marginTop: 5,
+          marginTop: 0,
         },
       }}
     >
