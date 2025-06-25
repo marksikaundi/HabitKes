@@ -232,7 +232,7 @@ async function recalculateStreak(ctx: any, habitId: string) {
     await ctx.db.patch(streak._id, {
       currentStreak,
       longestStreak,
-      lastCompletionDate: sortedCompletions[0]?.date || null,
+      lastCompletionDate: sortedCompletions[0]?.date || undefined,
     });
   }
 }
