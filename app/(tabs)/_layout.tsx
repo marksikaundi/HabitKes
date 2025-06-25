@@ -19,10 +19,11 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
+        tabBarShowLabel: false, // Hide text labels
         tabBarStyle: {
-          height: 80,
-          paddingBottom: Platform.OS === "ios" ? 20 : 10,
-          paddingTop: 10,
+          height: Platform.OS === "ios" ? 85 : 70,
+          paddingBottom: Platform.OS === "ios" ? 25 : 15,
+          paddingTop: 15,
           borderTopWidth: 1,
           borderTopColor: Colors[colorScheme ?? "light"].border,
           backgroundColor: Colors[colorScheme ?? "light"].surface,
@@ -34,45 +35,41 @@ export default function TabLayout() {
             default: {},
           }),
         },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: "500",
-        },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Today",
+          title: "", // Remove title since we're using icons only
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="checkmark.circle.fill" color={color} />
+            <IconSymbol size={30} name="checkmark.circle.fill" color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="habits"
         options={{
-          title: "Habits",
+          title: "", // Remove title since we're using icons only
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="list.bullet" color={color} />
+            <IconSymbol size={30} name="list.bullet" color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="analytics"
         options={{
-          title: "Analytics",
+          title: "", // Remove title since we're using icons only
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="chart.bar.fill" color={color} />
+            <IconSymbol size={30} name="chart.bar.fill" color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: "Settings",
+          title: "", // Remove title since we're using icons only
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="gear" color={color} />
+            <IconSymbol size={30} name="gear" color={color} />
           ),
         }}
       />
