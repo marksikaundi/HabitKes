@@ -40,13 +40,13 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
 const styles = StyleSheet.create({
   fab: {
     position: "absolute",
-    bottom: 100, // Move up to avoid tab bar (tab bar is ~70px + 25px bottom = 95px total)
+    bottom: 90, // Position above standard tab bar
     right: 20,
     width: 56,
     height: 56,
     borderRadius: 28,
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 1000, // Higher z-index to ensure it's above everything
+    zIndex: 1000,
   },
 });
