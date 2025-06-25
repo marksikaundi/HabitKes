@@ -4,8 +4,6 @@ import {
   Alert,
   ScrollView,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,6 +11,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
+import { ProgressCard } from "@/components/ui/Card";
+import { HabitCard } from "@/components/ui/HabitCard";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useCompleteHabit, useTodayCompletions } from "@/hooks/useCompletions";
@@ -69,7 +70,7 @@ export default function TodayScreen() {
       } else {
         await completeHabit(habit._id, today);
       }
-    } catch (error) {
+    } catch {
       Alert.alert("Error", "Failed to update habit completion");
     }
   };
@@ -93,9 +94,7 @@ export default function TodayScreen() {
       <SafeAreaView
         style={[styles.container, { backgroundColor: colors.background }]}
       >
-        <View style={styles.loading}>
-          <ThemedText>Loading...</ThemedText>
-        </View>
+        <LoadingSpinner fullScreen />
       </SafeAreaView>
     );
   }
@@ -119,37 +118,13 @@ export default function TodayScreen() {
         </View>
 
         {/* Progress Overview */}
-        <ThemedView
-          style={[styles.progressCard, { backgroundColor: colors.card }]}
-        >
-          <View style={styles.progressHeader}>
-            <View style={styles.progressStats}>
-              <ThemedText type="title" style={styles.progressNumber}>
-                {completedCount}/{totalCount}
-              </ThemedText>
-              <ThemedText
-                style={[styles.progressLabel, { color: colors.tabIconDefault }]}
-              >
-                Habits Completed
-              </ThemedText>
-            </View>
-            <View style={[styles.progressCircle, { borderColor: colors.tint }]}>
-              <ThemedText
-                style={[styles.progressPercentage, { color: colors.tint }]}
-              >
-                {completionRate}%
-              </ThemedText>
-            </View>
-          </View>
-          <ThemedText
-            style={[
-              styles.motivationalMessage,
-              { color: colors.tabIconDefault },
-            ]}
-          >
-            {getMotivationalMessage()}
-          </ThemedText>
-        </ThemedView>
+        <ProgressCard
+          current={completedCount}
+          total={totalCount}
+          title="Habits Completed"
+          subtitle={getMotivationalMessage()}
+          style={styles.progressCard}
+        />
 
         {/* Today's Habits */}
         <View style={styles.habitsSection}>
@@ -185,66 +160,12 @@ export default function TodayScreen() {
             </ThemedView>
           ) : (
             todayHabits.map((habit) => (
-              <TouchableOpacity
+              <HabitCard
                 key={habit._id}
-                style={[
-                  styles.habitCard,
-                  {
-                    backgroundColor: colors.card,
-                    borderLeftColor: habit.color,
-                  },
-                  habit.isCompletedToday && styles.completedHabitCard,
-                ]}
+                habit={habit}
                 onPress={() => handleToggleHabit(habit)}
-                activeOpacity={0.7}
-              >
-                <View style={styles.habitContent}>
-                  <View style={styles.habitInfo}>
-                    <View style={styles.habitHeader}>
-                      {habit.emoji && (
-                        <Text style={styles.habitEmoji}>{habit.emoji}</Text>
-                      )}
-                      <ThemedText
-                        type="defaultSemiBold"
-                        style={[
-                          styles.habitName,
-                          habit.isCompletedToday && styles.completedHabitName,
-                        ]}
-                      >
-                        {habit.name}
-                      </ThemedText>
-                    </View>
-                    {habit.description && (
-                      <ThemedText
-                        style={[
-                          styles.habitDescription,
-                          { color: colors.tabIconDefault },
-                        ]}
-                      >
-                        {habit.description}
-                      </ThemedText>
-                    )}
-                  </View>
-
-                  <View style={styles.habitActions}>
-                    <View
-                      style={[
-                        styles.checkButton,
-                        {
-                          backgroundColor: habit.isCompletedToday
-                            ? habit.color
-                            : "transparent",
-                          borderColor: habit.color,
-                        },
-                      ]}
-                    >
-                      {habit.isCompletedToday && (
-                        <IconSymbol name="checkmark" size={16} color="white" />
-                      )}
-                    </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
+                style={styles.habitCard}
+              />
             ))
           )}
         </View>
@@ -261,11 +182,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
-  loading: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   header: {
     paddingTop: 20,
     paddingBottom: 20,
@@ -279,47 +195,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   progressCard: {
-    padding: 20,
-    borderRadius: 16,
     marginBottom: 30,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  progressHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  progressStats: {
-    flex: 1,
-  },
-  progressNumber: {
-    fontSize: 28,
-    fontWeight: "bold",
-  },
-  progressLabel: {
-    fontSize: 14,
-    marginTop: 4,
-  },
-  progressCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    borderWidth: 3,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  progressPercentage: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  motivationalMessage: {
-    fontSize: 14,
-    fontStyle: "italic",
   },
   habitsSection: {
     paddingBottom: 30,
@@ -346,54 +222,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   habitCard: {
-    borderRadius: 12,
     marginBottom: 12,
-    borderLeftWidth: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  completedHabitCard: {
-    opacity: 0.8,
-  },
-  habitContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-  },
-  habitInfo: {
-    flex: 1,
-  },
-  habitHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  habitEmoji: {
-    fontSize: 20,
-    marginRight: 8,
-  },
-  habitName: {
-    fontSize: 16,
-    flex: 1,
-  },
-  completedHabitName: {
-    textDecorationLine: "line-through",
-  },
-  habitDescription: {
-    fontSize: 14,
-    marginTop: 4,
-  },
-  habitActions: {
-    marginLeft: 12,
-  },
-  checkButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    borderWidth: 2,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

@@ -14,6 +14,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
+import { Card } from "@/components/ui/Card";
+import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useCreateHabit, useDeleteHabit, useHabits } from "@/hooks/useHabits";
@@ -60,7 +63,7 @@ export default function HabitsScreen() {
       setShowCreateModal(false);
 
       Alert.alert("Success", "Habit created successfully!");
-    } catch (error) {
+    } catch {
       Alert.alert("Error", "Failed to create habit");
     }
   };
@@ -78,7 +81,7 @@ export default function HabitsScreen() {
             try {
               await deleteHabit({ id: habitId as any });
               Alert.alert("Success", "Habit deleted successfully");
-            } catch (error) {
+            } catch {
               Alert.alert("Error", "Failed to delete habit");
             }
           },
@@ -92,9 +95,7 @@ export default function HabitsScreen() {
       <SafeAreaView
         style={[styles.container, { backgroundColor: colors.background }]}
       >
-        <View style={styles.loading}>
-          <ThemedText>Loading...</ThemedText>
-        </View>
+        <LoadingSpinner fullScreen />
       </SafeAreaView>
     );
   }
@@ -107,12 +108,6 @@ export default function HabitsScreen() {
         <ThemedText type="title" style={styles.title}>
           My Habits
         </ThemedText>
-        <TouchableOpacity
-          style={[styles.addButton, { backgroundColor: colors.tint }]}
-          onPress={() => setShowCreateModal(true)}
-        >
-          <IconSymbol name="plus" size={24} color="white" />
-        </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -141,70 +136,56 @@ export default function HabitsScreen() {
           </ThemedView>
         ) : (
           habits.map((habit) => (
-            <TouchableOpacity
-              key={habit._id}
-              style={[
-                styles.habitCard,
-                {
-                  backgroundColor: colors.card,
-                  borderLeftColor: habit.color,
-                },
-              ]}
-              onPress={() => {
-                // Navigate to habit details (we'll implement this later)
-                Alert.alert(
-                  "Habit Details",
-                  `Details for ${habit.name} coming soon!`
-                );
-              }}
-              activeOpacity={0.7}
-            >
+            <Card key={habit._id} style={styles.habitCard}>
               <View style={styles.habitContent}>
                 <View style={styles.habitInfo}>
                   <View style={styles.habitHeader}>
                     {habit.emoji && (
-                      <Text style={styles.habitEmoji}>{habit.emoji}</Text>
+                      <View style={[styles.emojiContainer, { backgroundColor: colors.muted }]}>
+                        <Text style={styles.habitEmoji}>{habit.emoji}</Text>
+                      </View>
                     )}
-                    <ThemedText type="defaultSemiBold" style={styles.habitName}>
-                      {habit.name}
-                    </ThemedText>
+                    <View style={styles.habitTextContent}>
+                      <ThemedText type="defaultSemiBold" style={styles.habitName}>
+                        {habit.name}
+                      </ThemedText>
+                      {habit.description && (
+                        <ThemedText
+                          style={[
+                            styles.habitDescription,
+                            { color: colors.mutedForeground },
+                          ]}
+                        >
+                          {habit.description}
+                        </ThemedText>
+                      )}
+                      <ThemedText
+                        style={[
+                          styles.habitFrequency,
+                          { color: colors.mutedForeground },
+                        ]}
+                      >
+                        {getHabitFrequencyText(habit.frequency)}
+                      </ThemedText>
+                    </View>
                   </View>
-                  {habit.description && (
-                    <ThemedText
-                      style={[
-                        styles.habitDescription,
-                        { color: colors.tabIconDefault },
-                      ]}
-                    >
-                      {habit.description}
-                    </ThemedText>
-                  )}
-                  <ThemedText
-                    style={[
-                      styles.habitFrequency,
-                      { color: colors.tabIconDefault },
-                    ]}
-                  >
-                    {getHabitFrequencyText(habit.frequency)}
-                  </ThemedText>
                 </View>
 
                 <TouchableOpacity
-                  style={styles.deleteButton}
+                  style={[styles.deleteButton, { backgroundColor: colors.danger }]}
                   onPress={() => handleDeleteHabit(habit._id, habit.name)}
                   hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 >
-                  <IconSymbol
-                    name="trash"
-                    size={18}
-                    color={colors.tabIconDefault}
-                  />
+                  <IconSymbol name="trash" size={16} color="white" />
                 </TouchableOpacity>
               </View>
-            </TouchableOpacity>
+              <View style={[styles.colorIndicator, { backgroundColor: habit.color }]} />
+            </Card>
           ))
         )}
       </ScrollView>
+
+      <FloatingActionButton onPress={() => setShowCreateModal(true)} />
 
       {/* Create Habit Modal */}
       <Modal
@@ -370,7 +351,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
     paddingTop: 20,
@@ -380,21 +361,9 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
   },
-  addButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   content: {
     flex: 1,
     paddingHorizontal: 20,
-  },
-  loading: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   emptyState: {
     padding: 40,
@@ -414,47 +383,64 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   habitCard: {
-    borderRadius: 12,
-    marginBottom: 12,
-    borderLeftWidth: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    marginBottom: 16,
+    position: 'relative',
   },
   habitContent: {
     flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
+    alignItems: "flex-start",
+    justifyContent: "space-between",
   },
   habitInfo: {
     flex: 1,
   },
   habitHeader: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
+  },
+  emojiContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
   },
   habitEmoji: {
-    fontSize: 20,
-    marginRight: 8,
+    fontSize: 24,
+  },
+  habitTextContent: {
+    flex: 1,
   },
   habitName: {
-    fontSize: 16,
-    flex: 1,
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 4,
   },
   habitDescription: {
     fontSize: 14,
-    marginTop: 4,
+    marginBottom: 4,
   },
   habitFrequency: {
     fontSize: 12,
-    marginTop: 4,
-    textTransform: "uppercase",
-    fontWeight: "500",
+    textTransform: "capitalize",
   },
   deleteButton: {
-    padding: 8,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  colorIndicator: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 4,
+    borderTopLeftRadius: 16,
+    borderBottomLeftRadius: 16,
   },
   modalContainer: {
     flex: 1,

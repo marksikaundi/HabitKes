@@ -12,6 +12,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
+import { Card } from "@/components/ui/Card";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { Colors } from "@/constants/Colors";
 import { useUserAnalytics, useWeeklyAnalytics } from "@/hooks/useAnalytics";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -30,12 +32,18 @@ export default function AnalyticsScreen() {
   const weeklyAnalytics = useWeeklyAnalytics();
 
   const chartConfig = {
-    backgroundColor: colors.card,
-    backgroundGradientFrom: colors.card,
-    backgroundGradientTo: colors.card,
+    backgroundColor: colors.surface,
+    backgroundGradientFrom: colors.surface,
+    backgroundGradientTo: colors.surface,
     decimalPlaces: 0,
-    color: (opacity = 1) =>
-      `rgba(${colors.tint === "#007AFF" ? "0, 122, 255" : "255, 107, 107"}, ${opacity})`,
+    color: (opacity = 1) => {
+      // Convert primary color to RGB
+      const primaryColor = colors.primary;
+      if (primaryColor === "#6366F1") {
+        return `rgba(99, 102, 241, ${opacity})`;
+      }
+      return `rgba(139, 92, 246, ${opacity})`;
+    },
     labelColor: (opacity = 1) => colors.text,
     style: {
       borderRadius: 16,
@@ -43,7 +51,7 @@ export default function AnalyticsScreen() {
     propsForDots: {
       r: "6",
       strokeWidth: "2",
-      stroke: colors.tint,
+      stroke: colors.primary,
     },
   };
 
