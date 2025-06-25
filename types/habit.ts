@@ -1,8 +1,8 @@
 import { Id } from "@/convex/_generated/dataModel";
 
-export type HabitFrequency = 
-  | "daily" 
-  | "weekly" 
+export type HabitFrequency =
+  | "daily"
+  | "weekly"
   | { type: "custom"; days: number[] };
 
 export interface Habit {
@@ -58,13 +58,13 @@ export interface UserAnalytics {
   averageStreakLength: number;
   longestOverallStreak: number;
   mostConsistentHabit: any;
-  habitsAnalytics: Array<{
+  habitsAnalytics: {
     habitId: Id<"habits">;
     habitName: string;
     completions: number;
     currentStreak: number;
     longestStreak: number;
-  }>;
+  }[];
 }
 
 export interface WeeklyAnalytics {
@@ -73,12 +73,12 @@ export interface WeeklyAnalytics {
   totalCompletions: number;
   totalPossibleCompletions: number;
   overallCompletionRate: number;
-  dailyStats: Array<{
+  dailyStats: {
     date: string;
     completions: number;
     totalHabits: number;
     completionRate: number;
-  }>;
+  }[];
   perfectDays: number;
 }
 
@@ -98,12 +98,36 @@ export const HABIT_COLORS = [
 ];
 
 export const HABIT_EMOJIS = [
-  "💪", "📚", "💧", "🏃", "🧘", "🍎", "💤", "🚫", "🎯", "📝",
-  "🌱", "☀️", "🎵", "🧽", "💼", "📞", "🎨", "🍽️", "🚶", "📖",
+  "💪",
+  "📚",
+  "💧",
+  "🏃",
+  "🧘",
+  "🍎",
+  "💤",
+  "🚫",
+  "🎯",
+  "📝",
+  "🌱",
+  "☀️",
+  "🎵",
+  "🧽",
+  "💼",
+  "📞",
+  "🎨",
+  "🍽️",
+  "🚶",
+  "📖",
 ];
 
 export const DAYS_OF_WEEK = [
-  "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
 ];
 
 export const DAYS_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

@@ -1,8 +1,8 @@
-import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { HabitFrequency } from "@/types/habit";
 import { formatDate } from "@/utils/dateUtils";
+import { useMutation, useQuery } from "convex/react";
 
 export function useHabits(userId?: string) {
   const habits = useQuery(api.habits.getActiveHabits, { userId });
@@ -16,7 +16,7 @@ export function useHabit(habitId: Id<"habits">) {
 
 export function useCreateHabit() {
   const createHabit = useMutation(api.habits.createHabit);
-  
+
   return {
     createHabit: async (habitData: {
       name: string;

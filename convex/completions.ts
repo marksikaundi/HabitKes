@@ -1,5 +1,5 @@
-import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { mutation, query } from "./_generated/server";
 
 // Mark habit as complete for a specific date
 export const completeHabit = mutation({
@@ -12,7 +12,7 @@ export const completeHabit = mutation({
     // Check if already completed for this date
     const existingCompletion = await ctx.db
       .query("habitCompletions")
-      .filter((q) => 
+      .filter((q) =>
         q.and(
           q.eq(q.field("habitId"), args.habitId),
           q.eq(q.field("date"), args.date)
@@ -48,7 +48,7 @@ export const uncompleteHabit = mutation({
   handler: async (ctx, args) => {
     const completion = await ctx.db
       .query("habitCompletions")
-      .filter((q) => 
+      .filter((q) =>
         q.and(
           q.eq(q.field("habitId"), args.habitId),
           q.eq(q.field("date"), args.date)
@@ -105,7 +105,9 @@ export const getTodayCompletions = query({
 
     // Filter by userId if provided
     if (args.userId) {
-      return completions.filter((completion) => completion.userId === args.userId);
+      return completions.filter(
+        (completion) => completion.userId === args.userId
+      );
     }
 
     return completions.filter((completion) => !completion.userId);
@@ -129,7 +131,7 @@ export const getHabitStreak = query({
 async function updateStreak(ctx: any, habitId: string, completionDate: string) {
   const streak = await ctx.db
     .query("streaks")
-    .filter((q) => q.eq(q.field("habitId"), habitId))
+    .filter((q: any) => q.eq(q.field("habitId"), habitId))
     .first();
 
   if (!streak) return;
@@ -138,15 +140,18 @@ async function updateStreak(ctx: any, habitId: string, completionDate: string) {
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
 
-  const lastCompletionDate = streak.lastCompletionDate 
+  const lastCompletionDate = streak.lastCompletionDate
     ? new Date(streak.lastCompletionDate)
     : null;
 
   let newCurrentStreak = 1;
 
   // If there was a completion yesterday, increment streak
-  if (lastCompletionDate && 
-      lastCompletionDate.toISOString().split('T')[0] === yesterday.toISOString().split('T')[0]) {
+  if (
+    lastCompletionDate &&
+    lastCompletionDate.toISOString().split("T")[0] ===
+      yesterday.toISOString().split("T")[0]
+  ) {
     newCurrentStreak = streak.currentStreak + 1;
   }
 
@@ -163,11 +168,12 @@ async function updateStreak(ctx: any, habitId: string, completionDate: string) {
 async function recalculateStreak(ctx: any, habitId: string) {
   const completions = await ctx.db
     .query("habitCompletions")
-    .filter((q) => q.eq(q.field("habitId"), habitId))
+    .filter((q: any) => q.eq(q.field("habitId"), habitId))
     .collect();
 
-  const sortedCompletions = completions
-    .sort((a, b) => b.date.localeCompare(a.date));
+  const sortedCompletions = completions.sort((a: any, b: any) =>
+    b.date.localeCompare(a.date)
+  );
 
   let currentStreak = 0;
   let longestStreak = 0;
@@ -176,14 +182,14 @@ async function recalculateStreak(ctx: any, habitId: string) {
 
   for (const completion of sortedCompletions.reverse()) {
     const completionDate = new Date(completion.date);
-    
+
     if (lastDate === null) {
       tempStreak = 1;
     } else {
       const dayDiff = Math.floor(
         (completionDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24)
       );
-      
+
       if (dayDiff === 1) {
         tempStreak++;
       } else {
@@ -191,7 +197,7 @@ async function recalculateStreak(ctx: any, habitId: string) {
         tempStreak = 1;
       }
     }
-    
+
     lastDate = completionDate;
   }
 
@@ -200,14 +206,16 @@ async function recalculateStreak(ctx: any, habitId: string) {
   // Calculate current streak (from today backwards)
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
+
   currentStreak = 0;
   for (let i = 0; i < sortedCompletions.length; i++) {
     const checkDate = new Date(today);
     checkDate.setDate(checkDate.getDate() - i);
-    const checkDateStr = checkDate.toISOString().split('T')[0];
-    
-    const hasCompletion = sortedCompletions.some(c => c.date === checkDateStr);
+    const checkDateStr = checkDate.toISOString().split("T")[0];
+
+    const hasCompletion = sortedCompletions.some(
+      (c: any) => c.date === checkDateStr
+    );
     if (hasCompletion) {
       currentStreak++;
     } else {
@@ -217,7 +225,7 @@ async function recalculateStreak(ctx: any, habitId: string) {
 
   const streak = await ctx.db
     .query("streaks")
-    .filter((q) => q.eq(q.field("habitId"), habitId))
+    .filter((q: any) => q.eq(q.field("habitId"), habitId))
     .first();
 
   if (streak) {

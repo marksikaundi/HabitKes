@@ -1,11 +1,11 @@
 import { HabitFrequency } from "@/types/habit";
 
 export function formatDate(date: Date): string {
-  return date.toISOString().split('T')[0];
+  return date.toISOString().split("T")[0];
 }
 
 export function parseDate(dateString: string): Date {
-  return new Date(dateString + 'T00:00:00');
+  return new Date(dateString + "T00:00:00");
 }
 
 export function isToday(dateString: string): boolean {
@@ -61,9 +61,11 @@ export function getMonthEnd(date: Date = new Date()): string {
   return formatDate(d);
 }
 
-export function shouldHabitBeCompletedToday(frequency: HabitFrequency): boolean {
+export function shouldHabitBeCompletedToday(
+  frequency: HabitFrequency
+): boolean {
   const today = new Date().getDay(); // 0 = Sunday, 1 = Monday, etc.
-  
+
   switch (frequency) {
     case "daily":
       return true;
@@ -86,29 +88,37 @@ export function getHabitFrequencyText(frequency: HabitFrequency): string {
     default:
       if (frequency.type === "custom") {
         const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        const selectedDays = frequency.days.map(day => dayNames[day]).join(", ");
+        const selectedDays = frequency.days
+          .map((day) => dayNames[day])
+          .join(", ");
         return `Custom (${selectedDays})`;
       }
       return "Unknown";
   }
 }
 
-export function calculateCompletionRate(completed: number, total: number): number {
+export function calculateCompletionRate(
+  completed: number,
+  total: number
+): number {
   if (total === 0) return 0;
   return Math.round((completed / total) * 100);
 }
 
-export function generateDateRange(startDate: string, endDate: string): string[] {
+export function generateDateRange(
+  startDate: string,
+  endDate: string
+): string[] {
   const dates: string[] = [];
   const start = parseDate(startDate);
   const end = parseDate(endDate);
-  
+
   const current = new Date(start);
   while (current <= end) {
     dates.push(formatDate(current));
     current.setDate(current.getDate() + 1);
   }
-  
+
   return dates;
 }
 
@@ -123,13 +133,13 @@ export function getStreakEmoji(streak: number): string {
 export function getWeekDates(weekStart: string): string[] {
   const dates: string[] = [];
   const start = parseDate(weekStart);
-  
+
   for (let i = 0; i < 7; i++) {
     const date = new Date(start);
     date.setDate(start.getDate() + i);
     dates.push(formatDate(date));
   }
-  
+
   return dates;
 }
 
@@ -138,7 +148,7 @@ export function getRelativeDateText(dateString: string): string {
   const today = new Date();
   const yesterday = new Date();
   yesterday.setDate(today.getDate() - 1);
-  
+
   if (formatDate(date) === formatDate(today)) {
     return "Today";
   } else if (formatDate(date) === formatDate(yesterday)) {
@@ -161,20 +171,23 @@ export function validateHabitName(name: string): string | null {
   return null;
 }
 
-export function validateDateRange(startDate: string, endDate?: string): string | null {
+export function validateDateRange(
+  startDate: string,
+  endDate?: string
+): string | null {
   const start = parseDate(startDate);
   const today = new Date();
-  
+
   if (start > today) {
     return "Start date cannot be in the future";
   }
-  
+
   if (endDate) {
     const end = parseDate(endDate);
     if (end < start) {
       return "End date must be after start date";
     }
   }
-  
+
   return null;
 }

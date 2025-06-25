@@ -1,11 +1,11 @@
-import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { formatDate } from "@/utils/dateUtils";
+import { useMutation, useQuery } from "convex/react";
 
 export function useHabitCompletions(
-  habitId: Id<"habits">, 
-  startDate?: string, 
+  habitId: Id<"habits">,
+  startDate?: string,
   endDate?: string
 ) {
   const completions = useQuery(api.completions.getHabitCompletions, {
@@ -33,9 +33,13 @@ export function useHabitStreak(habitId: Id<"habits">) {
 export function useCompleteHabit() {
   const completeHabit = useMutation(api.completions.completeHabit);
   const uncompleteHabit = useMutation(api.completions.uncompleteHabit);
-  
+
   return {
-    completeHabit: async (habitId: Id<"habits">, date?: string, userId?: string) => {
+    completeHabit: async (
+      habitId: Id<"habits">,
+      date?: string,
+      userId?: string
+    ) => {
       const completionDate = date || formatDate(new Date());
       return await completeHabit({
         habitId,
@@ -60,7 +64,7 @@ export function useHabitStatus(habitId: Id<"habits">, date?: string) {
     startDate: completionDate,
     endDate: completionDate,
   });
-  
+
   const isCompleted = completions && completions.length > 0;
   return { isCompleted, completions };
 }

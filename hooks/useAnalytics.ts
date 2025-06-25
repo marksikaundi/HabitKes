@@ -1,7 +1,7 @@
-import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { getWeekStart, getMonthStart, getMonthEnd } from "@/utils/dateUtils";
+import { getMonthEnd, getMonthStart, getWeekStart } from "@/utils/dateUtils";
+import { useQuery } from "convex/react";
 
 export function useHabitAnalytics(
   habitId: Id<"habits">,
@@ -42,13 +42,13 @@ export function useMonthlyAnalytics(userId?: string, date?: Date) {
   const currentDate = date || new Date();
   const startDate = getMonthStart(currentDate);
   const endDate = getMonthEnd(currentDate);
-  
+
   const analytics = useQuery(api.analytics.getUserAnalytics, {
     userId,
     startDate,
     endDate,
   });
-  
+
   return {
     ...analytics,
     monthStart: startDate,
