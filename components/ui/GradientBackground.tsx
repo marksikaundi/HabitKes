@@ -1,30 +1,30 @@
-import React from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
-import { ViewStyle } from 'react-native';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { LinearGradient } from "expo-linear-gradient";
+import React from "react";
+import { ViewStyle } from "react-native";
 
 interface GradientBackgroundProps {
   children: React.ReactNode;
   style?: ViewStyle;
-  variant?: 'primary' | 'secondary' | 'accent';
+  variant?: "primary" | "secondary" | "accent";
 }
 
 export const GradientBackground: React.FC<GradientBackgroundProps> = ({
   children,
   style,
-  variant = 'primary',
+  variant = "primary",
 }) => {
   const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
+  const colors = Colors[colorScheme ?? "light"];
 
   const getGradientColors = (): [string, string] => {
     switch (variant) {
-      case 'primary':
+      case "primary":
         return [colors.gradientStart, colors.gradientEnd];
-      case 'secondary':
+      case "secondary":
         return [colors.secondary, colors.accent];
-      case 'accent':
+      case "accent":
         return [colors.accent, colors.warning];
       default:
         return [colors.gradientStart, colors.gradientEnd];

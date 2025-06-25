@@ -1,16 +1,16 @@
-import React from 'react';
+import { Colors } from "@/constants/Colors";
+import { Design, createTextStyle } from "@/constants/Design";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { HabitWithCompletion } from "@/types/habit";
+import React from "react";
 import {
+  StyleSheet,
+  Text,
   TouchableOpacity,
   View,
-  Text,
-  StyleSheet,
   ViewStyle,
-} from 'react-native';
-import { Colors } from '@/constants/Colors';
-import { Design, createTextStyle } from '@/constants/Design';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { IconSymbol } from './IconSymbol';
-import { HabitWithCompletion } from '@/types/habit';
+} from "react-native";
+import { IconSymbol } from "./IconSymbol";
 
 interface HabitCardProps {
   habit: HabitWithCompletion;
@@ -24,7 +24,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
   style,
 }) => {
   const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
+  const colors = Colors[colorScheme ?? "light"];
 
   const cardStyles = [
     styles.card,
@@ -41,11 +41,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
   ];
 
   return (
-    <TouchableOpacity
-      style={cardStyles}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
+    <TouchableOpacity style={cardStyles} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.content}>
         <View style={styles.leftContent}>
           {habit.emoji && (
@@ -53,25 +49,27 @@ export const HabitCard: React.FC<HabitCardProps> = ({
               <Text style={styles.emoji}>{habit.emoji}</Text>
             </View>
           )}
-          
+
           <View style={styles.textContent}>
             <Text
               style={[
-                createTextStyle('lg', 'semibold'),
+                createTextStyle("lg", "semibold"),
                 {
                   color: colors.text,
-                  textDecorationLine: habit.isCompletedToday ? 'line-through' : 'none',
+                  textDecorationLine: habit.isCompletedToday
+                    ? "line-through"
+                    : "none",
                   opacity: habit.isCompletedToday ? 0.7 : 1,
                 },
               ]}
             >
               {habit.name}
             </Text>
-            
+
             {habit.description && (
               <Text
                 style={[
-                  createTextStyle('sm'),
+                  createTextStyle("sm"),
                   {
                     color: colors.mutedForeground,
                     marginTop: Design.spacing.xs,
@@ -89,7 +87,9 @@ export const HabitCard: React.FC<HabitCardProps> = ({
             style={[
               styles.checkButton,
               {
-                backgroundColor: habit.isCompletedToday ? habit.color : 'transparent',
+                backgroundColor: habit.isCompletedToday
+                  ? habit.color
+                  : "transparent",
                 borderColor: habit.color,
               },
             ]}
@@ -115,21 +115,21 @@ const styles = StyleSheet.create({
     ...Design.shadow.sm,
   },
   content: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: Design.spacing.lg,
   },
   leftContent: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   emojiContainer: {
     width: 48,
     height: 48,
     borderRadius: Design.borderRadius.lg,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: Design.spacing.md,
   },
   emoji: {
@@ -146,13 +146,13 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
     borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   checkButtonInner: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
 });

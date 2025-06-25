@@ -12,8 +12,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import { Card } from "@/components/ui/Card";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { Colors } from "@/constants/Colors";
 import { useUserAnalytics, useWeeklyAnalytics } from "@/hooks/useAnalytics";
 import { useColorScheme } from "@/hooks/useColorScheme";

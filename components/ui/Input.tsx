@@ -1,15 +1,15 @@
-import React from 'react';
+import { Colors } from "@/constants/Colors";
+import { Design, createTextStyle } from "@/constants/Design";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import React from "react";
 import {
-  TextInput,
-  View,
-  Text,
   StyleSheet,
+  Text,
+  TextInput,
   TextInputProps,
+  View,
   ViewStyle,
-} from 'react-native';
-import { Colors } from '@/constants/Colors';
-import { Design, createTextStyle } from '@/constants/Design';
-import { useColorScheme } from '@/hooks/useColorScheme';
+} from "react-native";
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -25,7 +25,7 @@ export const Input: React.FC<InputProps> = ({
   ...props
 }) => {
   const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
+  const colors = Colors[colorScheme ?? "light"];
 
   const inputStyles = [
     styles.input,
@@ -40,9 +40,7 @@ export const Input: React.FC<InputProps> = ({
   return (
     <View style={[styles.container, containerStyle]}>
       {label && (
-        <Text style={[styles.label, { color: colors.text }]}>
-          {label}
-        </Text>
+        <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
       )}
       <TextInput
         style={inputStyles}
@@ -50,9 +48,7 @@ export const Input: React.FC<InputProps> = ({
         {...props}
       />
       {error && (
-        <Text style={[styles.error, { color: colors.danger }]}>
-          {error}
-        </Text>
+        <Text style={[styles.error, { color: colors.danger }]}>{error}</Text>
       )}
     </View>
   );
@@ -63,7 +59,7 @@ const styles = StyleSheet.create({
     marginBottom: Design.spacing.md,
   },
   label: {
-    ...createTextStyle('sm', 'medium'),
+    ...createTextStyle("sm", "medium"),
     marginBottom: Design.spacing.xs,
   },
   input: {
@@ -71,10 +67,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: Design.borderRadius.lg,
     paddingHorizontal: Design.spacing.lg,
-    ...createTextStyle('base'),
+    ...createTextStyle("base"),
   },
   error: {
-    ...createTextStyle('sm'),
+    ...createTextStyle("sm"),
     marginTop: Design.spacing.xs,
   },
 });

@@ -1,13 +1,8 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ViewStyle,
-} from 'react-native';
-import { Colors } from '@/constants/Colors';
-import { Design, createCardStyle, createTextStyle } from '@/constants/Design';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colors } from "@/constants/Colors";
+import { Design, createCardStyle, createTextStyle } from "@/constants/Design";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import React from "react";
+import { StyleSheet, Text, View, ViewStyle } from "react-native";
 
 interface CardProps {
   children: React.ReactNode;
@@ -19,11 +14,11 @@ interface CardProps {
 export const Card: React.FC<CardProps> = ({
   children,
   elevated = true,
-  padding = 'xl',
+  padding = "xl",
   style,
 }) => {
   const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
+  const colors = Colors[colorScheme ?? "light"];
 
   const cardStyles = [
     createCardStyle(elevated),
@@ -53,8 +48,8 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({
   style,
 }) => {
   const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
-  
+  const colors = Colors[colorScheme ?? "light"];
+
   const percentage = total > 0 ? Math.round((current / total) * 100) : 0;
   const progressWidth = total > 0 ? (current / total) * 100 : 0;
 
@@ -62,26 +57,40 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({
     <Card style={style}>
       <View style={styles.progressHeader}>
         <View style={styles.progressInfo}>
-          <Text style={[createTextStyle('3xl', 'bold'), { color: colors.text }]}>
+          <Text
+            style={[createTextStyle("3xl", "bold"), { color: colors.text }]}
+          >
             {current}/{total}
           </Text>
-          <Text style={[createTextStyle('base', 'medium'), { color: colors.mutedForeground }]}>
+          <Text
+            style={[
+              createTextStyle("base", "medium"),
+              { color: colors.mutedForeground },
+            ]}
+          >
             {title}
           </Text>
           {subtitle && (
-            <Text style={[createTextStyle('sm'), { color: colors.mutedForeground, marginTop: Design.spacing.xs }]}>
+            <Text
+              style={[
+                createTextStyle("sm"),
+                { color: colors.mutedForeground, marginTop: Design.spacing.xs },
+              ]}
+            >
               {subtitle}
             </Text>
           )}
         </View>
-        
+
         <View style={[styles.progressCircle, { borderColor: colors.primary }]}>
-          <Text style={[createTextStyle('lg', 'bold'), { color: colors.primary }]}>
+          <Text
+            style={[createTextStyle("lg", "bold"), { color: colors.primary }]}
+          >
             {percentage}%
           </Text>
         </View>
       </View>
-      
+
       <View style={[styles.progressBar, { backgroundColor: colors.muted }]}>
         <View
           style={[
@@ -102,9 +111,9 @@ const styles = StyleSheet.create({
     // Additional styles will be applied via createCardStyle
   },
   progressHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: Design.spacing.lg,
   },
   progressInfo: {
@@ -115,17 +124,17 @@ const styles = StyleSheet.create({
     height: 64,
     borderRadius: 32,
     borderWidth: 3,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginLeft: Design.spacing.lg,
   },
   progressBar: {
     height: 8,
     borderRadius: Design.borderRadius.full,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   progressFill: {
-    height: '100%',
+    height: "100%",
     borderRadius: Design.borderRadius.full,
   },
 });

@@ -1,23 +1,23 @@
-import React from 'react';
+import { Colors } from "@/constants/Colors";
+import { Design, createButtonStyle, createTextStyle } from "@/constants/Design";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import React from "react";
 import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
   ActivityIndicator,
+  StyleSheet,
+  Text,
+  TextStyle,
+  TouchableOpacity,
   View,
   ViewStyle,
-  TextStyle,
-} from 'react-native';
-import { Colors } from '@/constants/Colors';
-import { Design, createButtonStyle, createTextStyle } from '@/constants/Design';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { IconSymbol } from './IconSymbol';
+} from "react-native";
+import { IconSymbol } from "./IconSymbol";
 
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "primary" | "secondary" | "ghost" | "danger";
+  size?: "sm" | "md" | "lg";
   loading?: boolean;
   disabled?: boolean;
   icon?: any; // Use any for now to avoid icon name conflicts
@@ -28,8 +28,8 @@ interface ButtonProps {
 export const Button: React.FC<ButtonProps> = ({
   title,
   onPress,
-  variant = 'primary',
-  size = 'md',
+  variant = "primary",
+  size = "md",
   loading = false,
   disabled = false,
   icon,
@@ -37,7 +37,7 @@ export const Button: React.FC<ButtonProps> = ({
   textStyle,
 }) => {
   const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
+  const colors = Colors[colorScheme ?? "light"];
 
   const buttonStyles = [
     styles.button,
@@ -45,7 +45,7 @@ export const Button: React.FC<ButtonProps> = ({
     {
       backgroundColor: getBackgroundColor(variant, colors),
       borderColor: getBorderColor(variant, colors),
-      borderWidth: variant === 'ghost' || variant === 'secondary' ? 1 : 0,
+      borderWidth: variant === "ghost" || variant === "secondary" ? 1 : 0,
       height: getButtonHeight(size),
       opacity: disabled ? 0.6 : 1,
     },
@@ -53,7 +53,7 @@ export const Button: React.FC<ButtonProps> = ({
   ];
 
   const textStyles = [
-    createTextStyle(getTextSize(size), 'semibold'),
+    createTextStyle(getTextSize(size), "semibold"),
     {
       color: getTextColor(variant, colors),
     },
@@ -68,10 +68,7 @@ export const Button: React.FC<ButtonProps> = ({
       activeOpacity={0.8}
     >
       {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={getTextColor(variant, colors)}
-        />
+        <ActivityIndicator size="small" color={getTextColor(variant, colors)} />
       ) : (
         <View style={styles.buttonContent}>
           {icon && (
@@ -92,14 +89,14 @@ export const Button: React.FC<ButtonProps> = ({
 // Helper functions
 const getBackgroundColor = (variant: string, colors: any) => {
   switch (variant) {
-    case 'primary':
+    case "primary":
       return colors.primary;
-    case 'secondary':
+    case "secondary":
       return colors.secondary;
-    case 'danger':
+    case "danger":
       return colors.danger;
-    case 'ghost':
-      return 'transparent';
+    case "ghost":
+      return "transparent";
     default:
       return colors.primary;
   }
@@ -107,35 +104,35 @@ const getBackgroundColor = (variant: string, colors: any) => {
 
 const getBorderColor = (variant: string, colors: any) => {
   switch (variant) {
-    case 'secondary':
+    case "secondary":
       return colors.secondary;
-    case 'ghost':
+    case "ghost":
       return colors.border;
-    case 'danger':
+    case "danger":
       return colors.danger;
     default:
-      return 'transparent';
+      return "transparent";
   }
 };
 
 const getTextColor = (variant: string, colors: any) => {
   switch (variant) {
-    case 'primary':
-    case 'secondary':
-    case 'danger':
-      return '#FFFFFF';
-    case 'ghost':
+    case "primary":
+    case "secondary":
+    case "danger":
+      return "#FFFFFF";
+    case "ghost":
       return colors.text;
     default:
-      return '#FFFFFF';
+      return "#FFFFFF";
   }
 };
 
 const getButtonHeight = (size: string) => {
   switch (size) {
-    case 'sm':
+    case "sm":
       return 36;
-    case 'lg':
+    case "lg":
       return 56;
     default:
       return Design.dimensions.buttonHeight;
@@ -144,20 +141,20 @@ const getButtonHeight = (size: string) => {
 
 const getTextSize = (size: string): keyof typeof Design.typography.fontSize => {
   switch (size) {
-    case 'sm':
-      return 'sm';
-    case 'lg':
-      return 'lg';
+    case "sm":
+      return "sm";
+    case "lg":
+      return "lg";
     default:
-      return 'base';
+      return "base";
   }
 };
 
 const getIconSize = (size: string) => {
   switch (size) {
-    case 'sm':
+    case "sm":
       return 16;
-    case 'lg':
+    case "lg":
       return 24;
     default:
       return 20;
@@ -169,9 +166,9 @@ const styles = StyleSheet.create({
     ...createButtonStyle(),
   },
   buttonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonIcon: {
     marginRight: Design.spacing.sm,

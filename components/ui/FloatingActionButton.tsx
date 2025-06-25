@@ -1,13 +1,9 @@
-import React from 'react';
-import {
-  TouchableOpacity,
-  StyleSheet,
-  ViewStyle,
-} from 'react-native';
-import { Colors } from '@/constants/Colors';
-import { Design } from '@/constants/Design';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { IconSymbol } from './IconSymbol';
+import { Colors } from "@/constants/Colors";
+import { Design } from "@/constants/Design";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import React from "react";
+import { StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
+import { IconSymbol } from "./IconSymbol";
 
 interface FloatingActionButtonProps {
   onPress: () => void;
@@ -17,11 +13,11 @@ interface FloatingActionButtonProps {
 
 export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   onPress,
-  icon = 'plus',
+  icon = "plus",
   style,
 }) => {
   const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
+  const colors = Colors[colorScheme ?? "light"];
 
   return (
     <TouchableOpacity
@@ -43,14 +39,14 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
 
 const styles = StyleSheet.create({
   fab: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 20,
     right: 20,
     width: 56,
     height: 56,
     borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 1,
   },
 });

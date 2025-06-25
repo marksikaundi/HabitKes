@@ -13,9 +13,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import { Card } from "@/components/ui/Card";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
+import { IconSymbol } from "@/components/ui/IconSymbol";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -141,12 +141,20 @@ export default function HabitsScreen() {
                 <View style={styles.habitInfo}>
                   <View style={styles.habitHeader}>
                     {habit.emoji && (
-                      <View style={[styles.emojiContainer, { backgroundColor: colors.muted }]}>
+                      <View
+                        style={[
+                          styles.emojiContainer,
+                          { backgroundColor: colors.muted },
+                        ]}
+                      >
                         <Text style={styles.habitEmoji}>{habit.emoji}</Text>
                       </View>
                     )}
                     <View style={styles.habitTextContent}>
-                      <ThemedText type="defaultSemiBold" style={styles.habitName}>
+                      <ThemedText
+                        type="defaultSemiBold"
+                        style={styles.habitName}
+                      >
                         {habit.name}
                       </ThemedText>
                       {habit.description && (
@@ -172,14 +180,22 @@ export default function HabitsScreen() {
                 </View>
 
                 <TouchableOpacity
-                  style={[styles.deleteButton, { backgroundColor: colors.danger }]}
+                  style={[
+                    styles.deleteButton,
+                    { backgroundColor: colors.danger },
+                  ]}
                   onPress={() => handleDeleteHabit(habit._id, habit.name)}
                   hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 >
                   <IconSymbol name="trash" size={16} color="white" />
                 </TouchableOpacity>
               </View>
-              <View style={[styles.colorIndicator, { backgroundColor: habit.color }]} />
+              <View
+                style={[
+                  styles.colorIndicator,
+                  { backgroundColor: habit.color },
+                ]}
+              />
             </Card>
           ))
         )}
@@ -384,7 +400,7 @@ const styles = StyleSheet.create({
   },
   habitCard: {
     marginBottom: 16,
-    position: 'relative',
+    position: "relative",
   },
   habitContent: {
     flexDirection: "row",
@@ -402,8 +418,8 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 12,
   },
   habitEmoji: {
@@ -434,7 +450,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   colorIndicator: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     top: 0,
     bottom: 0,

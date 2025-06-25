@@ -21,7 +21,7 @@ export default function TabLayout() {
         tabBarBackground: TabBarBackground,
         tabBarStyle: {
           height: 80,
-          paddingBottom: Platform.OS === 'ios' ? 20 : 10,
+          paddingBottom: Platform.OS === "ios" ? 20 : 10,
           paddingTop: 10,
           borderTopWidth: 1,
           borderTopColor: Colors[colorScheme ?? "light"].border,
@@ -36,7 +36,7 @@ export default function TabLayout() {
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: '500',
+          fontWeight: "500",
         },
       }}
     >

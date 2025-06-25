@@ -1,18 +1,13 @@
 import * as Haptics from "expo-haptics";
 import React from "react";
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import { ProgressCard } from "@/components/ui/Card";
 import { HabitCard } from "@/components/ui/HabitCard";
+import { IconSymbol } from "@/components/ui/IconSymbol";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
