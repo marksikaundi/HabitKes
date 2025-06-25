@@ -19,7 +19,7 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
-        tabBarShowLabel: false, // Hide text labels
+        tabBarShowLabel: false,
         tabBarStyle: {
           height: Platform.OS === "ios" ? 85 : 70,
           paddingBottom: Platform.OS === "ios" ? 25 : 15,
@@ -29,47 +29,45 @@ export default function TabLayout() {
           backgroundColor: Colors[colorScheme ?? "light"].surface,
           ...Platform.select({
             ios: {
-              // Use a transparent background on iOS to show the blur effect
               position: "absolute",
             },
             default: {},
           }),
+        },
+        tabBarIconStyle: {
+          marginTop: 0,
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "", // Remove title since we're using icons only
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={30} name="checkmark.circle.fill" color={color} />
+            <IconSymbol size={28} name="house.fill" color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="habits"
         options={{
-          title: "", // Remove title since we're using icons only
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={30} name="list.bullet" color={color} />
+            <IconSymbol size={28} name="list.bullet" color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="analytics"
         options={{
-          title: "", // Remove title since we're using icons only
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={30} name="chart.bar.fill" color={color} />
+            <IconSymbol size={28} name="chart.bar" color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: "", // Remove title since we're using icons only
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={30} name="gear" color={color} />
+            <IconSymbol size={28} name="gearshape" color={color} />
           ),
         }}
       />
