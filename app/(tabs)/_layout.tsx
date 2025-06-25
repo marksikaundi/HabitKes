@@ -1,7 +1,7 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
 import { Platform } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
 import { HapticTab } from "@/components/HapticTab";
 import TabBarBackground from "@/components/ui/TabBarBackground";
@@ -29,7 +29,7 @@ export default function TabLayout() {
           borderRadius: 20,
           borderTopWidth: 0,
           backgroundColor: Colors[colorScheme ?? "light"].surface,
-          position: 'absolute',
+          position: "absolute",
           bottom: Platform.OS === "ios" ? 25 : 20,
           left: 0,
           right: 0,
@@ -48,10 +48,10 @@ export default function TabLayout() {
         name="index"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons 
-              name={focused ? "home" : "home-outline"} 
-              size={24} 
-              color={color} 
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={24}
+              color={color}
             />
           ),
         }}
@@ -60,10 +60,10 @@ export default function TabLayout() {
         name="habits"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons 
-              name={focused ? "list" : "list-outline"} 
-              size={24} 
-              color={color} 
+            <Ionicons
+              name={focused ? "list" : "list-outline"}
+              size={24}
+              color={color}
             />
           ),
         }}
@@ -72,10 +72,10 @@ export default function TabLayout() {
         name="analytics"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons 
-              name={focused ? "bar-chart" : "bar-chart-outline"} 
-              size={24} 
-              color={color} 
+            <Ionicons
+              name={focused ? "bar-chart" : "bar-chart-outline"}
+              size={24}
+              color={color}
             />
           ),
         }}
@@ -84,10 +84,10 @@ export default function TabLayout() {
         name="settings"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons 
-              name={focused ? "settings" : "settings-outline"} 
-              size={24} 
-              color={color} 
+            <Ionicons
+              name={focused ? "settings" : "settings-outline"}
+              size={24}
+              color={color}
             />
           ),
         }}
