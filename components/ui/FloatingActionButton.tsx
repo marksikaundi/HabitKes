@@ -1,19 +1,19 @@
 import { Colors } from "@/constants/Colors";
 import { Design } from "@/constants/Design";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
-import { IconSymbol } from "./IconSymbol";
 
 interface FloatingActionButtonProps {
   onPress: () => void;
-  icon?: any;
+  icon?: keyof typeof Ionicons.glyphMap;
   style?: ViewStyle;
 }
 
 export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   onPress,
-  icon = "plus",
+  icon = "add",
   style,
 }) => {
   const colorScheme = useColorScheme();
@@ -32,7 +32,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
       onPress={onPress}
       activeOpacity={0.8}
     >
-      <IconSymbol name={icon} size={24} color="white" />
+      <Ionicons name={icon} size={24} color="white" />
     </TouchableOpacity>
   );
 };
@@ -40,13 +40,13 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
 const styles = StyleSheet.create({
   fab: {
     position: "absolute",
-    bottom: 20,
+    bottom: 100, // Move up to avoid tab bar (tab bar is ~70px + 25px bottom = 95px total)
     right: 20,
     width: 56,
     height: 56,
     borderRadius: 28,
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 1,
+    zIndex: 1000, // Higher z-index to ensure it's above everything
   },
 });
