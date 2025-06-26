@@ -240,11 +240,12 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   stepTrackerSection: {
-    marginTop: 40,
+    paddingBottom: 30,
   },
   demoNote: {
     fontSize: 14,
-    marginTop: 8,
-    textAlign: "center",
+    textAlign: 'center',
+    marginTop: 12,
+    fontStyle: 'italic',
   },
 });
