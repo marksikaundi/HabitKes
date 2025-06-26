@@ -192,22 +192,28 @@ export default function TodayScreen() {
           </ThemedView>
         )}
 
-        {/* Step Tracker Demo Widget */}
+        {/* Step Tracker Widget */}
         <View style={styles.stepTrackerSection}>
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Step Tracker Demo
-          </ThemedText>
+          <View style={styles.sectionHeaderWithAction}>
+            <View>
+              <ThemedText type="subtitle" style={styles.sectionTitle}>
+                Daily Movement
+              </ThemedText>
+              <ThemedText style={[styles.sectionSubtitle, { color: colors.tabIconDefault }]}>
+                Track your steps today
+              </ThemedText>
+            </View>
+          </View>
           <StepTracker
             targetSteps={10000}
             onStepsUpdate={setDemoSteps}
             currentSteps={demoSteps}
           />
-          <ThemedText
-            style={[styles.demoNote, { color: colors.tabIconDefault }]}
-          >
-            💡 Create a step habit in the Habits tab to track your daily steps
-            automatically!
-          </ThemedText>
+          <View style={[styles.tipContainer, { backgroundColor: colors.card }]}>
+            <ThemedText style={[styles.tipText, { color: colors.tabIconDefault }]}>
+              💡 Go to the Habits tab and tap the 👟 button to create a step tracking habit
+            </ThemedText>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -243,12 +249,23 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "600",
+    marginBottom: 4,
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    marginBottom: 16,
+  },
+  sectionHeaderWithAction: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: 16,
   },
   emptyState: {
     padding: 40,
     borderRadius: 16,
     alignItems: "center",
+    marginBottom: 20,
   },
   emptyStateText: {
     fontSize: 18,
@@ -261,16 +278,17 @@ const styles = StyleSheet.create({
     marginTop: 8,
     textAlign: "center",
   },
-  habitCard: {
-    marginBottom: 12,
-  },
   stepTrackerSection: {
     paddingBottom: 30,
   },
-  demoNote: {
-    fontSize: 14,
-    textAlign: "center",
+  tipContainer: {
+    padding: 12,
+    borderRadius: 8,
     marginTop: 12,
-    fontStyle: "italic",
+  },
+  tipText: {
+    fontSize: 14,
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
 });
