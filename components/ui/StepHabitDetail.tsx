@@ -16,7 +16,7 @@ import { StepTracker } from '@/components/ui/StepTracker';
 import { NumericHabitInput } from '@/components/ui/NumericHabitInput';
 import { Habit, HabitCompletion } from '@/types/habit';
 import { useStepCounter } from '@/hooks/useStepCounter';
-import { useCompletions } from '@/hooks/useCompletions';
+import { useCompleteHabit } from '@/hooks/useCompletions';
 
 interface StepHabitDetailProps {
   visible: boolean;
@@ -33,7 +33,7 @@ export const StepHabitDetail: React.FC<StepHabitDetailProps> = ({
 }) => {
   const [currentValue, setCurrentValue] = useState(completion?.value || 0);
   const { getTodaySteps } = useStepCounter();
-  const { completeHabit } = useCompletions();
+  const { completeHabit } = useCompleteHabit();
   
   const primaryColor = useThemeColor({}, 'tint');
   const backgroundColor = useThemeColor({}, 'background');
@@ -44,7 +44,7 @@ export const StepHabitDetail: React.FC<StepHabitDetailProps> = ({
       // Auto-refresh steps when modal opens
       refreshSteps();
     }
-  }, [visible, habit]);
+  }, [visible, habit?.type]); // Remove refreshSteps from dependencies
 
   const refreshSteps = async () => {
     if (habit?.type === 'steps') {

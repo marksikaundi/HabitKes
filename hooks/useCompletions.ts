@@ -35,15 +35,22 @@ export function useCompleteHabit() {
   const uncompleteHabit = useMutation(api.completions.uncompleteHabit);
 
   return {
-    completeHabit: async (
-      habitId: Id<"habits">,
-      date?: string,
-      userId?: string
-    ) => {
+    completeHabit: async ({
+      habitId,
+      date,
+      value,
+      userId,
+    }: {
+      habitId: Id<"habits">;
+      date?: string;
+      value?: number;
+      userId?: string;
+    }) => {
       const completionDate = date || formatDate(new Date());
       return await completeHabit({
         habitId,
         date: completionDate,
+        value,
         userId,
       });
     },
