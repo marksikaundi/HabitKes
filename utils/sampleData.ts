@@ -1,4 +1,4 @@
-import { HABIT_COLORS, HABIT_EMOJIS, HabitFrequency } from "@/types/habit";
+import { HABIT_COLORS, HABIT_EMOJIS, HabitFrequency, HabitType } from "@/types/habit";
 
 // Sample habit data for testing
 export const sampleHabits = [
@@ -8,6 +8,9 @@ export const sampleHabits = [
     color: HABIT_COLORS[0], // Red
     emoji: HABIT_EMOJIS[2], // 💧
     frequency: "daily" as HabitFrequency,
+    type: "numeric" as HabitType,
+    targetValue: 8,
+    unit: "glasses",
   },
   {
     name: "Morning Exercise",
@@ -15,6 +18,17 @@ export const sampleHabits = [
     color: HABIT_COLORS[1], // Teal
     emoji: HABIT_EMOJIS[3], // 🏃
     frequency: "daily" as HabitFrequency,
+    type: "boolean" as HabitType,
+  },
+  {
+    name: "Daily Steps",
+    description: "Walk 10,000 steps daily",
+    color: HABIT_COLORS[8], // Cyan
+    emoji: "👟",
+    frequency: "daily" as HabitFrequency,
+    type: "steps" as HabitType,
+    targetValue: 10000,
+    unit: "steps",
   },
   {
     name: "Read Books",
@@ -22,6 +36,9 @@ export const sampleHabits = [
     color: HABIT_COLORS[2], // Blue
     emoji: HABIT_EMOJIS[1], // 📚
     frequency: "daily" as HabitFrequency,
+    type: "numeric" as HabitType,
+    targetValue: 30,
+    unit: "minutes",
   },
   {
     name: "Meditation",
@@ -29,6 +46,7 @@ export const sampleHabits = [
     color: HABIT_COLORS[3], // Green
     emoji: HABIT_EMOJIS[4], // 🧘
     frequency: "daily" as HabitFrequency,
+    type: "boolean" as HabitType,
   },
   {
     name: "Weekly Review",
@@ -36,18 +54,22 @@ export const sampleHabits = [
     color: HABIT_COLORS[4], // Yellow
     emoji: HABIT_EMOJIS[9], // 📝
     frequency: "weekly" as HabitFrequency,
+    type: "boolean" as HabitType,
   },
 ];
 
 // Generate sample completion data for testing
 export function generateSampleCompletions(
   habitIds: string[],
+  habits: any[],
   daysBack: number = 30
 ) {
   const completions: {
     habitId: string;
     date: string;
     completedAt: number;
+    value?: number;
+    isCompleted: boolean;
   }[] = [];
   const today = new Date();
 
@@ -57,13 +79,27 @@ export function generateSampleCompletions(
     const dateString = date.toISOString().split("T")[0];
 
     // Randomly complete habits (80% chance for each habit)
-    habitIds.forEach((habitId) => {
+    habitIds.forEach((habitId, index) => {
       if (Math.random() > 0.2) {
+        const habit = habits[index];
+        let value: number | undefined;
+        let isCompleted = true;
+
+        if (habit?.type === 'numeric' || habit?.type === 'steps') {
+          // Generate random value around target
+          const target = habit.targetValue || 10;
+          const variance = target * 0.3; // 30% variance
+          value = Math.floor(target + (Math.random() - 0.5) * variance);
+          value = Math.max(0, value); // Ensure positive
+          isCompleted = value >= target;
+        }
         // 80% completion rate
         completions.push({
           habitId,
           date: dateString,
           completedAt: date.getTime(),
+          value,
+          isCompleted,
         });
       }
     });
