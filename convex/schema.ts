@@ -15,11 +15,9 @@ export default defineSchema({
         days: v.array(v.number()), // 0=Sunday, 1=Monday, etc.
       })
     ),
-    type: v.optional(v.union(
-      v.literal("boolean"),
-      v.literal("numeric"),
-      v.literal("steps")
-    )), // Optional for backward compatibility
+    type: v.optional(
+      v.union(v.literal("boolean"), v.literal("numeric"), v.literal("steps"))
+    ), // Optional for backward compatibility
     targetValue: v.optional(v.number()), // For numeric and steps habits
     unit: v.optional(v.string()), // e.g., "steps", "minutes", "glasses"
     startDate: v.string(), // ISO date string

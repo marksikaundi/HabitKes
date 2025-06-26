@@ -180,8 +180,11 @@ export default function TodayScreen() {
             onStepsUpdate={setDemoSteps}
             currentSteps={demoSteps}
           />
-          <ThemedText style={[styles.demoNote, { color: colors.tabIconDefault }]}>
-            💡 Create a step habit in the Habits tab to track your daily steps automatically!
+          <ThemedText
+            style={[styles.demoNote, { color: colors.tabIconDefault }]}
+          >
+            💡 Create a step habit in the Habits tab to track your daily steps
+            automatically!
           </ThemedText>
         </View>
       </ScrollView>
@@ -244,8 +247,8 @@ const styles = StyleSheet.create({
   },
   demoNote: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 12,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
 });
