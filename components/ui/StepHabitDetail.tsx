@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   StyleSheet,
@@ -39,23 +39,23 @@ export const StepHabitDetail: React.FC<StepHabitDetailProps> = ({
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
 
+  const refreshSteps = useCallback(async () => {
+    if (habit?.type === 'steps') {
+      try {
+        const todaySteps = await getTodaySteps();
+        setCurrentValue(todaySteps);
+      } catch (err) {
+        console.error('Error getting steps:', err);
+      }
+    }
+  }, [habit?.type, getTodaySteps]);
+
   useEffect(() => {
     if (visible && habit?.type === 'steps') {
       // Auto-refresh steps when modal opens
       refreshSteps();
     }
-  }, [visible, habit?.type]); // Remove refreshSteps from dependencies
-
-  const refreshSteps = async () => {
-    if (habit?.type === 'steps') {
-      try {
-        const todaySteps = await getTodaySteps();
-        setCurrentValue(todaySteps);
-      } catch (error) {
-        console.error('Error getting steps:', error);
-      }
-    }
-  };
+  }, [visible, habit?.type, refreshSteps]);
 
   const handleSave = async () => {
     if (!habit) return;
@@ -73,7 +73,8 @@ export const StepHabitDetail: React.FC<StepHabitDetailProps> = ({
         `${habit.name} updated with ${currentValue} ${habit.unit}!`,
         [{ text: 'OK', onPress: onClose }]
       );
-    } catch (error) {
+    } catch (err) {
+      console.error('Error saving habit completion:', err);
       Alert.alert('Error', 'Failed to save progress');
     }
   };
