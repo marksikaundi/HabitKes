@@ -63,7 +63,10 @@ export default function TodayScreen() {
       if (habit.isCompletedToday) {
         await uncompleteHabit(habit._id, today);
       } else {
-        await completeHabit(habit._id, today);
+        await completeHabit({
+          habitId: habit._id,
+          date: today,
+        });
       }
     } catch {
       Alert.alert("Error", "Failed to update habit completion");
