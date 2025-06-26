@@ -83,8 +83,10 @@ export default function HabitsScreen() {
     });
 
     const totalHabits = habitsWithCompletion.length;
-    const completedCount = completed.length + stepHabits.filter(h => h.isCompletedToday).length;
-    const completionRate = totalHabits > 0 ? Math.round((completedCount / totalHabits) * 100) : 0;
+    const completedCount =
+      completed.length + stepHabits.filter((h) => h.isCompletedToday).length;
+    const completionRate =
+      totalHabits > 0 ? Math.round((completedCount / totalHabits) * 100) : 0;
 
     return {
       groupedHabits: { completed, incomplete, stepHabits },
@@ -185,15 +187,16 @@ export default function HabitsScreen() {
         },
       ]
     );
-  };    if (!habitsWithCompletion) {
-      return (
-        <SafeAreaView
-          style={[styles.container, { backgroundColor: colors.background }]}
-        >
-          <LoadingSpinner fullScreen />
-        </SafeAreaView>
-      );
-    }
+  };
+  if (!habitsWithCompletion) {
+    return (
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
+        <LoadingSpinner fullScreen />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView
@@ -284,10 +287,12 @@ export default function HabitsScreen() {
                 style={[styles.tipsCard, { backgroundColor: colors.card }]}
               >
                 <ThemedText style={styles.tipsTitle}>💡 Tips</ThemedText>
-                <ThemedText style={[styles.tipsText, { color: colors.tabIconDefault }]}>
-                  • Tap any habit to mark it complete or update progress{"\n"}
-                  • Use the walking icon button to create step-based habits{"\n"}
-                  • Long press to delete habits you no longer need
+                <ThemedText
+                  style={[styles.tipsText, { color: colors.tabIconDefault }]}
+                >
+                  • Tap any habit to mark it complete or update progress{"\n"}•
+                  Use the walking icon button to create step-based habits{"\n"}•
+                  Long press to delete habits you no longer need
                 </ThemedText>
               </ThemedView>
             )}
