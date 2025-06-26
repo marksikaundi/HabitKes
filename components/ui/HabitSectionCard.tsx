@@ -10,6 +10,7 @@ interface HabitSectionCardProps {
   title: string;
   habits: HabitWithCompletion[];
   onHabitPress: (habit: HabitWithCompletion) => void;
+  onHabitLongPress?: (habit: HabitWithCompletion) => void;
   emptyMessage: string;
   icon: string;
   accentColor: string;
@@ -19,6 +20,7 @@ export const HabitSectionCard: React.FC<HabitSectionCardProps> = ({
   title,
   habits,
   onHabitPress,
+  onHabitLongPress,
   emptyMessage,
   icon,
   accentColor,
@@ -65,6 +67,7 @@ export const HabitSectionCard: React.FC<HabitSectionCardProps> = ({
                 index === habits.length - 1 && styles.lastHabitItem,
               ]}
               onPress={() => onHabitPress(habit)}
+              onLongPress={() => onHabitLongPress?.(habit)}
               activeOpacity={0.7}
             >
               <View style={styles.habitContent}>
