@@ -31,7 +31,6 @@ import {
   HabitType,
   HabitWithCompletion,
 } from "@/types/habit";
-import { formatDate, shouldHabitBeCompletedToday } from "@/utils/dateUtils";
 
 export default function HabitsScreen() {
   const colorScheme = useColorScheme();
@@ -41,8 +40,6 @@ export default function HabitsScreen() {
   const todayCompletions = useTodayCompletions();
   const { createHabit } = useCreateHabit();
   const { deleteHabit } = useDeleteHabit();
-
-  const today = formatDate(new Date());
 
   // Convert habits to HabitWithCompletion objects
   const habitsWithCompletion = React.useMemo(() => {
@@ -232,7 +229,7 @@ export default function HabitsScreen() {
               Tap the + button to create your first habit
             </ThemedText>
           </ThemedView>
-        ) : habits && habits.length > 0 ? (
+        ) : habitsWithCompletion && habitsWithCompletion.length > 0 ? (
           <>
             {/* Summary Stats */}
             <HabitSummaryStats
