@@ -6,7 +6,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ProgressCard } from "@/components/ui/Card";
-import { HabitCard } from "@/components/ui/HabitCard";
+import { HabitSectionCard } from "@/components/ui/HabitSectionCard";
+import { HabitSummaryStats } from "@/components/ui/HabitSummaryStats";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { StepTracker } from "@/components/ui/StepTracker";
@@ -57,6 +58,10 @@ export default function TodayScreen() {
   const totalCount = todayHabits.length;
   const completionRate =
     totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+  // Separate completed and pending habits
+  const completedHabits = todayHabits.filter(h => h.isCompletedToday);
+  const pendingHabits = todayHabits.filter(h => !h.isCompletedToday);
 
   const handleToggleHabit = async (habit: HabitWithCompletion) => {
     try {
@@ -126,49 +131,66 @@ export default function TodayScreen() {
           style={styles.progressCard}
         />
 
-        {/* Today's Habits */}
-        <View style={styles.habitsSection}>
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Today&apos;s Habits
-          </ThemedText>
+        {/* Habit Summary Stats */}
+        <HabitSummaryStats
+          totalHabits={totalCount}
+          completedHabits={completedCount}
+          completionRate={completionRate}
+          activeStreak={0} // We can add streak calculation later
+        />
 
-          {todayHabits.length === 0 ? (
-            <ThemedView
-              style={[styles.emptyState, { backgroundColor: colors.card }]}
+        {/* Pending Habits */}
+        {pendingHabits.length > 0 && (
+          <HabitSectionCard
+            title="To Complete"
+            habits={pendingHabits}
+            onHabitPress={handleToggleHabit}
+            emptyMessage="All habits completed! 🎉"
+            icon="hourglass-outline"
+            accentColor="#FF9800"
+          />
+        )}
+
+        {/* Completed Habits */}
+        {completedHabits.length > 0 && (
+          <HabitSectionCard
+            title="Completed Today"
+            habits={completedHabits}
+            onHabitPress={handleToggleHabit}
+            emptyMessage="No habits completed yet"
+            icon="checkmark-circle"
+            accentColor="#4CAF50"
+          />
+        )}
+
+        {/* Empty State */}
+        {todayHabits.length === 0 && (
+          <ThemedView
+            style={[styles.emptyState, { backgroundColor: colors.card }]}
+          >
+            <IconSymbol
+              name="checkmark.circle"
+              size={48}
+              color={colors.tabIconDefault}
+            />
+            <ThemedText
+              style={[
+                styles.emptyStateText,
+                { color: colors.tabIconDefault },
+              ]}
             >
-              <IconSymbol
-                name="checkmark.circle"
-                size={48}
-                color={colors.tabIconDefault}
-              />
-              <ThemedText
-                style={[
-                  styles.emptyStateText,
-                  { color: colors.tabIconDefault },
-                ]}
-              >
-                No habits scheduled for today
-              </ThemedText>
-              <ThemedText
-                style={[
-                  styles.emptyStateSubtext,
-                  { color: colors.tabIconDefault },
-                ]}
-              >
-                Create some habits to get started!
-              </ThemedText>
-            </ThemedView>
-          ) : (
-            todayHabits.map((habit) => (
-              <HabitCard
-                key={habit._id}
-                habit={habit}
-                onPress={() => handleToggleHabit(habit)}
-                style={styles.habitCard}
-              />
-            ))
-          )}
-        </View>
+              No habits scheduled for today
+            </ThemedText>
+            <ThemedText
+              style={[
+                styles.emptyStateSubtext,
+                { color: colors.tabIconDefault },
+              ]}
+            >
+              Create some habits to get started!
+            </ThemedText>
+          </ThemedView>
+        )}
 
         {/* Step Tracker Demo Widget */}
         <View style={styles.stepTrackerSection}>
