@@ -1,5 +1,5 @@
 import * as Haptics from "expo-haptics";
-import React from "react";
+import React, { useState } from "react";
 import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -9,6 +9,7 @@ import { ProgressCard } from "@/components/ui/Card";
 import { HabitCard } from "@/components/ui/HabitCard";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { StepTracker } from "@/components/ui/StepTracker";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useCompleteHabit, useTodayCompletions } from "@/hooks/useCompletions";
@@ -19,6 +20,7 @@ import { formatDate, shouldHabitBeCompletedToday } from "@/utils/dateUtils";
 export default function TodayScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? "light"];
+  const [demoSteps, setDemoSteps] = useState(0);
 
   const habits = useHabits();
   const todayCompletions = useTodayCompletions();
@@ -167,6 +169,21 @@ export default function TodayScreen() {
             ))
           )}
         </View>
+
+        {/* Step Tracker Demo Widget */}
+        <View style={styles.stepTrackerSection}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            Step Tracker Demo
+          </ThemedText>
+          <StepTracker
+            targetSteps={10000}
+            onStepsUpdate={setDemoSteps}
+            currentSteps={demoSteps}
+          />
+          <ThemedText style={[styles.demoNote, { color: colors.tabIconDefault }]}>
+            💡 Create a step habit in the Habits tab to track your daily steps automatically!
+          </ThemedText>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -221,5 +238,13 @@ const styles = StyleSheet.create({
   },
   habitCard: {
     marginBottom: 12,
+  },
+  stepTrackerSection: {
+    marginTop: 40,
+  },
+  demoNote: {
+    fontSize: 14,
+    marginTop: 8,
+    textAlign: "center",
   },
 });
