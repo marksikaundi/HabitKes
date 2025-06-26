@@ -1,6 +1,6 @@
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { HabitFrequency } from "@/types/habit";
+import { HabitFrequency, HabitType } from "@/types/habit";
 import { formatDate } from "@/utils/dateUtils";
 import { useMutation, useQuery } from "convex/react";
 
@@ -24,13 +24,18 @@ export function useCreateHabit() {
       color: string;
       emoji?: string;
       frequency: HabitFrequency;
+      type?: HabitType;
+      targetValue?: number;
+      unit?: string;
       startDate?: string;
       endDate?: string;
       userId?: string;
     }) => {
       const startDate = habitData.startDate || formatDate(new Date());
+      const type = habitData.type || "boolean";
       return await createHabit({
         ...habitData,
+        type,
         startDate,
       });
     },

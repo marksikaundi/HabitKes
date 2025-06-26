@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import { ThemedView } from '@/components/ThemedView';
-import { ThemedText } from '@/components/ThemedText';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface NumericHabitInputProps {
   habitName: string;
@@ -26,10 +32,10 @@ export const NumericHabitInput: React.FC<NumericHabitInputProps> = ({
 }) => {
   const [inputValue, setInputValue] = useState(currentValue.toString());
   const [isEditing, setIsEditing] = useState(false);
-  
-  const primaryColor = useThemeColor({}, 'tint');
-  const textColor = useThemeColor({}, 'text');
-  const cardColor = useThemeColor({}, 'card');
+
+  const primaryColor = useThemeColor({}, "tint");
+  const textColor = useThemeColor({}, "text");
+  const cardColor = useThemeColor({}, "card");
 
   const handleSave = () => {
     const numValue = parseFloat(inputValue) || 0;
@@ -61,8 +67,8 @@ export const NumericHabitInput: React.FC<NumericHabitInputProps> = ({
 
   const getProgressColor = () => {
     const percentage = getProgressPercentage();
-    if (percentage >= 100) return '#4CAF50'; // Green
-    if (percentage >= 75) return '#FF9800'; // Orange
+    if (percentage >= 100) return "#4CAF50"; // Green
+    if (percentage >= 75) return "#FF9800"; // Orange
     return primaryColor;
   };
 
@@ -79,23 +85,26 @@ export const NumericHabitInput: React.FC<NumericHabitInputProps> = ({
         {isEditing ? (
           <View style={styles.editContainer}>
             <TextInput
-              style={[styles.input, { color: textColor, borderColor: primaryColor }]}
+              style={[
+                styles.input,
+                { color: textColor, borderColor: primaryColor },
+              ]}
               value={inputValue}
               onChangeText={setInputValue}
               keyboardType="numeric"
               placeholder="0"
-              placeholderTextColor={textColor + '80'}
+              placeholderTextColor={textColor + "80"}
               autoFocus
             />
             <View style={styles.editActions}>
               <TouchableOpacity
-                style={[styles.editButton, { backgroundColor: '#4CAF50' }]}
+                style={[styles.editButton, { backgroundColor: "#4CAF50" }]}
                 onPress={handleSave}
               >
                 <Ionicons name="checkmark" size={16} color="white" />
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.editButton, { backgroundColor: '#FF5252' }]}
+                style={[styles.editButton, { backgroundColor: "#FF5252" }]}
                 onPress={handleCancel}
               >
                 <Ionicons name="close" size={16} color="white" />
@@ -107,24 +116,32 @@ export const NumericHabitInput: React.FC<NumericHabitInputProps> = ({
             <View style={styles.valueDisplay}>
               <View style={styles.controls}>
                 <TouchableOpacity
-                  style={[styles.controlButton, { backgroundColor: primaryColor }]}
+                  style={[
+                    styles.controlButton,
+                    { backgroundColor: primaryColor },
+                  ]}
                   onPress={decrementValue}
                 >
                   <Ionicons name="remove" size={20} color="white" />
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity
                   style={styles.valueButton}
                   onPress={() => setIsEditing(true)}
                 >
-                  <ThemedText style={[styles.currentValue, { color: textColor }]}>
+                  <ThemedText
+                    style={[styles.currentValue, { color: textColor }]}
+                  >
                     {currentValue}
                   </ThemedText>
                   <ThemedText style={styles.unit}>{unit}</ThemedText>
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity
-                  style={[styles.controlButton, { backgroundColor: primaryColor }]}
+                  style={[
+                    styles.controlButton,
+                    { backgroundColor: primaryColor },
+                  ]}
                   onPress={incrementValue}
                 >
                   <Ionicons name="add" size={20} color="white" />
@@ -139,16 +156,20 @@ export const NumericHabitInput: React.FC<NumericHabitInputProps> = ({
         <ThemedText style={styles.targetText}>
           Target: {targetValue} {unit}
         </ThemedText>
-        <ThemedText style={[styles.remainingText, { color: isGoalAchieved ? '#4CAF50' : textColor }]}>
-          {isGoalAchieved 
+        <ThemedText
+          style={[
+            styles.remainingText,
+            { color: isGoalAchieved ? "#4CAF50" : textColor },
+          ]}
+        >
+          {isGoalAchieved
             ? `🎉 Goal achieved! +${currentValue - targetValue} extra ${unit}`
-            : `${targetValue - currentValue} ${unit} remaining`
-          }
+            : `${targetValue - currentValue} ${unit} remaining`}
         </ThemedText>
       </View>
 
       <View style={styles.progressContainer}>
-        <View style={[styles.progressBar, { backgroundColor: '#E0E0E0' }]}>
+        <View style={[styles.progressBar, { backgroundColor: "#E0E0E0" }]}>
           <View
             style={[
               styles.progressFill,
@@ -174,8 +195,8 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
   },
   emoji: {
@@ -184,65 +205,65 @@ const styles = StyleSheet.create({
   },
   habitName: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     flex: 1,
   },
   valueContainer: {
     marginBottom: 16,
   },
   editContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   input: {
     borderWidth: 2,
     borderRadius: 8,
     padding: 12,
     fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     minWidth: 100,
     marginRight: 12,
   },
   editActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   editButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   displayContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   valueDisplay: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   controls: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 20,
   },
   controlButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   valueButton: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 8,
     paddingHorizontal: 16,
     minWidth: 120,
   },
   currentValue: {
     fontSize: 36,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   unit: {
     fontSize: 16,
@@ -250,7 +271,7 @@ const styles = StyleSheet.create({
     marginTop: -4,
   },
   targetInfo: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 16,
   },
   targetText: {
@@ -259,28 +280,28 @@ const styles = StyleSheet.create({
   },
   remainingText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
     marginTop: 4,
-    textAlign: 'center',
+    textAlign: "center",
   },
   progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   progressBar: {
     flex: 1,
     height: 8,
     borderRadius: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   progressFill: {
-    height: '100%',
+    height: "100%",
     borderRadius: 4,
   },
   progressText: {
     marginLeft: 12,
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
     minWidth: 40,
   },
 });

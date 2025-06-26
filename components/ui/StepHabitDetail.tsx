@@ -1,22 +1,22 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { NumericHabitInput } from "@/components/ui/NumericHabitInput";
+import { StepTracker } from "@/components/ui/StepTracker";
+import { useCompleteHabit } from "@/hooks/useCompletions";
+import { useStepCounter } from "@/hooks/useStepCounter";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { Habit, HabitCompletion } from "@/types/habit";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useCallback, useEffect, useState } from "react";
 import {
-  View,
-  StyleSheet,
-  Modal,
-  TouchableOpacity,
   Alert,
+  Modal,
   ScrollView,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemedView } from '@/components/ThemedView';
-import { ThemedText } from '@/components/ThemedText';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { Ionicons } from '@expo/vector-icons';
-import { StepTracker } from '@/components/ui/StepTracker';
-import { NumericHabitInput } from '@/components/ui/NumericHabitInput';
-import { Habit, HabitCompletion } from '@/types/habit';
-import { useStepCounter } from '@/hooks/useStepCounter';
-import { useCompleteHabit } from '@/hooks/useCompletions';
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface StepHabitDetailProps {
   visible: boolean;
@@ -34,24 +34,24 @@ export const StepHabitDetail: React.FC<StepHabitDetailProps> = ({
   const [currentValue, setCurrentValue] = useState(completion?.value || 0);
   const { getTodaySteps } = useStepCounter();
   const { completeHabit } = useCompleteHabit();
-  
-  const primaryColor = useThemeColor({}, 'tint');
-  const backgroundColor = useThemeColor({}, 'background');
-  const textColor = useThemeColor({}, 'text');
+
+  const primaryColor = useThemeColor({}, "tint");
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
 
   const refreshSteps = useCallback(async () => {
-    if (habit?.type === 'steps') {
+    if (habit?.type === "steps") {
       try {
         const todaySteps = await getTodaySteps();
         setCurrentValue(todaySteps);
       } catch (err) {
-        console.error('Error getting steps:', err);
+        console.error("Error getting steps:", err);
       }
     }
   }, [habit?.type, getTodaySteps]);
 
   useEffect(() => {
-    if (visible && habit?.type === 'steps') {
+    if (visible && habit?.type === "steps") {
       // Auto-refresh steps when modal opens
       refreshSteps();
     }
@@ -61,21 +61,21 @@ export const StepHabitDetail: React.FC<StepHabitDetailProps> = ({
     if (!habit) return;
 
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().split("T")[0];
       await completeHabit({
         habitId: habit._id,
         date: today,
         value: currentValue,
       });
-      
+
       Alert.alert(
-        'Success',
+        "Success",
         `${habit.name} updated with ${currentValue} ${habit.unit}!`,
-        [{ text: 'OK', onPress: onClose }]
+        [{ text: "OK", onPress: onClose }]
       );
     } catch (err) {
-      console.error('Error saving habit completion:', err);
-      Alert.alert('Error', 'Failed to save progress');
+      console.error("Error saving habit completion:", err);
+      Alert.alert("Error", "Failed to save progress");
     }
   };
 
@@ -100,7 +100,10 @@ export const StepHabitDetail: React.FC<StepHabitDetailProps> = ({
           <ThemedText style={styles.title}>
             {habit.emoji} {habit.name}
           </ThemedText>
-          <TouchableOpacity onPress={handleSave} style={[styles.saveButton, { backgroundColor: primaryColor }]}>
+          <TouchableOpacity
+            onPress={handleSave}
+            style={[styles.saveButton, { backgroundColor: primaryColor }]}
+          >
             <ThemedText style={styles.saveButtonText}>Save</ThemedText>
           </TouchableOpacity>
         </View>
@@ -114,7 +117,7 @@ export const StepHabitDetail: React.FC<StepHabitDetailProps> = ({
             </ThemedView>
           )}
 
-          {habit.type === 'steps' ? (
+          {habit.type === "steps" ? (
             <StepTracker
               targetSteps={habit.targetValue || 10000}
               onStepsUpdate={handleStepsUpdate}
@@ -123,7 +126,7 @@ export const StepHabitDetail: React.FC<StepHabitDetailProps> = ({
           ) : (
             <NumericHabitInput
               habitName={habit.name}
-              unit={habit.unit || 'units'}
+              unit={habit.unit || "units"}
               targetValue={habit.targetValue || 1}
               currentValue={currentValue}
               onValueChange={setCurrentValue}
@@ -134,7 +137,7 @@ export const StepHabitDetail: React.FC<StepHabitDetailProps> = ({
 
           <View style={styles.tipsCard}>
             <ThemedText style={styles.tipsTitle}>💡 Tips</ThemedText>
-            {habit.type === 'steps' ? (
+            {habit.type === "steps" ? (
               <View>
                 <ThemedText style={styles.tipText}>
                   • Take the stairs instead of elevators
@@ -177,22 +180,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: "#E0E0E0",
   },
   closeButton: {
     padding: 8,
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     flex: 1,
-    textAlign: 'center',
+    textAlign: "center",
   },
   saveButton: {
     paddingHorizontal: 16,
@@ -200,8 +203,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   saveButtonText: {
-    color: 'white',
-    fontWeight: '600',
+    color: "white",
+    fontWeight: "600",
   },
   content: {
     flex: 1,
@@ -221,11 +224,11 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginTop: 16,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: "#F5F5F5",
   },
   tipsTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 12,
   },
   tipText: {

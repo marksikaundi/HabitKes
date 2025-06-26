@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { HABIT_COLORS, HABIT_EMOJIS, HabitType } from "@/types/habit";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  TextInput,
   Alert,
-} from 'react-native';
-import { ThemedView } from '@/components/ThemedView';
-import { ThemedText } from '@/components/ThemedText';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { Ionicons } from '@expo/vector-icons';
-import { HABIT_COLORS, HABIT_EMOJIS, HabitType } from '@/types/habit';
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface CreateStepHabitFormProps {
   onSubmit: (habitData: {
@@ -31,27 +31,27 @@ export const CreateStepHabitForm: React.FC<CreateStepHabitFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [selectedColor, setSelectedColor] = useState(HABIT_COLORS[0]);
-  const [selectedEmoji, setSelectedEmoji] = useState('👟');
-  const [targetSteps, setTargetSteps] = useState('10000');
-  const [habitType, setHabitType] = useState<HabitType>('steps');
+  const [selectedEmoji, setSelectedEmoji] = useState("👟");
+  const [targetSteps, setTargetSteps] = useState("10000");
+  const [habitType, setHabitType] = useState<HabitType>("steps");
 
-  const primaryColor = useThemeColor({}, 'tint');
-  const textColor = useThemeColor({}, 'text');
-  const cardColor = useThemeColor({}, 'card');
-  const backgroundColor = useThemeColor({}, 'background');
+  const primaryColor = useThemeColor({}, "tint");
+  const textColor = useThemeColor({}, "text");
+  const cardColor = useThemeColor({}, "card");
+  const backgroundColor = useThemeColor({}, "background");
 
   const handleSubmit = () => {
     if (!name.trim()) {
-      Alert.alert('Error', 'Please enter a habit name');
+      Alert.alert("Error", "Please enter a habit name");
       return;
     }
 
     const target = parseInt(targetSteps) || 0;
     if (target <= 0) {
-      Alert.alert('Error', 'Please enter a valid target number');
+      Alert.alert("Error", "Please enter a valid target number");
       return;
     }
 
@@ -62,35 +62,44 @@ export const CreateStepHabitForm: React.FC<CreateStepHabitFormProps> = ({
       emoji: selectedEmoji,
       type: habitType,
       targetValue: target,
-      unit: habitType === 'steps' ? 'steps' : 'units',
+      unit: habitType === "steps" ? "steps" : "units",
     });
   };
 
   const stepPresets = [
-    { label: '5,000 steps', value: 5000 },
-    { label: '10,000 steps', value: 10000 },
-    { label: '15,000 steps', value: 15000 },
-    { label: '20,000 steps', value: 20000 },
+    { label: "5,000 steps", value: 5000 },
+    { label: "10,000 steps", value: 10000 },
+    { label: "15,000 steps", value: 15000 },
+    { label: "20,000 steps", value: 20000 },
   ];
 
-  const habitTypes: { type: HabitType; label: string; icon: string; description: string }[] = [
+  const habitTypes: {
+    type: HabitType;
+    label: string;
+    icon: string;
+    description: string;
+  }[] = [
     {
-      type: 'steps',
-      label: 'Step Tracking',
-      icon: '👟',
-      description: 'Track daily steps using your device sensor',
+      type: "steps",
+      label: "Step Tracking",
+      icon: "👟",
+      description: "Track daily steps using your device sensor",
     },
     {
-      type: 'numeric',
-      label: 'Numeric Goal',
-      icon: '📊',
-      description: 'Track any measurable activity (glasses of water, minutes, etc.)',
+      type: "numeric",
+      label: "Numeric Goal",
+      icon: "📊",
+      description:
+        "Track any measurable activity (glasses of water, minutes, etc.)",
     },
   ];
 
   return (
     <ThemedView style={[styles.container, { backgroundColor }]}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.header}>
           <TouchableOpacity onPress={onCancel} style={styles.cancelButton}>
             <Ionicons name="close" size={24} color={textColor} />
@@ -109,15 +118,19 @@ export const CreateStepHabitForm: React.FC<CreateStepHabitFormProps> = ({
                 style={[
                   styles.typeCard,
                   {
-                    backgroundColor: habitType === type.type ? primaryColor + '20' : cardColor,
-                    borderColor: habitType === type.type ? primaryColor : textColor + '20',
+                    backgroundColor:
+                      habitType === type.type ? primaryColor + "20" : cardColor,
+                    borderColor:
+                      habitType === type.type ? primaryColor : textColor + "20",
                   },
                 ]}
                 onPress={() => setHabitType(type.type)}
               >
                 <Text style={styles.typeIcon}>{type.icon}</Text>
                 <ThemedText style={styles.typeLabel}>{type.label}</ThemedText>
-                <ThemedText style={[styles.typeDescription, { color: textColor + '80' }]}>
+                <ThemedText
+                  style={[styles.typeDescription, { color: textColor + "80" }]}
+                >
                   {type.description}
                 </ThemedText>
               </TouchableOpacity>
@@ -129,23 +142,33 @@ export const CreateStepHabitForm: React.FC<CreateStepHabitFormProps> = ({
         <View style={[styles.section, { backgroundColor: cardColor }]}>
           <ThemedText style={styles.sectionTitle}>Habit Name</ThemedText>
           <TextInput
-            style={[styles.input, { color: textColor, borderColor: textColor + '30' }]}
+            style={[
+              styles.input,
+              { color: textColor, borderColor: textColor + "30" },
+            ]}
             value={name}
             onChangeText={setName}
-            placeholder={habitType === 'steps' ? 'Daily Steps' : 'Enter habit name'}
-            placeholderTextColor={textColor + '60'}
+            placeholder={
+              habitType === "steps" ? "Daily Steps" : "Enter habit name"
+            }
+            placeholderTextColor={textColor + "60"}
           />
         </View>
 
         {/* Description (Optional) */}
         <View style={[styles.section, { backgroundColor: cardColor }]}>
-          <ThemedText style={styles.sectionTitle}>Description (Optional)</ThemedText>
+          <ThemedText style={styles.sectionTitle}>
+            Description (Optional)
+          </ThemedText>
           <TextInput
-            style={[styles.input, { color: textColor, borderColor: textColor + '30' }]}
+            style={[
+              styles.input,
+              { color: textColor, borderColor: textColor + "30" },
+            ]}
             value={description}
             onChangeText={setDescription}
             placeholder="Add a description..."
-            placeholderTextColor={textColor + '60'}
+            placeholderTextColor={textColor + "60"}
             multiline
           />
         </View>
@@ -153,10 +176,10 @@ export const CreateStepHabitForm: React.FC<CreateStepHabitFormProps> = ({
         {/* Target Value */}
         <View style={[styles.section, { backgroundColor: cardColor }]}>
           <ThemedText style={styles.sectionTitle}>
-            {habitType === 'steps' ? 'Daily Step Goal' : 'Target Value'}
+            {habitType === "steps" ? "Daily Step Goal" : "Target Value"}
           </ThemedText>
-          
-          {habitType === 'steps' && (
+
+          {habitType === "steps" && (
             <View style={styles.presetsContainer}>
               {stepPresets.map((preset) => (
                 <TouchableOpacity
@@ -164,16 +187,26 @@ export const CreateStepHabitForm: React.FC<CreateStepHabitFormProps> = ({
                   style={[
                     styles.presetButton,
                     {
-                      backgroundColor: parseInt(targetSteps) === preset.value ? primaryColor : 'transparent',
+                      backgroundColor:
+                        parseInt(targetSteps) === preset.value
+                          ? primaryColor
+                          : "transparent",
                       borderColor: primaryColor,
                     },
                   ]}
                   onPress={() => setTargetSteps(preset.value.toString())}
                 >
-                  <Text style={[
-                    styles.presetText,
-                    { color: parseInt(targetSteps) === preset.value ? 'white' : primaryColor }
-                  ]}>
+                  <Text
+                    style={[
+                      styles.presetText,
+                      {
+                        color:
+                          parseInt(targetSteps) === preset.value
+                            ? "white"
+                            : primaryColor,
+                      },
+                    ]}
+                  >
                     {preset.label}
                   </Text>
                 </TouchableOpacity>
@@ -182,11 +215,14 @@ export const CreateStepHabitForm: React.FC<CreateStepHabitFormProps> = ({
           )}
 
           <TextInput
-            style={[styles.input, { color: textColor, borderColor: textColor + '30' }]}
+            style={[
+              styles.input,
+              { color: textColor, borderColor: textColor + "30" },
+            ]}
             value={targetSteps}
             onChangeText={setTargetSteps}
-            placeholder={habitType === 'steps' ? '10000' : 'Enter target value'}
-            placeholderTextColor={textColor + '60'}
+            placeholder={habitType === "steps" ? "10000" : "Enter target value"}
+            placeholderTextColor={textColor + "60"}
             keyboardType="numeric"
           />
         </View>
@@ -201,8 +237,12 @@ export const CreateStepHabitForm: React.FC<CreateStepHabitFormProps> = ({
                 style={[
                   styles.emojiButton,
                   {
-                    backgroundColor: selectedEmoji === emoji ? primaryColor + '20' : 'transparent',
-                    borderColor: selectedEmoji === emoji ? primaryColor : 'transparent',
+                    backgroundColor:
+                      selectedEmoji === emoji
+                        ? primaryColor + "20"
+                        : "transparent",
+                    borderColor:
+                      selectedEmoji === emoji ? primaryColor : "transparent",
                   },
                 ]}
                 onPress={() => setSelectedEmoji(emoji)}
@@ -224,7 +264,8 @@ export const CreateStepHabitForm: React.FC<CreateStepHabitFormProps> = ({
                   styles.colorButton,
                   {
                     backgroundColor: color,
-                    borderColor: selectedColor === color ? textColor : 'transparent',
+                    borderColor:
+                      selectedColor === color ? textColor : "transparent",
                     borderWidth: selectedColor === color ? 3 : 0,
                   },
                 ]}
@@ -255,9 +296,9 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 24,
   },
   cancelButton: {
@@ -265,7 +306,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   section: {
     padding: 16,
@@ -274,7 +315,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 12,
   },
   typeGrid: {
@@ -284,7 +325,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     borderWidth: 2,
-    alignItems: 'center',
+    alignItems: "center",
   },
   typeIcon: {
     fontSize: 32,
@@ -292,12 +333,12 @@ const styles = StyleSheet.create({
   },
   typeLabel: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 4,
   },
   typeDescription: {
     fontSize: 12,
-    textAlign: 'center',
+    textAlign: "center",
   },
   input: {
     borderWidth: 1,
@@ -306,8 +347,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   presetsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
     marginBottom: 12,
   },
@@ -319,27 +360,27 @@ const styles = StyleSheet.create({
   },
   presetText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   emojiGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
   },
   emojiButton: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 2,
   },
   emoji: {
     fontSize: 24,
   },
   colorGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 12,
   },
   colorButton: {
@@ -350,13 +391,13 @@ const styles = StyleSheet.create({
   createButton: {
     padding: 16,
     borderRadius: 12,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 24,
     marginBottom: 32,
   },
   createButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });

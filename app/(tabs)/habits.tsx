@@ -14,16 +14,21 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Card } from "@/components/ui/Card";
+import { CreateStepHabitForm } from "@/components/ui/CreateStepHabitForm";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { StepHabitDetail } from "@/components/ui/StepHabitDetail";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useCreateHabit, useDeleteHabit, useHabits } from "@/hooks/useHabits";
-import { HABIT_COLORS, HABIT_EMOJIS, HabitFrequency, HabitType } from "@/types/habit";
+import {
+  HABIT_COLORS,
+  HABIT_EMOJIS,
+  HabitFrequency,
+  HabitType,
+} from "@/types/habit";
 import { getHabitFrequencyText } from "@/utils/dateUtils";
-import { CreateStepHabitForm } from "@/components/ui/CreateStepHabitForm";
-import { StepHabitDetail } from "@/components/ui/StepHabitDetail";
 
 export default function HabitsScreen() {
   const colorScheme = useColorScheme();
@@ -57,6 +62,7 @@ export default function HabitsScreen() {
         color: selectedColor,
         emoji: selectedEmoji,
         frequency: selectedFrequency,
+        type: "boolean" as HabitType, // Default to boolean for regular habits
       });
 
       // Reset form
@@ -70,6 +76,38 @@ export default function HabitsScreen() {
       Alert.alert("Success", "Habit created successfully!");
     } catch {
       Alert.alert("Error", "Failed to create habit");
+    }
+  };
+
+  const handleCreateStepHabit = async (habitData: {
+    name: string;
+    description?: string;
+    color: string;
+    emoji?: string;
+    type: HabitType;
+    targetValue: number;
+    unit: string;
+  }) => {
+    try {
+      await createHabit({
+        ...habitData,
+        frequency: "daily" as HabitFrequency, // Step habits are always daily
+      });
+
+      setShowStepModal(false);
+      Alert.alert("Success", "Movement habit created successfully!");
+    } catch {
+      Alert.alert("Error", "Failed to create movement habit");
+    }
+  };
+
+  const handleHabitPress = (habit: any) => {
+    if (habit.type === "steps" || habit.type === "numeric") {
+      setSelectedHabit(habit);
+      setShowStepHabitDetail(true);
+    } else {
+      // Handle regular boolean habits (existing functionality)
+      // You can add completion toggle logic here
     }
   };
 
@@ -141,72 +179,86 @@ export default function HabitsScreen() {
           </ThemedView>
         ) : (
           habits.map((habit) => (
-            <Card key={habit._id} style={styles.habitCard}>
-              <View style={styles.habitContent}>
-                <View style={styles.habitInfo}>
-                  <View style={styles.habitHeader}>
-                    {habit.emoji && (
-                      <View
-                        style={[
-                          styles.emojiContainer,
-                          { backgroundColor: colors.muted },
-                        ]}
-                      >
-                        <Text style={styles.habitEmoji}>{habit.emoji}</Text>
-                      </View>
-                    )}
-                    <View style={styles.habitTextContent}>
-                      <ThemedText
-                        type="defaultSemiBold"
-                        style={styles.habitName}
-                      >
-                        {habit.name}
-                      </ThemedText>
-                      {habit.description && (
+            <TouchableOpacity
+              key={habit._id}
+              onPress={() => handleHabitPress(habit)}
+              activeOpacity={0.7}
+            >
+              <Card style={styles.habitCard}>
+                <View style={styles.habitContent}>
+                  <View style={styles.habitInfo}>
+                    <View style={styles.habitHeader}>
+                      {habit.emoji && (
+                        <View
+                          style={[
+                            styles.emojiContainer,
+                            { backgroundColor: colors.muted },
+                          ]}
+                        >
+                          <Text style={styles.habitEmoji}>{habit.emoji}</Text>
+                        </View>
+                      )}
+                      <View style={styles.habitTextContent}>
+                        <ThemedText
+                          type="defaultSemiBold"
+                          style={styles.habitName}
+                        >
+                          {habit.name}
+                        </ThemedText>
+                        {habit.description && (
+                          <ThemedText
+                            style={[
+                              styles.habitDescription,
+                              { color: colors.mutedForeground },
+                            ]}
+                          >
+                            {habit.description}
+                          </ThemedText>
+                        )}
                         <ThemedText
                           style={[
-                            styles.habitDescription,
+                            styles.habitFrequency,
                             { color: colors.mutedForeground },
                           ]}
                         >
-                          {habit.description}
+                          {getHabitFrequencyText(habit.frequency)}
                         </ThemedText>
-                      )}
-                      <ThemedText
-                        style={[
-                          styles.habitFrequency,
-                          { color: colors.mutedForeground },
-                        ]}
-                      >
-                        {getHabitFrequencyText(habit.frequency)}
-                      </ThemedText>
+                      </View>
                     </View>
                   </View>
-                </View>
 
-                <TouchableOpacity
+                  <TouchableOpacity
+                    style={[
+                      styles.deleteButton,
+                      { backgroundColor: colors.danger },
+                    ]}
+                    onPress={() => handleDeleteHabit(habit._id, habit.name)}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <IconSymbol name="trash" size={16} color="white" />
+                  </TouchableOpacity>
+                </View>
+                <View
                   style={[
-                    styles.deleteButton,
-                    { backgroundColor: colors.danger },
+                    styles.colorIndicator,
+                    { backgroundColor: habit.color },
                   ]}
-                  onPress={() => handleDeleteHabit(habit._id, habit.name)}
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                >
-                  <IconSymbol name="trash" size={16} color="white" />
-                </TouchableOpacity>
-              </View>
-              <View
-                style={[
-                  styles.colorIndicator,
-                  { backgroundColor: habit.color },
-                ]}
-              />
-            </Card>
+                />
+              </Card>
+            </TouchableOpacity>
           ))
         )}
       </ScrollView>
 
-      <FloatingActionButton onPress={() => setShowCreateModal(true)} />
+      <View style={styles.fabContainer}>
+        <TouchableOpacity
+          style={[styles.secondaryFab, { backgroundColor: colors.secondary }]}
+          onPress={() => setShowStepModal(true)}
+        >
+          <IconSymbol name="figure.walk" size={20} color="white" />
+        </TouchableOpacity>
+        <FloatingActionButton onPress={() => setShowCreateModal(true)} />
+      </View>
 
       {/* Create Habit Modal */}
       <Modal
@@ -362,6 +414,29 @@ export default function HabitsScreen() {
           </ScrollView>
         </SafeAreaView>
       </Modal>
+
+      {/* Step Habit Creation Modal */}
+      <Modal
+        visible={showStepModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowStepModal(false)}
+      >
+        <CreateStepHabitForm
+          onSubmit={handleCreateStepHabit}
+          onCancel={() => setShowStepModal(false)}
+        />
+      </Modal>
+
+      {/* Step Habit Detail Modal */}
+      <StepHabitDetail
+        visible={showStepHabitDetail}
+        habit={selectedHabit}
+        onClose={() => {
+          setShowStepHabitDetail(false);
+          setSelectedHabit(null);
+        }}
+      />
     </SafeAreaView>
   );
 }
@@ -559,5 +634,27 @@ const styles = StyleSheet.create({
   frequencyText: {
     fontSize: 16,
     fontWeight: "500",
+  },
+  fabContainer: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    alignItems: "center",
+    gap: 12,
+  },
+  secondaryFab: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
 });

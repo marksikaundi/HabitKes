@@ -81,24 +81,25 @@ export const HabitCard: React.FC<HabitCardProps> = ({
             )}
 
             {/* Show progress for numeric/steps habits */}
-            {(habit.type === 'numeric' || habit.type === 'steps') && habit.targetValue && (
-              <Text
-                style={[
-                  createTextStyle("sm"),
-                  {
-                    color: colors.mutedForeground,
-                    marginTop: Design.spacing.xs,
-                  },
-                ]}
-              >
-                Target: {habit.targetValue} {habit.unit}
-              </Text>
-            )}
+            {(habit.type === "numeric" || habit.type === "steps") &&
+              habit.targetValue && (
+                <Text
+                  style={[
+                    createTextStyle("sm"),
+                    {
+                      color: colors.mutedForeground,
+                      marginTop: Design.spacing.xs,
+                    },
+                  ]}
+                >
+                  Target: {habit.targetValue} {habit.unit}
+                </Text>
+              )}
           </View>
         </View>
 
         <View style={styles.rightContent}>
-          {(habit.type === 'boolean' || !habit.type) ? (
+          {habit.type === "boolean" || !habit.type ? (
             <View
               style={[
                 styles.checkButton,
@@ -118,8 +119,13 @@ export const HabitCard: React.FC<HabitCardProps> = ({
             </View>
           ) : (
             <View style={styles.numericIndicator}>
-              <Text style={[createTextStyle("xs"), { color: colors.mutedForeground }]}>
-                {habit.type === 'steps' ? '👟' : '📊'}
+              <Text
+                style={[
+                  createTextStyle("xs"),
+                  { color: colors.mutedForeground },
+                ]}
+              >
+                {habit.type === "steps" ? "👟" : "📊"}
               </Text>
             </View>
           )}

@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Platform } from 'react-native';
-import { Pedometer } from 'expo-sensors';
+import { Pedometer } from "expo-sensors";
+import { useEffect, useState } from "react";
 
 export interface StepData {
   steps: number;
@@ -22,18 +21,18 @@ export const useStepCounter = () => {
     const checkAvailability = async () => {
       try {
         const isAvailable = await Pedometer.isAvailableAsync();
-        setStepData(prev => ({ ...prev, isAvailable }));
+        setStepData((prev) => ({ ...prev, isAvailable }));
 
         if (!isAvailable) {
-          setStepData(prev => ({
+          setStepData((prev) => ({
             ...prev,
-            error: 'Step counting is not available on this device',
+            error: "Step counting is not available on this device",
           }));
         }
       } catch (error) {
-        setStepData(prev => ({
+        setStepData((prev) => ({
           ...prev,
-          error: 'Failed to check step counter availability',
+          error: "Failed to check step counter availability",
         }));
       }
     };
@@ -51,29 +50,33 @@ export const useStepCounter = () => {
     try {
       const isAvailable = await Pedometer.isAvailableAsync();
       if (!isAvailable) {
-        setStepData(prev => ({
+        setStepData((prev) => ({
           ...prev,
-          error: 'Step counting is not available on this device',
+          error: "Step counting is not available on this device",
         }));
         return;
       }
 
       setIsTracking(true);
-      
+
       // Get today's steps
       const today = new Date();
-      const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      
+      const start = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+      );
+
       const result = await Pedometer.getStepCountAsync(start, today);
-      setStepData(prev => ({
+      setStepData((prev) => ({
         ...prev,
         steps: result.steps,
         error: undefined,
       }));
     } catch (error) {
-      setStepData(prev => ({
+      setStepData((prev) => ({
         ...prev,
-        error: 'Failed to get step count',
+        error: "Failed to get step count",
       }));
     }
   };
@@ -86,16 +89,20 @@ export const useStepCounter = () => {
     try {
       const isAvailable = await Pedometer.isAvailableAsync();
       if (!isAvailable) {
-        throw new Error('Step counting is not available on this device');
+        throw new Error("Step counting is not available on this device");
       }
 
       const today = new Date();
-      const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      
+      const start = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+      );
+
       const result = await Pedometer.getStepCountAsync(start, today);
       return result.steps;
     } catch (error) {
-      console.error('Error getting today steps:', error);
+      console.error("Error getting today steps:", error);
       return 0;
     }
   };
@@ -104,16 +111,20 @@ export const useStepCounter = () => {
     try {
       const isAvailable = await Pedometer.isAvailableAsync();
       if (!isAvailable) {
-        throw new Error('Step counting is not available on this device');
+        throw new Error("Step counting is not available on this device");
       }
 
-      const start = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const start = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+      );
       const end = new Date(start.getTime() + 24 * 60 * 60 * 1000); // Next day
-      
+
       const result = await Pedometer.getStepCountAsync(start, end);
       return result.steps;
     } catch (error) {
-      console.error('Error getting steps for date:', error);
+      console.error("Error getting steps for date:", error);
       return 0;
     }
   };

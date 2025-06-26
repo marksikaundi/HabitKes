@@ -1,4 +1,9 @@
-import { HABIT_COLORS, HABIT_EMOJIS, HabitFrequency, HabitType } from "@/types/habit";
+import {
+  HABIT_COLORS,
+  HABIT_EMOJIS,
+  HabitFrequency,
+  HabitType,
+} from "@/types/habit";
 
 // Sample habit data for testing
 export const sampleHabits = [
@@ -85,7 +90,7 @@ export function generateSampleCompletions(
         let value: number | undefined;
         let isCompleted = true;
 
-        if (habit?.type === 'numeric' || habit?.type === 'steps') {
+        if (habit?.type === "numeric" || habit?.type === "steps") {
           // Generate random value around target
           const target = habit.targetValue || 10;
           const variance = target * 0.3; // 30% variance
