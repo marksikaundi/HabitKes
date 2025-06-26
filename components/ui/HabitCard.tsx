@@ -79,27 +79,50 @@ export const HabitCard: React.FC<HabitCardProps> = ({
                 {habit.description}
               </Text>
             )}
+
+            {/* Show progress for numeric/steps habits */}
+            {(habit.type === 'numeric' || habit.type === 'steps') && habit.targetValue && (
+              <Text
+                style={[
+                  createTextStyle("sm"),
+                  {
+                    color: colors.mutedForeground,
+                    marginTop: Design.spacing.xs,
+                  },
+                ]}
+              >
+                Target: {habit.targetValue} {habit.unit}
+              </Text>
+            )}
           </View>
         </View>
 
         <View style={styles.rightContent}>
-          <View
-            style={[
-              styles.checkButton,
-              {
-                backgroundColor: habit.isCompletedToday
-                  ? habit.color
-                  : "transparent",
-                borderColor: habit.color,
-              },
-            ]}
-          >
-            {habit.isCompletedToday ? (
-              <IconSymbol name="checkmark" size={20} color="white" />
-            ) : (
-              <View style={styles.checkButtonInner} />
-            )}
-          </View>
+          {(habit.type === 'boolean' || !habit.type) ? (
+            <View
+              style={[
+                styles.checkButton,
+                {
+                  backgroundColor: habit.isCompletedToday
+                    ? habit.color
+                    : "transparent",
+                  borderColor: habit.color,
+                },
+              ]}
+            >
+              {habit.isCompletedToday ? (
+                <IconSymbol name="checkmark" size={20} color="white" />
+              ) : (
+                <View style={styles.checkButtonInner} />
+              )}
+            </View>
+          ) : (
+            <View style={styles.numericIndicator}>
+              <Text style={[createTextStyle("xs"), { color: colors.mutedForeground }]}>
+                {habit.type === 'steps' ? '👟' : '📊'}
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -154,5 +177,12 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
     backgroundColor: "transparent",
+  },
+  numericIndicator: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
