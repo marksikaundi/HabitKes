@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { ThemedView } from '@/components/ThemedView';
-import { ThemedText } from '@/components/ThemedText';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 
 interface StatItemProps {
   icon: string;
@@ -13,17 +13,17 @@ interface StatItemProps {
 }
 
 const StatItem: React.FC<StatItemProps> = ({ icon, value, label, color }) => {
-  const textColor = useThemeColor({}, 'text');
-  
+  const textColor = useThemeColor({}, "text");
+
   return (
     <View style={styles.statItem}>
-      <View style={[styles.statIcon, { backgroundColor: color + '20' }]}>
+      <View style={[styles.statIcon, { backgroundColor: color + "20" }]}>
         <Ionicons name={icon as any} size={20} color={color} />
       </View>
       <ThemedText style={[styles.statValue, { color: textColor }]}>
         {value}
       </ThemedText>
-      <ThemedText style={[styles.statLabel, { color: textColor + '70' }]}>
+      <ThemedText style={[styles.statLabel, { color: textColor + "70" }]}>
         {label}
       </ThemedText>
     </View>
@@ -43,17 +43,19 @@ export const HabitSummaryStats: React.FC<HabitSummaryStatsProps> = ({
   completionRate,
   activeStreak = 0,
 }) => {
-  const cardColor = useThemeColor({}, 'card');
-  const borderColor = useThemeColor({}, 'border');
+  const cardColor = useThemeColor({}, "card");
+  const borderColor = useThemeColor({}, "border");
 
   const getCompletionColor = () => {
-    if (completionRate >= 80) return '#4CAF50';
-    if (completionRate >= 60) return '#FF9800';
-    return '#F44336';
+    if (completionRate >= 80) return "#4CAF50";
+    if (completionRate >= 60) return "#FF9800";
+    return "#F44336";
   };
 
   return (
-    <ThemedView style={[styles.container, { backgroundColor: cardColor, borderColor }]}>
+    <ThemedView
+      style={[styles.container, { backgroundColor: cardColor, borderColor }]}
+    >
       <View style={styles.statsGrid}>
         <StatItem
           icon="list-outline"
@@ -92,28 +94,28 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   statsGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   statItem: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   statIcon: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 8,
   },
   statValue: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

@@ -60,8 +60,8 @@ export default function TodayScreen() {
     totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   // Separate completed and pending habits
-  const completedHabits = todayHabits.filter(h => h.isCompletedToday);
-  const pendingHabits = todayHabits.filter(h => !h.isCompletedToday);
+  const completedHabits = todayHabits.filter((h) => h.isCompletedToday);
+  const pendingHabits = todayHabits.filter((h) => !h.isCompletedToday);
 
   const handleToggleHabit = async (habit: HabitWithCompletion) => {
     try {
@@ -174,10 +174,7 @@ export default function TodayScreen() {
               color={colors.tabIconDefault}
             />
             <ThemedText
-              style={[
-                styles.emptyStateText,
-                { color: colors.tabIconDefault },
-              ]}
+              style={[styles.emptyStateText, { color: colors.tabIconDefault }]}
             >
               No habits scheduled for today
             </ThemedText>
@@ -199,7 +196,12 @@ export default function TodayScreen() {
               <ThemedText type="subtitle" style={styles.sectionTitle}>
                 Daily Movement
               </ThemedText>
-              <ThemedText style={[styles.sectionSubtitle, { color: colors.tabIconDefault }]}>
+              <ThemedText
+                style={[
+                  styles.sectionSubtitle,
+                  { color: colors.tabIconDefault },
+                ]}
+              >
                 Track your steps today
               </ThemedText>
             </View>
@@ -210,8 +212,11 @@ export default function TodayScreen() {
             currentSteps={demoSteps}
           />
           <View style={[styles.tipContainer, { backgroundColor: colors.card }]}>
-            <ThemedText style={[styles.tipText, { color: colors.tabIconDefault }]}>
-              💡 Go to the Habits tab and tap the 👟 button to create a step tracking habit
+            <ThemedText
+              style={[styles.tipText, { color: colors.tabIconDefault }]}
+            >
+              💡 Go to the Habits tab and tap the 👟 button to create a step
+              tracking habit
             </ThemedText>
           </View>
         </View>
@@ -256,9 +261,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionHeaderWithAction: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 16,
   },
   emptyState: {
@@ -288,7 +293,7 @@ const styles = StyleSheet.create({
   },
   tipText: {
     fontSize: 14,
-    textAlign: 'center',
-    fontStyle: 'italic',
+    textAlign: "center",
+    fontStyle: "italic",
   },
 });

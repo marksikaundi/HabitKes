@@ -1,10 +1,10 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ThemedView } from '@/components/ThemedView';
-import { ThemedText } from '@/components/ThemedText';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { HabitWithCompletion } from '@/types/habit';
-import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { HabitWithCompletion } from "@/types/habit";
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface HabitSectionCardProps {
   title: string;
@@ -23,27 +23,34 @@ export const HabitSectionCard: React.FC<HabitSectionCardProps> = ({
   icon,
   accentColor,
 }) => {
-  const textColor = useThemeColor({}, 'text');
-  const cardColor = useThemeColor({}, 'card');
-  const borderColor = useThemeColor({}, 'border');
+  const textColor = useThemeColor({}, "text");
+  const cardColor = useThemeColor({}, "card");
+  const borderColor = useThemeColor({}, "border");
 
   return (
-    <ThemedView style={[styles.sectionCard, { backgroundColor: cardColor, borderColor }]}>
+    <ThemedView
+      style={[styles.sectionCard, { backgroundColor: cardColor, borderColor }]}
+    >
       <View style={styles.sectionHeader}>
-        <View style={[styles.iconContainer, { backgroundColor: accentColor + '20' }]}>
+        <View
+          style={[
+            styles.iconContainer,
+            { backgroundColor: accentColor + "20" },
+          ]}
+        >
           <Ionicons name={icon as any} size={20} color={accentColor} />
         </View>
         <View style={styles.headerText}>
           <ThemedText style={styles.sectionTitle}>{title}</ThemedText>
-          <ThemedText style={[styles.count, { color: textColor + '80' }]}>
-            {habits.length} {habits.length === 1 ? 'habit' : 'habits'}
+          <ThemedText style={[styles.count, { color: textColor + "80" }]}>
+            {habits.length} {habits.length === 1 ? "habit" : "habits"}
           </ThemedText>
         </View>
       </View>
 
       {habits.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <ThemedText style={[styles.emptyText, { color: textColor + '60' }]}>
+          <ThemedText style={[styles.emptyText, { color: textColor + "60" }]}>
             {emptyMessage}
           </ThemedText>
         </View>
@@ -66,38 +73,71 @@ export const HabitSectionCard: React.FC<HabitSectionCardProps> = ({
                     <Text style={styles.habitEmoji}>{habit.emoji}</Text>
                   )}
                   <View style={styles.habitTextContainer}>
-                    <ThemedText 
+                    <ThemedText
                       style={[
                         styles.habitName,
                         habit.isCompletedToday && styles.completedHabitName,
-                        { color: habit.isCompletedToday ? textColor + '60' : textColor }
+                        {
+                          color: habit.isCompletedToday
+                            ? textColor + "60"
+                            : textColor,
+                        },
                       ]}
                     >
                       {habit.name}
                     </ThemedText>
                     {habit.description && (
-                      <ThemedText style={[styles.habitDescription, { color: textColor + '60' }]}>
+                      <ThemedText
+                        style={[
+                          styles.habitDescription,
+                          { color: textColor + "60" },
+                        ]}
+                      >
                         {habit.description}
                       </ThemedText>
                     )}
-                    {(habit.type === 'numeric' || habit.type === 'steps') && habit.targetValue && (
-                      <ThemedText style={[styles.habitTarget, { color: textColor + '50' }]}>
-                        Goal: {habit.targetValue} {habit.unit}
-                      </ThemedText>
-                    )}
+                    {(habit.type === "numeric" || habit.type === "steps") &&
+                      habit.targetValue && (
+                        <ThemedText
+                          style={[
+                            styles.habitTarget,
+                            { color: textColor + "50" },
+                          ]}
+                        >
+                          Goal: {habit.targetValue} {habit.unit}
+                        </ThemedText>
+                      )}
                   </View>
                 </View>
                 <View style={styles.habitRight}>
                   {habit.isCompletedToday ? (
-                    <View style={[styles.statusIndicator, { backgroundColor: '#4CAF50' }]}>
+                    <View
+                      style={[
+                        styles.statusIndicator,
+                        { backgroundColor: "#4CAF50" },
+                      ]}
+                    >
                       <Ionicons name="checkmark" size={16} color="white" />
                     </View>
                   ) : (
-                    <View style={[styles.statusIndicator, { backgroundColor: 'transparent', borderColor: textColor + '30' }]}>
+                    <View
+                      style={[
+                        styles.statusIndicator,
+                        {
+                          backgroundColor: "transparent",
+                          borderColor: textColor + "30",
+                        },
+                      ]}
+                    >
                       <View style={styles.incompleteIndicator} />
                     </View>
                   )}
-                  <View style={[styles.colorStripe, { backgroundColor: habit.color }]} />
+                  <View
+                    style={[
+                      styles.colorStripe,
+                      { backgroundColor: habit.color },
+                    ]}
+                  />
                 </View>
               </View>
             </TouchableOpacity>
@@ -113,11 +153,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 20,
     borderWidth: 1,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
     paddingBottom: 12,
   },
@@ -125,8 +165,8 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 12,
   },
   headerText: {
@@ -134,7 +174,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   count: {
     fontSize: 14,
@@ -142,11 +182,11 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   emptyText: {
     fontSize: 14,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
   habitsContainer: {
     paddingHorizontal: 16,
@@ -160,13 +200,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   habitContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   habitLeft: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   habitEmoji: {
     fontSize: 24,
@@ -177,10 +217,10 @@ const styles = StyleSheet.create({
   },
   habitName: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   completedHabitName: {
-    textDecorationLine: 'line-through',
+    textDecorationLine: "line-through",
   },
   habitDescription: {
     fontSize: 14,
@@ -191,15 +231,15 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   habitRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   statusIndicator: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 2,
     marginRight: 8,
   },
@@ -207,7 +247,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   colorStripe: {
     width: 4,
