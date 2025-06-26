@@ -5,6 +5,8 @@ export type HabitFrequency =
   | "weekly"
   | { type: "custom"; days: number[] };
 
+export type HabitType = "boolean" | "numeric" | "steps";
+
 export interface Habit {
   _id: Id<"habits">;
   name: string;
@@ -12,6 +14,9 @@ export interface Habit {
   color: string;
   emoji?: string;
   frequency: HabitFrequency;
+  type: HabitType;
+  targetValue?: number; // For numeric and steps habits
+  unit?: string; // e.g., "steps", "minutes", "glasses"
   startDate: string;
   endDate?: string;
   isActive: boolean;
@@ -25,6 +30,8 @@ export interface HabitCompletion {
   habitId: Id<"habits">;
   date: string;
   completedAt: number;
+  value?: number; // For numeric habits (steps, minutes, etc.)
+  isCompleted: boolean; // True if target is met for numeric habits
   userId?: string;
 }
 
@@ -118,6 +125,14 @@ export const HABIT_EMOJIS = [
   "🍽️",
   "🚶",
   "📖",
+  "👟", // Steps
+  "🚴", // Cycling
+  "🏋️", // Weight lifting
+  "🏊", // Swimming
+  "⏱️", // Timer
+  "📊", // Stats
+  "🎯", // Target
+  "📈", // Progress
 ];
 
 export const DAYS_OF_WEEK = [
