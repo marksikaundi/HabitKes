@@ -82,6 +82,9 @@ export const updateHabit = mutation({
         })
       )
     ),
+    type: v.optional(v.union(v.literal("boolean"), v.literal("numeric"), v.literal("steps"))),
+    targetValue: v.optional(v.number()),
+    unit: v.optional(v.string()),
     endDate: v.optional(v.string()),
   },
   handler: async (ctx, args) => {

@@ -6,9 +6,16 @@ export const completeHabit = mutation({
   args: {
     habitId: v.id("habits"),
     date: v.string(), // YYYY-MM-DD format
+    value: v.optional(v.number()), // For numeric habits
     userId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    // Get habit to check type and target
+    const habit = await ctx.db.get(args.habitId);
+    if (!habit) {
+      throw new Error("Habit not found");
+    }
+
     // Check if already completed for this date
     const existingCompletion = await ctx.db
       .query("habitCompletions")
@@ -20,7 +27,21 @@ export const completeHabit = mutation({
       )
       .first();
 
+    // Determine if completion target is met
+    let isCompleted = true;
+    if (habit.type === "numeric" || habit.type === "steps") {
+      const value = args.value || 0;
+      const target = habit.targetValue || 0;
+      isCompleted = value >= target;
+    }
+
     if (existingCompletion) {
+      // Update existing completion
+      await ctx.db.patch(existingCompletion._id, {
+        value: args.value,
+        isCompleted,
+        completedAt: Date.now(),
+      });
       return existingCompletion._id;
     }
 
@@ -29,11 +50,15 @@ export const completeHabit = mutation({
       habitId: args.habitId,
       date: args.date,
       completedAt: Date.now(),
+      value: args.value,
+      isCompleted,
       userId: args.userId,
     });
 
-    // Update streak
-    await updateStreak(ctx, args.habitId, args.date);
+    // Update streak only if target is met
+    if (isCompleted) {
+      await updateStreak(ctx, args.habitId, args.date);
+    }
 
     return completionId;
   },
