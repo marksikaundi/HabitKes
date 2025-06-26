@@ -20,8 +20,10 @@ import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useCreateHabit, useDeleteHabit, useHabits } from "@/hooks/useHabits";
-import { HABIT_COLORS, HABIT_EMOJIS, HabitFrequency } from "@/types/habit";
+import { HABIT_COLORS, HABIT_EMOJIS, HabitFrequency, HabitType } from "@/types/habit";
 import { getHabitFrequencyText } from "@/utils/dateUtils";
+import { CreateStepHabitForm } from "@/components/ui/CreateStepHabitForm";
+import { StepHabitDetail } from "@/components/ui/StepHabitDetail";
 
 export default function HabitsScreen() {
   const colorScheme = useColorScheme();
@@ -32,6 +34,9 @@ export default function HabitsScreen() {
   const { deleteHabit } = useDeleteHabit();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showStepModal, setShowStepModal] = useState(false);
+  const [showStepHabitDetail, setShowStepHabitDetail] = useState(false);
+  const [selectedHabit, setSelectedHabit] = useState<any>(null);
   const [habitName, setHabitName] = useState("");
   const [habitDescription, setHabitDescription] = useState("");
   const [selectedColor, setSelectedColor] = useState(HABIT_COLORS[0]);
