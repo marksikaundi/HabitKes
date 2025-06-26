@@ -16,6 +16,9 @@ export const createHabit = mutation({
         days: v.array(v.number()),
       })
     ),
+    type: v.union(v.literal("boolean"), v.literal("numeric"), v.literal("steps")),
+    targetValue: v.optional(v.number()),
+    unit: v.optional(v.string()),
     startDate: v.string(),
     endDate: v.optional(v.string()),
     userId: v.optional(v.string()),
