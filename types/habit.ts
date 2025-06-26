@@ -14,7 +14,7 @@ export interface Habit {
   color: string;
   emoji?: string;
   frequency: HabitFrequency;
-  type: HabitType;
+  type?: HabitType; // Optional for backward compatibility
   targetValue?: number; // For numeric and steps habits
   unit?: string; // e.g., "steps", "minutes", "glasses"
   startDate: string;
@@ -31,7 +31,7 @@ export interface HabitCompletion {
   date: string;
   completedAt: number;
   value?: number; // For numeric habits (steps, minutes, etc.)
-  isCompleted: boolean; // True if target is met for numeric habits
+  isCompleted?: boolean; // True if target is met for numeric habits - optional for backward compatibility
   userId?: string;
 }
 

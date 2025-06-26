@@ -16,11 +16,11 @@ export const createHabit = mutation({
         days: v.array(v.number()),
       })
     ),
-    type: v.union(
+    type: v.optional(v.union(
       v.literal("boolean"),
       v.literal("numeric"),
       v.literal("steps")
-    ),
+    )),
     targetValue: v.optional(v.number()),
     unit: v.optional(v.string()),
     startDate: v.string(),

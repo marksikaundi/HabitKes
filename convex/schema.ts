@@ -15,11 +15,11 @@ export default defineSchema({
         days: v.array(v.number()), // 0=Sunday, 1=Monday, etc.
       })
     ),
-    type: v.union(
+    type: v.optional(v.union(
       v.literal("boolean"),
       v.literal("numeric"),
       v.literal("steps")
-    ),
+    )), // Optional for backward compatibility
     targetValue: v.optional(v.number()), // For numeric and steps habits
     unit: v.optional(v.string()), // e.g., "steps", "minutes", "glasses"
     startDate: v.string(), // ISO date string
@@ -39,7 +39,7 @@ export default defineSchema({
     date: v.string(), // ISO date string (YYYY-MM-DD)
     completedAt: v.number(), // timestamp
     value: v.optional(v.number()), // For numeric habits (steps, minutes, etc.)
-    isCompleted: v.boolean(), // True if target is met for numeric habits
+    isCompleted: v.optional(v.boolean()), // True if target is met for numeric habits - optional for backward compatibility
     userId: v.optional(v.string()),
   })
     .index("by_habit", ["habitId"])
