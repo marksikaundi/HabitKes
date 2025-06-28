@@ -67,6 +67,8 @@ export default function HabitsScreen() {
 
   // Group habits and calculate stats
   const { groupedHabits, stats } = useMemo(() => {
+    console.log("Grouping habits, habitsWithCompletion:", habitsWithCompletion);
+    
     if (!habitsWithCompletion) {
       return {
         groupedHabits: { completed: [], incomplete: [], stepHabits: [] },
@@ -94,10 +96,13 @@ export default function HabitsScreen() {
     const completionRate =
       totalHabits > 0 ? Math.round((completedCount / totalHabits) * 100) : 0;
 
-    return {
+    const result = {
       groupedHabits: { completed, incomplete, stepHabits },
       stats: { totalHabits, completedHabits: completedCount, completionRate },
     };
+    
+    console.log("Grouped habits result:", result);
+    return result;
   }, [habitsWithCompletion]);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
