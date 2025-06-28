@@ -83,8 +83,10 @@ export default function HabitsScreen() {
     });
 
     const totalHabits = habitsWithCompletion.length;
-    const completedCount = completed.length + stepHabits.filter(h => h.isCompletedToday).length;
-    const completionRate = totalHabits > 0 ? Math.round((completedCount / totalHabits) * 100) : 0;
+    const completedCount =
+      completed.length + stepHabits.filter((h) => h.isCompletedToday).length;
+    const completionRate =
+      totalHabits > 0 ? Math.round((completedCount / totalHabits) * 100) : 0;
 
     return {
       groupedHabits: { completed, incomplete, stepHabits },
@@ -286,10 +288,12 @@ export default function HabitsScreen() {
                 style={[styles.tipsCard, { backgroundColor: colors.card }]}
               >
                 <ThemedText style={styles.tipsTitle}>💡 Tips</ThemedText>
-                <ThemedText style={[styles.tipsText, { color: colors.tabIconDefault }]}>
-                  • Tap any habit to mark it complete or update progress{"\n"}
-                  • Tap the red trash icon to delete any habit{"\n"}
-                  • Use the walking icon button to create step-based habits
+                <ThemedText
+                  style={[styles.tipsText, { color: colors.tabIconDefault }]}
+                >
+                  • Tap any habit to mark it complete or update progress{"\n"}•
+                  Tap the red trash icon to delete any habit{"\n"}• Use the
+                  walking icon button to create step-based habits
                 </ThemedText>
               </ThemedView>
             )}

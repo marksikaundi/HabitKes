@@ -128,7 +128,7 @@ export const HabitSectionCard: React.FC<HabitSectionCardProps> = ({
                       <Ionicons name="trash-outline" size={16} color="white" />
                     </TouchableOpacity>
                   )}
-                  
+
                   {/* Status Indicator */}
                   {habit.isCompletedToday ? (
                     <View
@@ -152,7 +152,7 @@ export const HabitSectionCard: React.FC<HabitSectionCardProps> = ({
                       <View style={styles.incompleteIndicator} />
                     </View>
                   )}
-                  
+
                   {/* Color Stripe */}
                   <View
                     style={[
