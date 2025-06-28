@@ -54,5 +54,18 @@ export function useArchiveHabit() {
 
 export function useDeleteHabit() {
   const deleteHabit = useMutation(api.habits.deleteHabit);
-  return { deleteHabit };
+  
+  return {
+    deleteHabit: async (args: { id: Id<"habits"> }) => {
+      console.log(`[useDeleteHabit] Starting delete for habit ID: ${args.id}`);
+      try {
+        const result = await deleteHabit(args);
+        console.log(`[useDeleteHabit] Delete successful:`, result);
+        return result;
+      } catch (error) {
+        console.error(`[useDeleteHabit] Delete failed:`, error);
+        throw error;
+      }
+    },
+  };
 }

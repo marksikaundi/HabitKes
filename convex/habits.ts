@@ -121,12 +121,17 @@ export const deleteHabit = mutation({
     id: v.id("habits"),
   },
   handler: async (ctx, args) => {
+    console.log(`[Convex] Starting deleteHabit for ID: ${args.id}`);
+    
     try {
       // First check if the habit exists
       const habit = await ctx.db.get(args.id);
       if (!habit) {
+        console.error(`[Convex] Habit not found with ID: ${args.id}`);
         throw new Error("Habit not found");
       }
+
+      console.log(`[Convex] Found habit: ${habit.name}`);
 
       // Delete all completions for this habit
       const completions = await ctx.db
@@ -134,8 +139,11 @@ export const deleteHabit = mutation({
         .filter((q) => q.eq(q.field("habitId"), args.id))
         .collect();
 
+      console.log(`[Convex] Found ${completions.length} completions to delete`);
+      
       for (const completion of completions) {
         await ctx.db.delete(completion._id);
+        console.log(`[Convex] Deleted completion: ${completion._id}`);
       }
 
       // Delete streak record
@@ -146,14 +154,18 @@ export const deleteHabit = mutation({
 
       if (streak) {
         await ctx.db.delete(streak._id);
+        console.log(`[Convex] Deleted streak: ${streak._id}`);
+      } else {
+        console.log(`[Convex] No streak record found for habit`);
       }
 
       // Delete the habit
       await ctx.db.delete(args.id);
+      console.log(`[Convex] Successfully deleted habit: ${args.id}`);
 
-      return { success: true, id: args.id };
+      return { success: true, id: args.id, deletedHabit: habit.name };
     } catch (error) {
-      console.error("Error deleting habit:", error);
+      console.error("[Convex] Error deleting habit:", error);
       throw new Error(
         `Failed to delete habit: ${error instanceof Error ? error.message : "Unknown error"}`
       );
