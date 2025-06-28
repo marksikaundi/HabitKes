@@ -119,8 +119,6 @@ export const updateHabit = mutation({
     }
   },
 });
-  },
-});
 
 // Archive/deactivate habit
 export const archiveHabit = mutation({
