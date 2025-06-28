@@ -123,29 +123,41 @@ export const deleteHabit = mutation({
     id: v.id("habits"),
   },
   handler: async (ctx, args) => {
-    // Delete all completions for this habit
-    const completions = await ctx.db
-      .query("habitCompletions")
-      .filter((q) => q.eq(q.field("habitId"), args.id))
-      .collect();
+    try {
+      // First check if the habit exists
+      const habit = await ctx.db.get(args.id);
+      if (!habit) {
+        throw new Error("Habit not found");
+      }
 
-    for (const completion of completions) {
-      await ctx.db.delete(completion._id);
+      // Delete all completions for this habit
+      const completions = await ctx.db
+        .query("habitCompletions")
+        .filter((q) => q.eq(q.field("habitId"), args.id))
+        .collect();
+
+      for (const completion of completions) {
+        await ctx.db.delete(completion._id);
+      }
+
+      // Delete streak record
+      const streak = await ctx.db
+        .query("streaks")
+        .filter((q) => q.eq(q.field("habitId"), args.id))
+        .first();
+
+      if (streak) {
+        await ctx.db.delete(streak._id);
+      }
+
+      // Delete the habit
+      await ctx.db.delete(args.id);
+      
+      return { success: true, id: args.id };
+    } catch (error) {
+      console.error("Error deleting habit:", error);
+      throw new Error(`Failed to delete habit: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-
-    // Delete streak record
-    const streak = await ctx.db
-      .query("streaks")
-      .filter((q) => q.eq(q.field("habitId"), args.id))
-      .first();
-
-    if (streak) {
-      await ctx.db.delete(streak._id);
-    }
-
-    // Delete the habit
-    await ctx.db.delete(args.id);
-    return args.id;
   },
 });
 

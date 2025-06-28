@@ -178,10 +178,13 @@ export default function HabitsScreen() {
           style: "destructive",
           onPress: async () => {
             try {
-              await deleteHabit({ id: habit._id });
+              console.log("Attempting to delete habit:", habit._id);
+              const result = await deleteHabit({ id: habit._id });
+              console.log("Delete result:", result);
               Alert.alert("Success", "Habit deleted successfully");
-            } catch {
-              Alert.alert("Error", "Failed to delete habit");
+            } catch (error) {
+              console.error("Delete error:", error);
+              Alert.alert("Error", `Failed to delete habit: ${error instanceof Error ? error.message : 'Unknown error'}`);
             }
           },
         },
