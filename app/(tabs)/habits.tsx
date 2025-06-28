@@ -43,9 +43,6 @@ export default function HabitsScreen() {
 
   // Convert habits to HabitWithCompletion objects
   const habitsWithCompletion = React.useMemo(() => {
-    console.log("Raw habits from useHabits:", habits);
-    console.log("Today completions:", todayCompletions);
-
     if (!habits) return null;
 
     const result = habits.map((habit) => {
@@ -61,14 +58,11 @@ export default function HabitsScreen() {
       } as HabitWithCompletion;
     });
 
-    console.log("Processed habitsWithCompletion:", result);
     return result;
   }, [habits, todayCompletions]);
 
   // Group habits and calculate stats
   const { groupedHabits, stats } = useMemo(() => {
-    console.log("Grouping habits, habitsWithCompletion:", habitsWithCompletion);
-
     if (!habitsWithCompletion) {
       return {
         groupedHabits: { completed: [], incomplete: [], stepHabits: [] },
@@ -101,7 +95,6 @@ export default function HabitsScreen() {
       stats: { totalHabits, completedHabits: completedCount, completionRate },
     };
 
-    console.log("Grouped habits result:", result);
     return result;
   }, [habitsWithCompletion]);
 
@@ -123,6 +116,15 @@ export default function HabitsScreen() {
     }
 
     try {
+      console.log("[UI] Creating habit:", {
+        name: habitName.trim(),
+        description: habitDescription.trim() || undefined,
+        color: selectedColor,
+        emoji: selectedEmoji,
+        frequency: selectedFrequency,
+        type: "boolean" as HabitType,
+      });
+
       await createHabit({
         name: habitName.trim(),
         description: habitDescription.trim() || undefined,
@@ -141,8 +143,9 @@ export default function HabitsScreen() {
       setShowCreateModal(false);
 
       Alert.alert("Success", "Habit created successfully!");
-    } catch {
-      Alert.alert("Error", "Failed to create habit");
+    } catch (error) {
+      console.error("[UI] Create habit error:", error);
+      Alert.alert("Error", `Failed to create habit: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   };
 
@@ -156,6 +159,8 @@ export default function HabitsScreen() {
     unit: string;
   }) => {
     try {
+      console.log("[UI] Creating step habit:", habitData);
+      
       await createHabit({
         ...habitData,
         frequency: "daily" as HabitFrequency, // Step habits are always daily
@@ -163,8 +168,9 @@ export default function HabitsScreen() {
 
       setShowStepModal(false);
       Alert.alert("Success", "Movement habit created successfully!");
-    } catch {
-      Alert.alert("Error", "Failed to create movement habit");
+    } catch (error) {
+      console.error("[UI] Create step habit error:", error);
+      Alert.alert("Error", `Failed to create movement habit: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   };
 
