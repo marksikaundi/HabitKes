@@ -27,6 +27,11 @@ export const HabitSectionCard: React.FC<HabitSectionCardProps> = ({
   icon,
   accentColor,
 }) => {
+  console.log(
+    `HabitSectionCard "${title}" rendering with ${habits.length} habits`
+  );
+  console.log("onHabitDelete function exists:", !!onHabitDelete);
+
   const textColor = useThemeColor({}, "text");
   const cardColor = useThemeColor({}, "card");
   const borderColor = useThemeColor({}, "border");
