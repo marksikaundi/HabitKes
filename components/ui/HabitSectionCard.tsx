@@ -122,7 +122,10 @@ export const HabitSectionCard: React.FC<HabitSectionCardProps> = ({
                         styles.deleteButton,
                         { backgroundColor: "#FF5252" },
                       ]}
-                      onPress={() => onHabitDelete(habit)}
+                      onPress={() => {
+                        console.log("Delete button pressed for habit:", habit.name);
+                        onHabitDelete(habit);
+                      }}
                       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     >
                       <Ionicons name="trash" size={18} color="white" />
