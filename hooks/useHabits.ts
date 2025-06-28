@@ -31,20 +31,52 @@ export function useCreateHabit() {
       endDate?: string;
       userId?: string;
     }) => {
-      const startDate = habitData.startDate || formatDate(new Date());
-      const type = habitData.type || "boolean";
-      return await createHabit({
-        ...habitData,
-        type,
-        startDate,
-      });
+      console.log(`[useCreateHabit] Starting create for habit: ${habitData.name}`);
+      try {
+        const startDate = habitData.startDate || formatDate(new Date());
+        const type = habitData.type || "boolean";
+        const result = await createHabit({
+          ...habitData,
+          type,
+          startDate,
+        });
+        console.log(`[useCreateHabit] Create successful:`, result);
+        return result;
+      } catch (error) {
+        console.error(`[useCreateHabit] Create failed:`, error);
+        throw error;
+      }
     },
   };
 }
 
 export function useUpdateHabit() {
   const updateHabit = useMutation(api.habits.updateHabit);
-  return { updateHabit };
+  
+  return {
+    updateHabit: async (args: {
+      id: Id<"habits">;
+      name?: string;
+      description?: string;
+      color?: string;
+      emoji?: string;
+      frequency?: HabitFrequency;
+      type?: HabitType;
+      targetValue?: number;
+      unit?: string;
+      endDate?: string;
+    }) => {
+      console.log(`[useUpdateHabit] Starting update for habit ID: ${args.id}`);
+      try {
+        const result = await updateHabit(args);
+        console.log(`[useUpdateHabit] Update successful:`, result);
+        return result;
+      } catch (error) {
+        console.error(`[useUpdateHabit] Update failed:`, error);
+        throw error;
+      }
+    },
+  };
 }
 
 export function useArchiveHabit() {

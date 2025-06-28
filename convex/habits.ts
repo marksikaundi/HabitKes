@@ -26,23 +26,33 @@ export const createHabit = mutation({
     userId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const now = Date.now();
-    const habitId = await ctx.db.insert("habits", {
-      ...args,
-      isActive: true,
-      createdAt: now,
-      updatedAt: now,
-    });
+    console.log(`[Convex] Creating habit: ${args.name}`);
+    
+    try {
+      const now = Date.now();
+      const habitId = await ctx.db.insert("habits", {
+        ...args,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      });
 
-    // Initialize streak record
-    await ctx.db.insert("streaks", {
-      habitId,
-      currentStreak: 0,
-      longestStreak: 0,
-      userId: args.userId,
-    });
+      console.log(`[Convex] Created habit with ID: ${habitId}`);
 
-    return habitId;
+      // Initialize streak record
+      await ctx.db.insert("streaks", {
+        habitId,
+        currentStreak: 0,
+        longestStreak: 0,
+        userId: args.userId,
+      });
+
+      console.log(`[Convex] Created streak record for habit: ${habitId}`);
+      return habitId;
+    } catch (error) {
+      console.error(`[Convex] Error creating habit:`, error);
+      throw error;
+    }
   },
 });
 
@@ -92,12 +102,23 @@ export const updateHabit = mutation({
     endDate: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const { id, ...updates } = args;
-    await ctx.db.patch(id, {
-      ...updates,
-      updatedAt: Date.now(),
-    });
-    return id;
+    console.log(`[Convex] Updating habit ID: ${args.id}`);
+    
+    try {
+      const { id, ...updates } = args;
+      await ctx.db.patch(id, {
+        ...updates,
+        updatedAt: Date.now(),
+      });
+      
+      console.log(`[Convex] Successfully updated habit: ${id}`);
+      return id;
+    } catch (error) {
+      console.error(`[Convex] Error updating habit:`, error);
+      throw error;
+    }
+  },
+});
   },
 });
 
