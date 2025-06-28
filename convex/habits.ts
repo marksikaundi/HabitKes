@@ -16,11 +16,9 @@ export const createHabit = mutation({
         days: v.array(v.number()),
       })
     ),
-    type: v.optional(v.union(
-      v.literal("boolean"),
-      v.literal("numeric"),
-      v.literal("steps")
-    )),
+    type: v.optional(
+      v.union(v.literal("boolean"), v.literal("numeric"), v.literal("steps"))
+    ),
     targetValue: v.optional(v.number()),
     unit: v.optional(v.string()),
     startDate: v.string(),
@@ -152,11 +150,13 @@ export const deleteHabit = mutation({
 
       // Delete the habit
       await ctx.db.delete(args.id);
-      
+
       return { success: true, id: args.id };
     } catch (error) {
       console.error("Error deleting habit:", error);
-      throw new Error(`Failed to delete habit: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to delete habit: ${error instanceof Error ? error.message : "Unknown error"}`
+      );
     }
   },
 });

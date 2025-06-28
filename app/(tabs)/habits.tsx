@@ -184,7 +184,10 @@ export default function HabitsScreen() {
               Alert.alert("Success", "Habit deleted successfully");
             } catch (error) {
               console.error("Delete error:", error);
-              Alert.alert("Error", `Failed to delete habit: ${error instanceof Error ? error.message : 'Unknown error'}`);
+              Alert.alert(
+                "Error",
+                `Failed to delete habit: ${error instanceof Error ? error.message : "Unknown error"}`
+              );
             }
           },
         },
