@@ -123,9 +123,9 @@ export const HabitSectionCard: React.FC<HabitSectionCardProps> = ({
                         { backgroundColor: "#FF5252" },
                       ]}
                       onPress={() => onHabitDelete(habit)}
-                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     >
-                      <Ionicons name="trash-outline" size={16} color="white" />
+                      <Ionicons name="trash" size={18} color="white" />
                     </TouchableOpacity>
                   )}
 
@@ -258,11 +258,19 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   deleteButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
   },
   statusIndicator: {
     width: 28,
