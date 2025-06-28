@@ -43,9 +43,12 @@ export default function HabitsScreen() {
 
   // Convert habits to HabitWithCompletion objects
   const habitsWithCompletion = React.useMemo(() => {
+    console.log("Raw habits from useHabits:", habits);
+    console.log("Today completions:", todayCompletions);
+    
     if (!habits) return null;
 
-    return habits.map((habit) => {
+    const result = habits.map((habit) => {
       const isCompleted =
         todayCompletions?.some(
           (completion) => completion.habitId === habit._id
@@ -57,6 +60,9 @@ export default function HabitsScreen() {
         streak: null, // We'll add this later with another hook if needed
       } as HabitWithCompletion;
     });
+    
+    console.log("Processed habitsWithCompletion:", result);
+    return result;
   }, [habits, todayCompletions]);
 
   // Group habits and calculate stats
