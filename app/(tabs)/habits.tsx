@@ -145,7 +145,10 @@ export default function HabitsScreen() {
       Alert.alert("Success", "Habit created successfully!");
     } catch (error) {
       console.error("[UI] Create habit error:", error);
-      Alert.alert("Error", `Failed to create habit: ${error instanceof Error ? error.message : "Unknown error"}`);
+      Alert.alert(
+        "Error",
+        `Failed to create habit: ${error instanceof Error ? error.message : "Unknown error"}`
+      );
     }
   };
 
@@ -160,7 +163,7 @@ export default function HabitsScreen() {
   }) => {
     try {
       console.log("[UI] Creating step habit:", habitData);
-      
+
       await createHabit({
         ...habitData,
         frequency: "daily" as HabitFrequency, // Step habits are always daily
@@ -170,7 +173,10 @@ export default function HabitsScreen() {
       Alert.alert("Success", "Movement habit created successfully!");
     } catch (error) {
       console.error("[UI] Create step habit error:", error);
-      Alert.alert("Error", `Failed to create movement habit: ${error instanceof Error ? error.message : "Unknown error"}`);
+      Alert.alert(
+        "Error",
+        `Failed to create movement habit: ${error instanceof Error ? error.message : "Unknown error"}`
+      );
     }
   };
 
@@ -185,7 +191,11 @@ export default function HabitsScreen() {
   };
 
   const handleDeleteHabit = (habit: HabitWithCompletion) => {
-    console.log("[UI] handleDeleteHabit called with habit:", habit.name, habit._id);
+    console.log(
+      "[UI] handleDeleteHabit called with habit:",
+      habit.name,
+      habit._id
+    );
     Alert.alert(
       "Delete Habit",
       `Are you sure you want to delete "${habit.name}"? This will remove all associated data.`,
@@ -198,11 +208,14 @@ export default function HabitsScreen() {
             try {
               console.log("[UI] Attempting to delete habit:", habit._id);
               console.log("[UI] deleteHabit function exists:", !!deleteHabit);
-              
+
               const result = await deleteHabit({ id: habit._id });
               console.log("[UI] Delete result:", result);
-              
-              Alert.alert("Success", `"${habit.name}" has been deleted successfully`);
+
+              Alert.alert(
+                "Success",
+                `"${habit.name}" has been deleted successfully`
+              );
             } catch (error) {
               console.error("[UI] Delete error:", error);
               Alert.alert(

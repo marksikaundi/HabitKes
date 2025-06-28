@@ -123,7 +123,11 @@ export const HabitSectionCard: React.FC<HabitSectionCardProps> = ({
                         { backgroundColor: "#FF5252" },
                       ]}
                       onPress={() => {
-                        console.log("[HabitSectionCard] Delete button pressed for:", habit.name, habit._id);
+                        console.log(
+                          "[HabitSectionCard] Delete button pressed for:",
+                          habit.name,
+                          habit._id
+                        );
                         onHabitDelete(habit);
                       }}
                       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}

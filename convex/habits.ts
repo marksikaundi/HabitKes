@@ -27,7 +27,7 @@ export const createHabit = mutation({
   },
   handler: async (ctx, args) => {
     console.log(`[Convex] Creating habit: ${args.name}`);
-    
+
     try {
       const now = Date.now();
       const habitId = await ctx.db.insert("habits", {
@@ -103,14 +103,14 @@ export const updateHabit = mutation({
   },
   handler: async (ctx, args) => {
     console.log(`[Convex] Updating habit ID: ${args.id}`);
-    
+
     try {
       const { id, ...updates } = args;
       await ctx.db.patch(id, {
         ...updates,
         updatedAt: Date.now(),
       });
-      
+
       console.log(`[Convex] Successfully updated habit: ${id}`);
       return id;
     } catch (error) {
@@ -141,7 +141,7 @@ export const deleteHabit = mutation({
   },
   handler: async (ctx, args) => {
     console.log(`[Convex] Starting deleteHabit for ID: ${args.id}`);
-    
+
     try {
       // First check if the habit exists
       const habit = await ctx.db.get(args.id);
@@ -159,7 +159,7 @@ export const deleteHabit = mutation({
         .collect();
 
       console.log(`[Convex] Found ${completions.length} completions to delete`);
-      
+
       for (const completion of completions) {
         await ctx.db.delete(completion._id);
         console.log(`[Convex] Deleted completion: ${completion._id}`);

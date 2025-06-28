@@ -31,7 +31,9 @@ export function useCreateHabit() {
       endDate?: string;
       userId?: string;
     }) => {
-      console.log(`[useCreateHabit] Starting create for habit: ${habitData.name}`);
+      console.log(
+        `[useCreateHabit] Starting create for habit: ${habitData.name}`
+      );
       try {
         const startDate = habitData.startDate || formatDate(new Date());
         const type = habitData.type || "boolean";
@@ -52,7 +54,7 @@ export function useCreateHabit() {
 
 export function useUpdateHabit() {
   const updateHabit = useMutation(api.habits.updateHabit);
-  
+
   return {
     updateHabit: async (args: {
       id: Id<"habits">;
@@ -86,7 +88,7 @@ export function useArchiveHabit() {
 
 export function useDeleteHabit() {
   const deleteHabit = useMutation(api.habits.deleteHabit);
-  
+
   return {
     deleteHabit: async (args: { id: Id<"habits"> }) => {
       console.log(`[useDeleteHabit] Starting delete for habit ID: ${args.id}`);
