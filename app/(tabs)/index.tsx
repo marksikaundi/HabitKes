@@ -1,16 +1,14 @@
 import * as Haptics from "expo-haptics";
-import React, { useState } from "react";
+import React from "react";
 import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ProgressCard } from "@/components/ui/Card";
-import { HabitSectionCard } from "@/components/ui/HabitSectionCard";
-import { HabitSummaryStats } from "@/components/ui/HabitSummaryStats";
+import { HabitCard } from "@/components/ui/HabitCard";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { StepTracker } from "@/components/ui/StepTracker";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useCompleteHabit, useTodayCompletions } from "@/hooks/useCompletions";
@@ -21,7 +19,6 @@ import { formatDate, shouldHabitBeCompletedToday } from "@/utils/dateUtils";
 export default function TodayScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? "light"];
-  const [demoSteps, setDemoSteps] = useState(0);
 
   const habits = useHabits();
   const todayCompletions = useTodayCompletions();
@@ -58,10 +55,6 @@ export default function TodayScreen() {
   const totalCount = todayHabits.length;
   const completionRate =
     totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
-
-  // Separate completed and pending habits
-  const completedHabits = todayHabits.filter((h) => h.isCompletedToday);
-  const pendingHabits = todayHabits.filter((h) => !h.isCompletedToday);
 
   const handleToggleHabit = async (habit: HabitWithCompletion) => {
     try {
@@ -131,94 +124,48 @@ export default function TodayScreen() {
           style={styles.progressCard}
         />
 
-        {/* Habit Summary Stats */}
-        <HabitSummaryStats
-          totalHabits={totalCount}
-          completedHabits={completedCount}
-          completionRate={completionRate}
-          activeStreak={0} // We can add streak calculation later
-        />
+        {/* Today's Habits */}
+        <View style={styles.habitsSection}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            Today&apos;s Habits
+          </ThemedText>
 
-        {/* Pending Habits */}
-        {pendingHabits.length > 0 && (
-          <HabitSectionCard
-            title="To Complete"
-            habits={pendingHabits}
-            onHabitPress={handleToggleHabit}
-            emptyMessage="All habits completed! 🎉"
-            icon="hourglass-outline"
-            accentColor="#FF9800"
-          />
-        )}
-
-        {/* Completed Habits */}
-        {completedHabits.length > 0 && (
-          <HabitSectionCard
-            title="Completed Today"
-            habits={completedHabits}
-            onHabitPress={handleToggleHabit}
-            emptyMessage="No habits completed yet"
-            icon="checkmark-circle"
-            accentColor="#4CAF50"
-          />
-        )}
-
-        {/* Empty State */}
-        {todayHabits.length === 0 && (
-          <ThemedView
-            style={[styles.emptyState, { backgroundColor: colors.card }]}
-          >
-            <IconSymbol
-              name="checkmark.circle"
-              size={48}
-              color={colors.tabIconDefault}
-            />
-            <ThemedText
-              style={[styles.emptyStateText, { color: colors.tabIconDefault }]}
+          {todayHabits.length === 0 ? (
+            <ThemedView
+              style={[styles.emptyState, { backgroundColor: colors.card }]}
             >
-              No habits scheduled for today
-            </ThemedText>
-            <ThemedText
-              style={[
-                styles.emptyStateSubtext,
-                { color: colors.tabIconDefault },
-              ]}
-            >
-              Create some habits to get started!
-            </ThemedText>
-          </ThemedView>
-        )}
-
-        {/* Step Tracker Widget */}
-        <View style={styles.stepTrackerSection}>
-          <View style={styles.sectionHeaderWithAction}>
-            <View>
-              <ThemedText type="subtitle" style={styles.sectionTitle}>
-                Daily Movement
-              </ThemedText>
+              <IconSymbol
+                name="checkmark.circle"
+                size={48}
+                color={colors.tabIconDefault}
+              />
               <ThemedText
                 style={[
-                  styles.sectionSubtitle,
+                  styles.emptyStateText,
                   { color: colors.tabIconDefault },
                 ]}
               >
-                Track your steps today
+                No habits scheduled for today
               </ThemedText>
-            </View>
-          </View>
-          <StepTracker
-            targetSteps={10000}
-            onStepsUpdate={setDemoSteps}
-            currentSteps={demoSteps}
-          />
-          <View style={[styles.tipContainer, { backgroundColor: colors.card }]}>
-            <ThemedText
-              style={[styles.tipText, { color: colors.tabIconDefault }]}
-            >
-              💡 Go to the Habits tab and tap the 👟 button to create a step
-              tracking habit
-            </ThemedText>
-          </View>
+              <ThemedText
+                style={[
+                  styles.emptyStateSubtext,
+                  { color: colors.tabIconDefault },
+                ]}
+              >
+                Create some habits to get started!
+              </ThemedText>
+            </ThemedView>
+          ) : (
+            todayHabits.map((habit) => (
+              <HabitCard
+                key={habit._id}
+                habit={habit}
+                onPress={() => handleToggleHabit(habit)}
+                style={styles.habitCard}
+              />
+            ))
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -254,23 +201,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "600",
-    marginBottom: 4,
-  },
-  sectionSubtitle: {
-    fontSize: 14,
-    marginBottom: 16,
-  },
-  sectionHeaderWithAction: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
     marginBottom: 16,
   },
   emptyState: {
     padding: 40,
     borderRadius: 16,
     alignItems: "center",
-    marginBottom: 20,
   },
   emptyStateText: {
     fontSize: 18,
@@ -283,17 +219,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     textAlign: "center",
   },
-  stepTrackerSection: {
-    paddingBottom: 30,
-  },
-  tipContainer: {
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 12,
-  },
-  tipText: {
-    fontSize: 14,
-    textAlign: "center",
-    fontStyle: "italic",
+  habitCard: {
+    marginBottom: 12,
   },
 });

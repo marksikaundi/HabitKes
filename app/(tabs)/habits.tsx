@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
   Modal,
@@ -13,86 +13,30 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { Card } from "@/components/ui/Card";
 import { CreateStepHabitForm } from "@/components/ui/CreateStepHabitForm";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
-import { HabitSectionCard } from "@/components/ui/HabitSectionCard";
-import { HabitSummaryStats } from "@/components/ui/HabitSummaryStats";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { StepHabitDetail } from "@/components/ui/StepHabitDetail";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { useTodayCompletions } from "@/hooks/useCompletions";
 import { useCreateHabit, useDeleteHabit, useHabits } from "@/hooks/useHabits";
 import {
   HABIT_COLORS,
   HABIT_EMOJIS,
   HabitFrequency,
   HabitType,
-  HabitWithCompletion,
 } from "@/types/habit";
+import { getHabitFrequencyText } from "@/utils/dateUtils";
 
 export default function HabitsScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? "light"];
 
   const habits = useHabits();
-  const todayCompletions = useTodayCompletions();
   const { createHabit } = useCreateHabit();
   const { deleteHabit } = useDeleteHabit();
-
-  // Convert habits to HabitWithCompletion objects
-  const habitsWithCompletion = React.useMemo(() => {
-    if (!habits) return null;
-
-    return habits.map((habit) => {
-      const isCompleted =
-        todayCompletions?.some(
-          (completion) => completion.habitId === habit._id
-        ) || false;
-
-      return {
-        ...habit,
-        isCompletedToday: isCompleted,
-        streak: null, // We'll add this later with another hook if needed
-      } as HabitWithCompletion;
-    });
-  }, [habits, todayCompletions]);
-
-  // Group habits and calculate stats
-  const { groupedHabits, stats } = useMemo(() => {
-    if (!habitsWithCompletion) {
-      return {
-        groupedHabits: { completed: [], incomplete: [], stepHabits: [] },
-        stats: { totalHabits: 0, completedHabits: 0, completionRate: 0 },
-      };
-    }
-
-    const completed: HabitWithCompletion[] = [];
-    const incomplete: HabitWithCompletion[] = [];
-    const stepHabits: HabitWithCompletion[] = [];
-
-    habitsWithCompletion.forEach((habit) => {
-      if (habit.type === "steps") {
-        stepHabits.push(habit);
-      } else if (habit.isCompletedToday) {
-        completed.push(habit);
-      } else {
-        incomplete.push(habit);
-      }
-    });
-
-    const totalHabits = habitsWithCompletion.length;
-    const completedCount =
-      completed.length + stepHabits.filter((h) => h.isCompletedToday).length;
-    const completionRate =
-      totalHabits > 0 ? Math.round((completedCount / totalHabits) * 100) : 0;
-
-    return {
-      groupedHabits: { completed, incomplete, stepHabits },
-      stats: { totalHabits, completedHabits: completedCount, completionRate },
-    };
-  }, [habitsWithCompletion]);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showStepModal, setShowStepModal] = useState(false);
@@ -157,7 +101,7 @@ export default function HabitsScreen() {
     }
   };
 
-  const handleHabitPress = (habit: HabitWithCompletion) => {
+  const handleHabitPress = (habit: any) => {
     if (habit.type === "steps" || habit.type === "numeric") {
       setSelectedHabit(habit);
       setShowStepHabitDetail(true);
@@ -167,10 +111,10 @@ export default function HabitsScreen() {
     }
   };
 
-  const handleDeleteHabit = (habit: HabitWithCompletion) => {
+  const handleDeleteHabit = (habitId: string, habitName: string) => {
     Alert.alert(
       "Delete Habit",
-      `Are you sure you want to delete "${habit.name}"? This will remove all associated data.`,
+      `Are you sure you want to delete "${habitName}"? This will remove all associated data.`,
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -178,7 +122,7 @@ export default function HabitsScreen() {
           style: "destructive",
           onPress: async () => {
             try {
-              await deleteHabit({ id: habit._id });
+              await deleteHabit({ id: habitId as any });
               Alert.alert("Success", "Habit deleted successfully");
             } catch {
               Alert.alert("Error", "Failed to delete habit");
@@ -188,7 +132,8 @@ export default function HabitsScreen() {
       ]
     );
   };
-  if (!habitsWithCompletion) {
+
+  if (!habits) {
     return (
       <SafeAreaView
         style={[styles.container, { backgroundColor: colors.background }]}
@@ -209,7 +154,7 @@ export default function HabitsScreen() {
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {habitsWithCompletion && habitsWithCompletion.length === 0 ? (
+        {habits.length === 0 ? (
           <ThemedView
             style={[styles.emptyState, { backgroundColor: colors.card }]}
           >
@@ -232,72 +177,77 @@ export default function HabitsScreen() {
               Tap the + button to create your first habit
             </ThemedText>
           </ThemedView>
-        ) : habitsWithCompletion && habitsWithCompletion.length > 0 ? (
-          <>
-            {/* Summary Stats */}
-            <HabitSummaryStats
-              totalHabits={stats.totalHabits}
-              completedHabits={stats.completedHabits}
-              completionRate={stats.completionRate}
-              activeStreak={0} // You can add streak calculation later
-            />
+        ) : (
+          habits.map((habit) => (
+            <TouchableOpacity
+              key={habit._id}
+              onPress={() => handleHabitPress(habit)}
+              activeOpacity={0.7}
+            >
+              <Card style={styles.habitCard}>
+                <View style={styles.habitContent}>
+                  <View style={styles.habitInfo}>
+                    <View style={styles.habitHeader}>
+                      {habit.emoji && (
+                        <View
+                          style={[
+                            styles.emojiContainer,
+                            { backgroundColor: colors.muted },
+                          ]}
+                        >
+                          <Text style={styles.habitEmoji}>{habit.emoji}</Text>
+                        </View>
+                      )}
+                      <View style={styles.habitTextContent}>
+                        <ThemedText
+                          type="defaultSemiBold"
+                          style={styles.habitName}
+                        >
+                          {habit.name}
+                        </ThemedText>
+                        {habit.description && (
+                          <ThemedText
+                            style={[
+                              styles.habitDescription,
+                              { color: colors.mutedForeground },
+                            ]}
+                          >
+                            {habit.description}
+                          </ThemedText>
+                        )}
+                        <ThemedText
+                          style={[
+                            styles.habitFrequency,
+                            { color: colors.mutedForeground },
+                          ]}
+                        >
+                          {getHabitFrequencyText(habit.frequency)}
+                        </ThemedText>
+                      </View>
+                    </View>
+                  </View>
 
-            {/* Step Habits Section */}
-            {groupedHabits.stepHabits.length > 0 && (
-              <HabitSectionCard
-                title="Movement & Goals"
-                habits={groupedHabits.stepHabits}
-                onHabitPress={handleHabitPress}
-                onHabitLongPress={handleDeleteHabit}
-                emptyMessage=""
-                icon="walk"
-                accentColor="#FF5722"
-              />
-            )}
-
-            {/* Incomplete Habits Section */}
-            {groupedHabits.incomplete.length > 0 && (
-              <HabitSectionCard
-                title="To Complete"
-                habits={groupedHabits.incomplete}
-                onHabitPress={handleHabitPress}
-                onHabitLongPress={handleDeleteHabit}
-                emptyMessage="All habits completed for today! 🎉"
-                icon="hourglass"
-                accentColor="#FF9800"
-              />
-            )}
-
-            {/* Completed Habits Section */}
-            {groupedHabits.completed.length > 0 && (
-              <HabitSectionCard
-                title="Completed Today"
-                habits={groupedHabits.completed}
-                onHabitPress={handleHabitPress}
-                onHabitLongPress={handleDeleteHabit}
-                emptyMessage="No habits completed yet today"
-                icon="checkmark-circle"
-                accentColor="#4CAF50"
-              />
-            )}
-
-            {/* Instructions for new users */}
-            {stats.totalHabits > 0 && stats.totalHabits < 3 && (
-              <ThemedView
-                style={[styles.tipsCard, { backgroundColor: colors.card }]}
-              >
-                <ThemedText style={styles.tipsTitle}>💡 Tips</ThemedText>
-                <ThemedText
-                  style={[styles.tipsText, { color: colors.tabIconDefault }]}
-                >
-                  • Tap any habit to mark it complete or update progress{"\n"}•
-                  Use the walking icon button to create step-based habits{"\n"}•
-                  Long press to delete habits you no longer need
-                </ThemedText>
-              </ThemedView>
-            )}
-          </>
-        ) : null}
+                  <TouchableOpacity
+                    style={[
+                      styles.deleteButton,
+                      { backgroundColor: colors.danger },
+                    ]}
+                    onPress={() => handleDeleteHabit(habit._id, habit.name)}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <IconSymbol name="trash" size={16} color="white" />
+                  </TouchableOpacity>
+                </View>
+                <View
+                  style={[
+                    styles.colorIndicator,
+                    { backgroundColor: habit.color },
+                  ]}
+                />
+              </Card>
+            </TouchableOpacity>
+          ))
+        )}
       </ScrollView>
 
       <View style={styles.fabContainer}>
@@ -528,6 +478,66 @@ const styles = StyleSheet.create({
     marginTop: 8,
     textAlign: "center",
   },
+  habitCard: {
+    marginBottom: 16,
+    position: "relative",
+  },
+  habitContent: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+  },
+  habitInfo: {
+    flex: 1,
+  },
+  habitHeader: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  emojiContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  habitEmoji: {
+    fontSize: 24,
+  },
+  habitTextContent: {
+    flex: 1,
+  },
+  habitName: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  habitDescription: {
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  habitFrequency: {
+    fontSize: 12,
+    textTransform: "capitalize",
+  },
+  deleteButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  colorIndicator: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 4,
+    borderTopLeftRadius: 16,
+    borderBottomLeftRadius: 16,
+  },
   modalContainer: {
     flex: 1,
   },
@@ -646,20 +656,5 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-  },
-  tipsCard: {
-    borderRadius: 16,
-    padding: 16,
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  tipsTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  tipsText: {
-    fontSize: 14,
-    lineHeight: 20,
   },
 });
