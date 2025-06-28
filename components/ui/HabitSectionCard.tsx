@@ -115,22 +115,31 @@ export const HabitSectionCard: React.FC<HabitSectionCardProps> = ({
                   </View>
                 </View>
                 <View style={styles.habitRight}>
-                  {/* Delete Button */}
-                  {onHabitDelete && (
-                    <TouchableOpacity
-                      style={[
-                        styles.deleteButton,
-                        { backgroundColor: "#FF5252" },
-                      ]}
-                      onPress={() => {
-                        console.log("Delete button pressed for habit:", habit.name);
+                  {/* Debug: Always show a test button */}
+                  <TouchableOpacity
+                    style={[
+                      styles.deleteButton,
+                      {
+                        backgroundColor: onHabitDelete ? "#FF5252" : "#CCCCCC",
+                      },
+                    ]}
+                    onPress={() => {
+                      console.log(
+                        "Delete button pressed for habit:",
+                        habit.name
+                      );
+                      console.log("onHabitDelete exists:", !!onHabitDelete);
+                      console.log("Habit ID:", habit._id);
+                      if (onHabitDelete) {
                         onHabitDelete(habit);
-                      }}
-                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                    >
-                      <Ionicons name="trash" size={18} color="white" />
-                    </TouchableOpacity>
-                  )}
+                      } else {
+                        console.log("onHabitDelete is not defined");
+                      }
+                    }}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <Ionicons name="trash" size={18} color="white" />
+                  </TouchableOpacity>
 
                   {/* Status Indicator */}
                   {habit.isCompletedToday ? (

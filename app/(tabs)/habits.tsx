@@ -168,6 +168,7 @@ export default function HabitsScreen() {
   };
 
   const handleDeleteHabit = (habit: HabitWithCompletion) => {
+    console.log("handleDeleteHabit called with habit:", habit.name, habit._id);
     Alert.alert(
       "Delete Habit",
       `Are you sure you want to delete "${habit.name}"? This will remove all associated data.`,
@@ -179,6 +180,7 @@ export default function HabitsScreen() {
           onPress: async () => {
             try {
               console.log("Attempting to delete habit:", habit._id);
+              console.log("deleteHabit function:", deleteHabit);
               const result = await deleteHabit({ id: habit._id });
               console.log("Delete result:", result);
               Alert.alert("Success", "Habit deleted successfully");
