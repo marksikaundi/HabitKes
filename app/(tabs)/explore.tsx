@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 10,
     backgroundColor: Colors.light.background,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOpacity: 0.04,
     shadowRadius: 14,
     shadowOffset: { width: 0, height: 6 },
@@ -393,24 +393,5 @@ const styles = StyleSheet.create({
     color: "#94A3B8",
     fontSize: 12,
   },
-  footerCard: {
-    borderRadius: 28,
-    padding: 20,
-    gap: 10,
-  },
-  footerLabel: {
-    color: "#FFF7ED",
-    textTransform: "uppercase",
-    letterSpacing: 1.2,
-    fontSize: 12,
-  },
-  footerTitle: {
-    color: "#FFFFFF",
-    fontFamily: Fonts.rounded,
-    fontSize: 28,
-  },
-  footerCopy: {
-    color: "#FFF7ED",
-    lineHeight: 22,
-  },
+  /* footer styles are defined earlier (merged) */
 });

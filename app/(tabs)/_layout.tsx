@@ -16,14 +16,14 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
-          position: 'absolute',
+          position: "absolute",
           bottom: 12,
           left: 16,
           right: 16,
           height: 72,
           borderRadius: 36,
           backgroundColor: Colors.light.background,
-          shadowColor: '#000',
+          shadowColor: "#000",
           shadowOpacity: 0.06,
           shadowRadius: 18,
           shadowOffset: { width: 0, height: 8 },
@@ -36,7 +36,12 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <IconSymbol size={focused ? 36 : 28} name="huge-house" color={color} weight={focused ? 'bold' : 'regular'} />
+            <IconSymbol
+              size={focused ? 36 : 28}
+              name="huge-house"
+              color={color}
+              weight={focused ? "bold" : "regular"}
+            />
           ),
         }}
       />
@@ -45,7 +50,12 @@ export default function TabLayout() {
         options={{
           title: "Crew",
           tabBarIcon: ({ color, focused }) => (
-            <IconSymbol size={focused ? 34 : 28} name="huge-crew" color={color} weight={focused ? 'bold' : 'regular'} />
+            <IconSymbol
+              size={focused ? 34 : 28}
+              name="huge-crew"
+              color={color}
+              weight={focused ? "bold" : "regular"}
+            />
           ),
         }}
       />

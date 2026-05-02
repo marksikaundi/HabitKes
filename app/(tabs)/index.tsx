@@ -72,7 +72,10 @@ export default function HomeScreen() {
         {topHabit ? (
           <Pressable
             onPress={() => void toggleHabit(topHabit.id)}
-            style={({ pressed }) => [styles.ctaButton, pressed && styles.ctaPressed]}
+            style={({ pressed }) => [
+              styles.ctaButton,
+              pressed && styles.ctaPressed,
+            ]}
           >
             <ThemedText type="defaultSemiBold" style={styles.ctaText}>
               Begin
@@ -599,8 +602,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.accent,
     borderRadius: 999,
     paddingVertical: 14,
-    alignItems: 'center',
-    shadowColor: '#1C2011',
+    alignItems: "center",
+    shadowColor: "#1C2011",
     shadowOpacity: 0.18,
     shadowRadius: 20,
     shadowOffset: { width: 0, height: 10 },
