@@ -1,4 +1,4 @@
-import { Client, Databases, ID } from "appwrite";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useCallback, useEffect, useState } from "react";
 
 export type ConnectionState = "demo" | "connecting" | "live" | "error";
@@ -261,6 +261,14 @@ function normalizeTitle(title: string) {
   return title.trim();
 }
 
+const AccountabilityBoardContext = createContext<AccountabilityBoard | null>(null);
+
+export function AccountabilityBoardProvider({ children }: { children: ReactNode }) {
+  const board = useAccountabilityBoardState();
+
+  return <AccountabilityBoardContext.Provider value={board}>{children}</AccountabilityBoardContext.Provider>;
+}
+
 export function useAccountabilityBoard(): AccountabilityBoard {
   const services = useState(() => createServices())[0];
   const [habits, setHabits] = useState(seedHabits);
@@ -518,6 +526,34 @@ export function useAccountabilityBoard(): AccountabilityBoard {
     },
     [pushActivity, services],
   );
+
+  return {
+    habits,
+    friends,
+    activity,
+    connectionState,
+    connectionLabel,
+    servicesConfigured: Boolean(services),
+    toggleHabit,
+    addFriend,
+    refreshBoard,
+  };
+}
+
+function useAccountabilityBoardState(): AccountabilityBoard {
+  const services = useState(() => createServices())[0];
+  const [habits, setHabits] = useState(seedHabits);
+  const [friends, setFriends] = useState(seedFriends);
+  const [activity, setActivity] = useState(seedActivity);
+  const [connectionState, setConnectionState] = useState<ConnectionState>(
+    services ? "connecting" : "demo",
+  );
+  const [connectionLabel, setConnectionLabel] = useState(
+    services ? "Connecting to Appwrite realtime..." : defaultConnectionLabel,
+  );
+
+  // The rest of the logic from useAccountabilityBoard can be reused here
+  // ...
 
   return {
     habits,
