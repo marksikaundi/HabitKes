@@ -3,17 +3,17 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-import { Platform } from 'react-native';
+import { Platform } from "react-native";
 
 // New palette inspired by user's design
-const ACCENT_LIME = '#C8FF1A';
-const ACCENT_DARK = '#1C2011';
-const BACKGROUND_LIGHT = '#F5F6FA';
-const MUTED_BLUE = '#6D7588';
+const ACCENT_LIME = "#C8FF1A";
+const ACCENT_DARK = "#1C2011";
+const BACKGROUND_LIGHT = "#F5F6FA";
+const MUTED_BLUE = "#6D7588";
 
 export const Colors = {
   light: {
-    text: '#11181C',
+    text: "#11181C",
     background: BACKGROUND_LIGHT,
     tint: ACCENT_LIME,
     icon: MUTED_BLUE,
@@ -23,8 +23,8 @@ export const Colors = {
     accentDark: ACCENT_DARK,
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#0F1112',
+    text: "#ECEDEE",
+    background: "#0F1112",
     tint: ACCENT_LIME,
     icon: MUTED_BLUE,
     tabIconDefault: MUTED_BLUE,
@@ -38,14 +38,14 @@ export const Colors = {
 
 export const Fonts = Platform.select({
   ios: {
-    sans: 'Outfit_400Regular',
-    semibold: 'Outfit_600SemiBold',
-    bold: 'Outfit_700Bold',
+    sans: "Outfit_400Regular",
+    semibold: "Outfit_600SemiBold",
+    bold: "Outfit_700Bold",
   },
   android: {
-    sans: 'Outfit_400Regular',
-    semibold: 'Outfit_600SemiBold',
-    bold: 'Outfit_700Bold',
+    sans: "Outfit_400Regular",
+    semibold: "Outfit_600SemiBold",
+    bold: "Outfit_700Bold",
   },
   web: {
     sans: "Outfit, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",

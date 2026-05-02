@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Fonts, Colors } from "@/constants/theme";
+import { Colors, Fonts } from "@/constants/theme";
 import { useAccountabilityBoard } from "@/lib/accountability-board";
 
 export default function HomeScreen() {
@@ -45,8 +45,8 @@ export default function HomeScreen() {
             style={[
               styles.statusPill,
               connectionState === "live"
-                ? { backgroundColor: 'rgba(16,185,129,0.14)' }
-                : { backgroundColor: 'rgba(200,255,26,0.14)' },
+                ? { backgroundColor: "rgba(16,185,129,0.14)" }
+                : { backgroundColor: "rgba(200,255,26,0.14)" },
             ]}
           >
             <ThemedText type="defaultSemiBold" style={styles.statusText}>
@@ -161,7 +161,7 @@ export default function HomeScreen() {
 
       <ThemedView style={styles.gridRow}>
         <ThemedView
-          style={[styles.sideCard, { backgroundColor: '#FFFFFF' }]}
+          style={[styles.sideCard, { backgroundColor: "#FFFFFF" }]}
           lightColor="#FFFFFF"
           darkColor="#15181C"
         >
@@ -196,7 +196,7 @@ export default function HomeScreen() {
         </ThemedView>
 
         <ThemedView
-          style={[styles.sideCard, { backgroundColor: '#FFFFFF' }]}
+          style={[styles.sideCard, { backgroundColor: "#FFFFFF" }]}
           lightColor="#FFFFFF"
           darkColor="#15181C"
         >
