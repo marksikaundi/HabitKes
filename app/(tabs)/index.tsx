@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Fonts } from "@/constants/theme";
+import { Fonts, Colors } from "@/constants/theme";
 import { useAccountabilityBoard } from "@/lib/accountability-board";
 
 export default function HomeScreen() {
@@ -36,15 +36,17 @@ export default function HomeScreen() {
       <View style={styles.heroGlowSecondary} />
 
       <ThemedView
-        style={styles.heroCard}
-        lightColor="#FFF8F2"
-        darkColor="#15181C"
+        style={[styles.heroCard, { backgroundColor: Colors.light.background }]}
+        lightColor={Colors.light.background}
+        darkColor={Colors.dark.background}
       >
         <View style={styles.pillRow}>
           <View
             style={[
               styles.statusPill,
-              connectionState === "live" ? styles.pillLive : styles.pillDemo,
+              connectionState === "live"
+                ? { backgroundColor: 'rgba(16,185,129,0.14)' }
+                : { backgroundColor: 'rgba(200,255,26,0.14)' },
             ]}
           >
             <ThemedText type="defaultSemiBold" style={styles.statusText}>
@@ -69,17 +71,17 @@ export default function HomeScreen() {
           <StatCard
             label="Habits"
             value={`${summary.activeHabits}`}
-            accent="#F97316"
+            accent={Colors.light.accent}
           />
           <StatCard
             label="Live friends"
             value={`${summary.liveFriends}`}
-            accent="#2563EB"
+            accent="#6D7588"
           />
           <StatCard
             label="Total streak"
             value={`${summary.streakDays}`}
-            accent="#10B981"
+            accent={Colors.light.accentDark}
           />
         </View>
 
@@ -159,7 +161,7 @@ export default function HomeScreen() {
 
       <ThemedView style={styles.gridRow}>
         <ThemedView
-          style={styles.sideCard}
+          style={[styles.sideCard, { backgroundColor: '#FFFFFF' }]}
           lightColor="#FFFFFF"
           darkColor="#15181C"
         >
@@ -194,7 +196,7 @@ export default function HomeScreen() {
         </ThemedView>
 
         <ThemedView
-          style={styles.sideCard}
+          style={[styles.sideCard, { backgroundColor: '#FFFFFF' }]}
           lightColor="#FFFFFF"
           darkColor="#15181C"
         >

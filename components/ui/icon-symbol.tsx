@@ -4,9 +4,10 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { SymbolWeight, SymbolViewProps } from 'expo-symbols';
 import { ComponentProps } from 'react';
 import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
+import { CaretDoubleDown, House, Users, PlusCircle } from 'phosphor-react-native';
 
 type IconMapping = Record<SymbolViewProps['name'], ComponentProps<typeof MaterialIcons>['name']>;
-type IconSymbolName = keyof typeof MAPPING;
+type IconSymbolName = keyof typeof MAPPING | 'huge-house' | 'huge-crew' | 'huge-add';
 
 /**
  * Add your SF Symbols to Material Icons mappings here.
@@ -37,5 +38,15 @@ export function IconSymbol({
   style?: StyleProp<TextStyle>;
   weight?: SymbolWeight;
 }) {
-  return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
+  if (name === 'huge-house') {
+    return <House color={String(color)} size={size} weight="duotone" style={style} />;
+  }
+  if (name === 'huge-crew') {
+    return <Users color={String(color)} size={size} weight="duotone" style={style} />;
+  }
+  if (name === 'huge-add') {
+    return <PlusCircle color={String(color)} size={size} weight="duotone" style={style} />;
+  }
+
+  return <MaterialIcons color={String(color)} size={size} name={MAPPING[name]} style={style} />;
 }

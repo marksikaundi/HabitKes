@@ -5,49 +5,49 @@
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+// New palette inspired by user's design
+const ACCENT_LIME = '#C8FF1A';
+const ACCENT_DARK = '#1C2011';
+const BACKGROUND_LIGHT = '#F5F6FA';
+const MUTED_BLUE = '#6D7588';
 
 export const Colors = {
   light: {
     text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    background: BACKGROUND_LIGHT,
+    tint: ACCENT_LIME,
+    icon: MUTED_BLUE,
+    tabIconDefault: MUTED_BLUE,
+    tabIconSelected: ACCENT_LIME,
+    accent: ACCENT_LIME,
+    accentDark: ACCENT_DARK,
   },
   dark: {
     text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    background: '#0F1112',
+    tint: ACCENT_LIME,
+    icon: MUTED_BLUE,
+    tabIconDefault: MUTED_BLUE,
+    tabIconSelected: ACCENT_LIME,
+    accent: ACCENT_LIME,
+    accentDark: ACCENT_DARK,
   },
 };
 
+// Platform font fallbacks left intentionally minimal; Outfit family is loaded at app startup.
+
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
+    sans: 'Outfit_400Regular',
+    semibold: 'Outfit_600SemiBold',
+    bold: 'Outfit_700Bold',
   },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
+  android: {
+    sans: 'Outfit_400Regular',
+    semibold: 'Outfit_600SemiBold',
+    bold: 'Outfit_700Bold',
   },
   web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+    sans: "Outfit, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
   },
 });
