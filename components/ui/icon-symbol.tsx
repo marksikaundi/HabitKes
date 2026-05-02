@@ -31,22 +31,26 @@ export function IconSymbol({
   size = 24,
   color,
   style,
+  weight = 'duotone',
 }: {
   name: IconSymbolName;
   size?: number;
   color: string | OpaqueColorValue;
   style?: StyleProp<TextStyle>;
-  weight?: SymbolWeight;
+  weight?: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone';
 }) {
+  const colorStr = String(color);
+
   if (name === 'huge-house') {
-    return <House color={String(color)} size={size} weight="duotone" style={style} />;
+    return <House color={colorStr} size={size} weight={weight} style={style} />;
   }
   if (name === 'huge-crew') {
-    return <Users color={String(color)} size={size} weight="duotone" style={style} />;
+    return <Users color={colorStr} size={size} weight={weight} style={style} />;
   }
   if (name === 'huge-add') {
-    return <PlusCircle color={String(color)} size={size} weight="duotone" style={style} />;
+    return <PlusCircle color={colorStr} size={size} weight={weight} style={style} />;
   }
 
-  return <MaterialIcons color={String(color)} size={size} name={MAPPING[name]} style={style} />;
+  // Fallback to Material Icons for other names. weight is ignored for fallback.
+  return <MaterialIcons color={colorStr} size={size} name={MAPPING[name]} style={style} />;
 }

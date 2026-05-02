@@ -69,6 +69,17 @@ export default function HomeScreen() {
           keep everyone honest when a streak changes.
         </ThemedText>
 
+        {topHabit ? (
+          <Pressable
+            onPress={() => void toggleHabit(topHabit.id)}
+            style={({ pressed }) => [styles.ctaButton, pressed && styles.ctaPressed]}
+          >
+            <ThemedText type="defaultSemiBold" style={styles.ctaText}>
+              Begin
+            </ThemedText>
+          </Pressable>
+        ) : null}
+
         <View style={styles.heroStatsRow}>
           <StatCard
             label="Habits"
@@ -286,16 +297,16 @@ const styles = StyleSheet.create({
   page: {
     padding: 20,
     gap: 16,
-    backgroundColor: "#F3F7FB",
+    backgroundColor: "#F5F6FA",
   },
   heroGlow: {
     position: "absolute",
-    top: 10,
-    right: -32,
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: "rgba(249, 115, 22, 0.15)",
+    top: 4,
+    right: -26,
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: "rgba(200,255,26,0.18)",
   },
   heroGlowSecondary: {
     position: "absolute",
@@ -304,16 +315,16 @@ const styles = StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 70,
-    backgroundColor: "rgba(37, 99, 235, 0.13)",
+    backgroundColor: "rgba(109,117,136,0.08)",
   },
   heroCard: {
     backgroundColor: "#FFFFFF",
-    padding: 20,
+    padding: 22,
     gap: 16,
     shadowColor: "#0F172A",
-    shadowOpacity: 0.08,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.06,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 8 },
     elevation: 3,
   },
   pillRow: {
@@ -335,8 +346,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   heroTitle: {
-    fontFamily: Fonts.rounded,
-    fontSize: 34,
+    fontFamily: Fonts.sans,
+    fontSize: 32,
     lineHeight: 38,
   },
   heroCopy: {
@@ -582,5 +593,26 @@ const styles = StyleSheet.create({
   footerCopy: {
     color: "#CBD5E1",
     lineHeight: 22,
+  },
+  ctaButton: {
+    marginTop: 12,
+    backgroundColor: Colors.light.accent,
+    borderRadius: 999,
+    paddingVertical: 14,
+    alignItems: 'center',
+    shadowColor: '#1C2011',
+    shadowOpacity: 0.18,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 4,
+  },
+  ctaPressed: {
+    opacity: 0.92,
+    transform: [{ scale: 0.995 }],
+  },
+  ctaText: {
+    color: Colors.light.accentDark,
+    fontSize: 18,
+    fontFamily: Fonts.semibold,
   },
 });
