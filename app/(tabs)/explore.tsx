@@ -1,112 +1,396 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { useState } from "react";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from "react-native";
 
-import { Collapsible } from '@/components/ui/collapsible';
-import { ExternalLink } from '@/components/external-link';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Fonts } from "@/constants/theme";
+import { useAccountabilityBoard } from "@/lib/accountability-board";
 
-export default function TabTwoScreen() {
+export default function CrewScreen() {
+  const {
+    friends,
+    activity,
+    connectionLabel,
+    connectionState,
+    addFriend,
+    refreshBoard,
+  } = useAccountabilityBoard();
+  const [name, setName] = useState("");
+  const [focus, setFocus] = useState("Daily consistency");
+
+  const inviteFriend = async () => {
+    await addFriend(name, focus);
+    setName("");
+    setFocus("Daily consistency");
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}>
-          Explore
+    <ScrollView
+      contentContainerStyle={styles.page}
+      showsVerticalScrollIndicator={false}
+    >
+      <ThemedView style={styles.hero} lightColor="#0F172A" darkColor="#0F172A">
+        <ThemedText type="defaultSemiBold" style={styles.heroEyebrow}>
+          Social accountability
+        </ThemedText>
+        <ThemedText type="title" style={styles.heroTitle}>
+          Bring friends into the streak.
+        </ThemedText>
+        <ThemedText style={styles.heroCopy}>
+          Appwrite keeps the board synced, so every check-in and nudge shows up
+          for the whole crew.
+        </ThemedText>
+
+        <View style={styles.setupRow}>
+          <View
+            style={[
+              styles.connectionPill,
+              connectionState === "live"
+                ? styles.connectionLive
+                : styles.connectionDemo,
+            ]}
+          >
+            <ThemedText type="defaultSemiBold" style={styles.connectionText}>
+              {connectionLabel}
+            </ThemedText>
+          </View>
+          <Pressable
+            onPress={() => void refreshBoard()}
+            style={({ pressed }) => [
+              styles.refreshButton,
+              pressed && styles.refreshPressed,
+            ]}
+          >
+            <ThemedText type="defaultSemiBold" style={styles.refreshText}>
+              Refresh board
+            </ThemedText>
+          </Pressable>
+        </View>
+      </ThemedView>
+
+      <ThemedView style={styles.card} lightColor="#FFFFFF" darkColor="#15181C">
+        <ThemedText type="subtitle" style={styles.sectionTitle}>
+          Invite a friend
+        </ThemedText>
+        <ThemedText style={styles.sectionCopy}>
+          Add someone to the accountability loop. Their invite will also sync to
+          the Appwrite database when the env vars are set.
+        </ThemedText>
+
+        <View style={styles.inputStack}>
+          <TextInput
+            value={name}
+            onChangeText={setName}
+            placeholder="Friend name"
+            placeholderTextColor="#94A3B8"
+            style={styles.input}
+          />
+          <TextInput
+            value={focus}
+            onChangeText={setFocus}
+            placeholder="Their focus"
+            placeholderTextColor="#94A3B8"
+            style={styles.input}
+          />
+          <Pressable
+            onPress={() => void inviteFriend()}
+            style={({ pressed }) => [
+              styles.primaryButton,
+              pressed && styles.buttonPressed,
+            ]}
+          >
+            <ThemedText type="defaultSemiBold" style={styles.primaryButtonText}>
+              Add to crew
+            </ThemedText>
+          </Pressable>
+        </View>
+      </ThemedView>
+
+      <View style={styles.gridRow}>
+        <ThemedView
+          style={styles.card}
+          lightColor="#FFFFFF"
+          darkColor="#15181C"
+        >
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            Live members
+          </ThemedText>
+          <View style={styles.friendList}>
+            {friends.map((friend) => (
+              <View key={friend.id} style={styles.friendRow}>
+                <View
+                  style={[
+                    styles.avatar,
+                    friend.live ? styles.avatarLive : styles.avatarIdle,
+                  ]}
+                >
+                  <ThemedText type="defaultSemiBold" style={styles.avatarText}>
+                    {friend.avatar}
+                  </ThemedText>
+                </View>
+                <View style={styles.friendCopy}>
+                  <ThemedText type="defaultSemiBold">{friend.name}</ThemedText>
+                  <ThemedText style={styles.friendMeta}>
+                    {friend.focus}
+                  </ThemedText>
+                </View>
+                <View
+                  style={[
+                    styles.liveDot,
+                    friend.live ? styles.liveDotOn : styles.liveDotOff,
+                  ]}
+                />
+              </View>
+            ))}
+          </View>
+        </ThemedView>
+
+        <ThemedView
+          style={styles.card}
+          lightColor="#FFFFFF"
+          darkColor="#15181C"
+        >
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            Realtime notes
+          </ThemedText>
+          <View style={styles.noteList}>
+            {activity.map((entry) => (
+              <View key={entry.id} style={styles.noteRow}>
+                <ThemedText type="defaultSemiBold" style={styles.noteTitle}>
+                  {entry.title}
+                </ThemedText>
+                <ThemedText style={styles.noteDetail}>
+                  {entry.detail}
+                </ThemedText>
+                <ThemedText style={styles.noteTime}>{entry.time}</ThemedText>
+              </View>
+            ))}
+          </View>
+        </ThemedView>
+      </View>
+
+      <ThemedView
+        style={styles.footerCard}
+        lightColor="#F97316"
+        darkColor="#F97316"
+      >
+        <ThemedText type="defaultSemiBold" style={styles.footerLabel}>
+          Appwrite setup
+        </ThemedText>
+        <ThemedText type="title" style={styles.footerTitle}>
+          Use database + realtime collections
+        </ThemedText>
+        <ThemedText style={styles.footerCopy}>
+          Set the Expo public env vars for endpoint, project, database, and the
+          habits, friends, and activity collection IDs. Once they are in place,
+          the board switches from demo mode to live sync.
         </ThemedText>
       </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ width: 100, height: 100, alignSelf: 'center' }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful{' '}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  page: {
+    padding: 20,
+    gap: 16,
+    backgroundColor: "#F3F7FB",
   },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+  hero: {
+    borderRadius: 28,
+    padding: 20,
+    gap: 12,
+    shadowColor: "#0F172A",
+    shadowOpacity: 0.1,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 3,
+  },
+  heroEyebrow: {
+    color: "#FDBA74",
+    textTransform: "uppercase",
+    letterSpacing: 1.3,
+    fontSize: 12,
+  },
+  heroTitle: {
+    color: "#FFFFFF",
+    fontFamily: Fonts.rounded,
+    fontSize: 34,
+  },
+  heroCopy: {
+    color: "#CBD5E1",
+    lineHeight: 22,
+  },
+  setupRow: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
+  },
+  connectionPill: {
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  connectionLive: {
+    backgroundColor: "rgba(16, 185, 129, 0.18)",
+  },
+  connectionDemo: {
+    backgroundColor: "rgba(249, 115, 22, 0.18)",
+  },
+  connectionText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+  },
+  refreshButton: {
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: "rgba(255, 255, 255, 0.12)",
+  },
+  refreshPressed: {
+    opacity: 0.86,
+  },
+  refreshText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+  },
+  card: {
+    flex: 1,
+    minWidth: 280,
+    borderRadius: 24,
+    padding: 16,
+    gap: 14,
+    shadowColor: "#0F172A",
+    shadowOpacity: 0.05,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 2,
+  },
+  sectionTitle: {
+    fontFamily: Fonts.rounded,
+  },
+  sectionCopy: {
+    color: "#64748B",
+    lineHeight: 22,
+  },
+  inputStack: {
+    gap: 10,
+  },
+  input: {
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "#CBD5E1",
+    backgroundColor: "#F8FAFC",
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 16,
+    color: "#0F172A",
+  },
+  primaryButton: {
+    backgroundColor: "#0F172A",
+    borderRadius: 18,
+    paddingVertical: 14,
+    alignItems: "center",
+  },
+  buttonPressed: {
+    opacity: 0.9,
+    transform: [{ scale: 0.99 }],
+  },
+  primaryButtonText: {
+    color: "#FFFFFF",
+  },
+  gridRow: {
+    flexDirection: "row",
+    gap: 12,
+    flexWrap: "wrap",
+  },
+  friendList: {
+    gap: 12,
+  },
+  friendRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  avatar: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  avatarLive: {
+    backgroundColor: "rgba(16, 185, 129, 0.16)",
+  },
+  avatarIdle: {
+    backgroundColor: "rgba(100, 116, 139, 0.16)",
+  },
+  avatarText: {
+    fontSize: 14,
+  },
+  friendCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  friendMeta: {
+    color: "#64748B",
+    fontSize: 12,
+  },
+  liveDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  liveDotOn: {
+    backgroundColor: "#10B981",
+  },
+  liveDotOff: {
+    backgroundColor: "#94A3B8",
+  },
+  noteList: {
+    gap: 12,
+  },
+  noteRow: {
+    gap: 4,
+    paddingBottom: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: "#E2E8F0",
+  },
+  noteTitle: {
+    fontSize: 14,
+  },
+  noteDetail: {
+    color: "#64748B",
+    lineHeight: 20,
+  },
+  noteTime: {
+    color: "#94A3B8",
+    fontSize: 12,
+  },
+  footerCard: {
+    borderRadius: 28,
+    padding: 20,
+    gap: 10,
+  },
+  footerLabel: {
+    color: "#FFF7ED",
+    textTransform: "uppercase",
+    letterSpacing: 1.2,
+    fontSize: 12,
+  },
+  footerTitle: {
+    color: "#FFFFFF",
+    fontFamily: Fonts.rounded,
+    fontSize: 28,
+  },
+  footerCopy: {
+    color: "#FFF7ED",
+    lineHeight: 22,
   },
 });

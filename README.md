@@ -2,6 +2,23 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
+## HabitKes
+
+HabitKes is a habit tracker with social accountability. The home tab shows streaks, live friends, and a realtime feed, while the crew tab lets you add accountability partners.
+
+### Appwrite setup
+
+Set these Expo public env vars to connect the app to Appwrite:
+
+- `EXPO_PUBLIC_APPWRITE_ENDPOINT`
+- `EXPO_PUBLIC_APPWRITE_PROJECT_ID`
+- `EXPO_PUBLIC_APPWRITE_DATABASE_ID`
+- `EXPO_PUBLIC_APPWRITE_HABITS_COLLECTION_ID`
+- `EXPO_PUBLIC_APPWRITE_FRIENDS_COLLECTION_ID`
+- `EXPO_PUBLIC_APPWRITE_ACTIVITY_COLLECTION_ID`
+
+The app uses Appwrite `Databases` for habits, friends, and activity records, plus `Realtime` subscriptions on those collections. If the env vars are missing, it stays in demo mode with the same UI.
+
 ## Get started
 
 1. Install dependencies
