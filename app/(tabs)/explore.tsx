@@ -9,7 +9,7 @@ import {
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Fonts } from "@/constants/theme";
+import { Fonts, Colors } from "@/constants/theme";
 import { useAccountabilityBoard } from "@/lib/accountability-board";
 
 export default function CrewScreen() {
@@ -32,7 +32,7 @@ export default function CrewScreen() {
 
   return (
     <ScrollView
-      contentContainerStyle={styles.page}
+      contentContainerStyle={[styles.page, { backgroundColor: Colors.light.background }]}
       showsVerticalScrollIndicator={false}
     >
       <ThemedView style={styles.hero} lightColor="#0F172A" darkColor="#0F172A">
@@ -207,21 +207,22 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 12,
     shadowColor: "#0F172A",
-    shadowOpacity: 0.1,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 8 },
     elevation: 3,
+    backgroundColor: Colors.light.accentDark,
   },
   heroEyebrow: {
-    color: "#FDBA74",
+    color: Colors.light.accent,
     textTransform: "uppercase",
     letterSpacing: 1.3,
     fontSize: 12,
   },
   heroTitle: {
     color: "#FFFFFF",
-    fontFamily: Fonts.rounded,
-    fontSize: 34,
+    fontFamily: Fonts.sans,
+    fontSize: 32,
   },
   heroCopy: {
     color: "#CBD5E1",
@@ -293,7 +294,7 @@ const styles = StyleSheet.create({
     color: "#0F172A",
   },
   primaryButton: {
-    backgroundColor: "#0F172A",
+    backgroundColor: Colors.light.accentDark,
     borderRadius: 18,
     paddingVertical: 14,
     alignItems: "center",

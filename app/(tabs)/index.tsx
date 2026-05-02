@@ -26,10 +26,9 @@ export default function HomeScreen() {
   );
 
   const topHabit = habits[0];
-
   return (
     <ScrollView
-      contentContainerStyle={styles.page}
+      contentContainerStyle={[styles.page, { backgroundColor: Colors.light.background }]}
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.heroGlow} />
@@ -53,8 +52,8 @@ export default function HomeScreen() {
               {connectionState === "live"
                 ? "Realtime live"
                 : connectionState === "connecting"
-                  ? "Syncing"
-                  : "Demo mode"}
+                ? "Syncing"
+                : "Demo mode"}
             </ThemedText>
           </View>
         </View>
@@ -305,7 +304,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(37, 99, 235, 0.13)",
   },
   heroCard: {
-    borderRadius: 28,
+          backgroundColor: "#FFFFFF",
     padding: 20,
     gap: 16,
     shadowColor: "#0F172A",
