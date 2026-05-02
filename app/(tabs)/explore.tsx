@@ -9,7 +9,7 @@ import {
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Fonts, Colors } from "@/constants/theme";
+import { Colors, Fonts } from "@/constants/theme";
 import { useAccountabilityBoard } from "@/lib/accountability-board";
 
 export default function CrewScreen() {
@@ -32,7 +32,10 @@ export default function CrewScreen() {
 
   return (
     <ScrollView
-      contentContainerStyle={[styles.page, { backgroundColor: Colors.light.background }]}
+      contentContainerStyle={[
+        styles.page,
+        { backgroundColor: Colors.light.background },
+      ]}
       showsVerticalScrollIndicator={false}
     >
       <ThemedView style={styles.hero} lightColor="#0F172A" darkColor="#0F172A">
