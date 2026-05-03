@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
@@ -16,262 +16,143 @@ export default function HomeScreen() {
     toggleHabit,
   } = useAccountabilityBoard();
 
-  const summary = useMemo(
-    () => ({
-      activeHabits: habits.length,
-      liveFriends: friends.filter((friend) => friend.live).length,
-      streakDays: habits.reduce((total, habit) => total + habit.streak, 0),
-    }),
-    [friends, habits],
-  );
+  const [selectedDate, setSelectedDate] = useState(3); // Wednesday (12)
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const dates = [9, 10, 11, 12, 13, 14, 15];
+  const currentDay = new Date().getDay();
 
-  const topHabit = habits[0];
+  const morningHabit = habits.find((h) => h.title.includes("Morning"));
+  const eveningHabit = habits.find((h) => h.title.includes("Evening"));
+
   return (
     <ScrollView
       contentContainerStyle={[
         styles.page,
-        { backgroundColor: Colors.light.background },
+        { backgroundColor: "#F5F6FA" },
       ]}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.heroGlow} />
-      <View style={styles.heroGlowSecondary} />
-
-      <ThemedView
-        style={[styles.heroCard, { backgroundColor: Colors.light.background }]}
-        lightColor={Colors.light.background}
-        darkColor={Colors.dark.background}
-      >
-        <View style={styles.pillRow}>
-          <View
-            style={[
-              styles.statusPill,
-              connectionState === "live"
-                ? { backgroundColor: "rgba(16,185,129,0.14)" }
-                : { backgroundColor: "rgba(200,255,26,0.14)" },
-            ]}
-          >
-            <ThemedText type="defaultSemiBold" style={styles.statusText}>
-              {connectionState === "live"
-                ? "Realtime live"
-                : connectionState === "connecting"
-                  ? "Syncing"
-                  : "Demo mode"}
+      {/* Header Section */}
+      <View style={styles.headerSection}>
+        <View style={styles.greetingRow}>
+          <View>
+            <ThemedText type="defaultSemiBold" style={styles.greeting}>
+              Good afternoon.
+            </ThemedText>
+          </View>
+          <View style={styles.streakBadge}>
+            <ThemedText type="defaultSemiBold" style={styles.streakText}>
+              🔥 10
             </ThemedText>
           </View>
         </View>
+      </View>
 
-        <ThemedText type="title" style={styles.heroTitle}>
-          HabitKes keeps your streaks visible.
-        </ThemedText>
-        <ThemedText style={styles.heroCopy}>
-          Track habits, bring friends into the loop, and let Appwrite realtime
-          keep everyone honest when a streak changes.
-        </ThemedText>
-
-        {topHabit ? (
+      {/* Date Selector */}
+      <View style={styles.dateSelector}>
+        {days.map((day, index) => (
           <Pressable
-            onPress={() => void toggleHabit(topHabit.id)}
-            style={({ pressed }) => [
-              styles.ctaButton,
-              pressed && styles.ctaPressed,
+            key={index}
+            onPress={() => setSelectedDate(index)}
+            style={[
+              styles.dateItem,
+              selectedDate === index && styles.dateItemSelected,
             ]}
           >
-            <ThemedText type="defaultSemiBold" style={styles.ctaText}>
-              Begin
+            <ThemedText
+              style={[
+                styles.dayText,
+                selectedDate === index && styles.dayTextSelected,
+              ]}
+            >
+              {day}
             </ThemedText>
-          </Pressable>
-        ) : null}
-
-        <View style={styles.heroStatsRow}>
-          <StatCard
-            label="Habits"
-            value={`${summary.activeHabits}`}
-            accent={Colors.light.accent}
-          />
-          <StatCard
-            label="Live friends"
-            value={`${summary.liveFriends}`}
-            accent="#6D7588"
-          />
-          <StatCard
-            label="Total streak"
-            value={`${summary.streakDays}`}
-            accent={Colors.light.accentDark}
-          />
-        </View>
-
-        <ThemedText type="defaultSemiBold" style={styles.connectionLabel}>
-          {connectionLabel}
-        </ThemedText>
-      </ThemedView>
-
-      <ThemedView style={styles.sectionHeader}>
-        <ThemedText type="subtitle" style={styles.sectionTitle}>
-          Today&apos;s habits
-        </ThemedText>
-        <ThemedText style={styles.sectionSubtitle}>
-          Tap a card to mark it complete and push the update through the board.
-        </ThemedText>
-      </ThemedView>
-
-      <View style={styles.habitList}>
-        {habits.map((habit) => (
-          <Pressable
-            key={habit.id}
-            onPress={() => void toggleHabit(habit.id)}
-            style={({ pressed }) => [
-              styles.habitCard,
-              pressed && styles.cardPressed,
-            ]}
-          >
-            <View style={styles.habitHeader}>
-              <View
-                style={[styles.accentBar, { backgroundColor: habit.color }]}
-              />
-              <View style={styles.habitCopy}>
-                <View style={styles.habitTitleRow}>
-                  <ThemedText type="defaultSemiBold" style={styles.habitTitle}>
-                    {habit.title}
-                  </ThemedText>
-                  <View
-                    style={[
-                      styles.badge,
-                      habit.completedToday
-                        ? styles.badgeDone
-                        : styles.badgePending,
-                    ]}
-                  >
-                    <ThemedText type="defaultSemiBold" style={styles.badgeText}>
-                      {habit.completedToday ? "Done" : "Open"}
-                    </ThemedText>
-                  </View>
-                </View>
-                <ThemedText style={styles.habitMeta}>
-                  {habit.cadence} • {habit.streak} day streak • best{" "}
-                  {habit.bestStreak}
-                </ThemedText>
-              </View>
-            </View>
-
-            <View style={styles.progressTrack}>
-              <View
-                style={[
-                  styles.progressFill,
-                  { width: `${habit.progress}%`, backgroundColor: habit.color },
-                ]}
-              />
-            </View>
-
-            <View style={styles.habitFooter}>
-              <ThemedText style={styles.supporterText}>
-                {habit.supporters.join(" · ")} are watching this one.
-              </ThemedText>
-              <ThemedText type="defaultSemiBold" style={styles.progressText}>
-                {habit.progress}%
-              </ThemedText>
-            </View>
+            <ThemedText
+              type="defaultSemiBold"
+              style={[
+                styles.dateText,
+                selectedDate === index && styles.dateTextSelected,
+              ]}
+            >
+              {dates[index]}
+            </ThemedText>
           </Pressable>
         ))}
       </View>
 
-      <ThemedView style={styles.gridRow}>
-        <ThemedView
-          style={[styles.sideCard, { backgroundColor: "#FFFFFF" }]}
-          lightColor="#FFFFFF"
-          darkColor="#15181C"
+      {/* Cards Row */}
+      <View style={styles.cardsRow}>
+        {/* Morning Card */}
+        <Pressable
+          onPress={() => morningHabit && toggleHabit(morningHabit.id)}
+          style={[styles.card, styles.morningCard]}
         >
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Accountability crew
-          </ThemedText>
-          <View style={styles.friendList}>
-            {friends.map((friend) => (
-              <View key={friend.id} style={styles.friendRow}>
-                <View
-                  style={[
-                    styles.avatar,
-                    friend.live ? styles.avatarLive : styles.avatarIdle,
-                  ]}
-                >
-                  <ThemedText type="defaultSemiBold" style={styles.avatarText}>
-                    {friend.avatar}
-                  </ThemedText>
-                </View>
-                <View style={styles.friendCopy}>
-                  <ThemedText type="defaultSemiBold">{friend.name}</ThemedText>
-                  <ThemedText style={styles.friendMeta}>
-                    {friend.focus}
-                  </ThemedText>
-                </View>
-                <ThemedText style={styles.friendStatus}>
-                  {friend.status}
-                </ThemedText>
-              </View>
-            ))}
+          <View style={styles.cardContent}>
+            <View style={styles.cardIcon}>
+              <ThemedText style={styles.iconEmoji}>🌱</ThemedText>
+            </View>
+            <ThemedText style={styles.cardLabel}>
+              Morning Preparation
+            </ThemedText>
+            <ThemedText type="defaultSemiBold" style={styles.cardTitle}>
+              Ready to take on the day?
+            </ThemedText>
+            <Pressable
+              style={styles.beginButton}
+              onPress={() => morningHabit && toggleHabit(morningHabit.id)}
+            >
+              <ThemedText type="defaultSemiBold" style={styles.buttonText}>
+                Begin
+              </ThemedText>
+            </Pressable>
           </View>
-        </ThemedView>
+        </Pressable>
 
-        <ThemedView
-          style={[styles.sideCard, { backgroundColor: "#FFFFFF" }]}
-          lightColor="#FFFFFF"
-          darkColor="#15181C"
+        {/* Evening Card */}
+        <Pressable
+          style={[styles.card, styles.eveningCard]}
         >
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Live feed
-          </ThemedText>
-          <View style={styles.activityList}>
-            {activity.map((entry) => (
-              <View key={entry.id} style={styles.activityRow}>
-                <View
-                  style={[
-                    styles.activityDot,
-                    entry.tone === "positive"
-                      ? styles.dotPositive
-                      : entry.tone === "warning"
-                        ? styles.dotWarning
-                        : styles.dotNeutral,
-                  ]}
-                />
-                <View style={styles.activityCopy}>
-                  <View style={styles.activityHeader}>
-                    <ThemedText
-                      type="defaultSemiBold"
-                      style={styles.activityTitle}
-                    >
-                      {entry.title}
-                    </ThemedText>
-                    <ThemedText style={styles.activityTime}>
-                      {entry.time}
-                    </ThemedText>
-                  </View>
-                  <ThemedText style={styles.activityDetail}>
-                    {entry.detail}
-                  </ThemedText>
-                </View>
+          <View style={styles.cardContent}>
+            <View style={styles.cardIcon}>
+              <ThemedText style={styles.iconEmoji}>🌙</ThemedText>
+            </View>
+            <ThemedText style={styles.cardLabel}>
+              Evening complete.
+            </ThemedText>
+            <View style={styles.moodButtons}>
+              <View style={styles.moodOption}>
+                <ThemedText style={styles.moodEmoji}>😌</ThemedText>
+                <ThemedText style={styles.moodText}>Satisfied</ThemedText>
               </View>
-            ))}
+              <View style={styles.moodOption}>
+                <ThemedText style={styles.moodEmoji}>😊</ThemedText>
+                <ThemedText style={styles.moodText}>Happy</ThemedText>
+              </View>
+            </View>
+            <Pressable style={styles.moreButton}>
+              <ThemedText type="defaultSemiBold" style={styles.moreText}>
+                +3More
+              </ThemedText>
+            </Pressable>
           </View>
-        </ThemedView>
+        </Pressable>
+      </View>
+
+      {/* Progress Section */}
+      <ThemedView style={styles.progressCard} lightColor="#FFFFFF" darkColor="#15181C">
+        <ThemedText style={styles.progressLabel}>Day 5 of 7</ThemedText>
+        <ThemedText type="defaultSemiBold" style={styles.progressTitle}>
+          On Glowing reviews.
+        </ThemedText>
+        <ThemedText style={styles.progressSubtitle}>
+          Was there a time you could've said something nice but didn&apos;t?
+        </ThemedText>
+        <Pressable style={styles.reflectButton}>
+          <ThemedText type="defaultSemiBold" style={styles.reflectButtonText}>
+            Reflect
+          </ThemedText>
+        </Pressable>
       </ThemedView>
-
-      {topHabit ? (
-        <ThemedView
-          style={styles.footerCard}
-          lightColor="#0F172A"
-          darkColor="#0F172A"
-        >
-          <ThemedText type="defaultSemiBold" style={styles.footerLabel}>
-            Featured streak
-          </ThemedText>
-          <ThemedText type="title" style={styles.footerTitle}>
-            {topHabit.title}
-          </ThemedText>
-          <ThemedText style={styles.footerCopy}>
-            Keep this moving and the realtime board will notify the whole
-            accountability crew.
-          </ThemedText>
-        </ThemedView>
-      ) : null}
     </ScrollView>
   );
 }
@@ -299,69 +180,195 @@ function StatCard({
 const styles = StyleSheet.create({
   page: {
     padding: 20,
-    gap: 16,
+    gap: 20,
     backgroundColor: "#F5F6FA",
   },
-  heroGlow: {
-    position: "absolute",
-    top: 4,
-    right: -26,
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: "rgba(200,255,26,0.18)",
+  
+  // Header Section
+  headerSection: {
+    marginTop: 8,
   },
-  heroGlowSecondary: {
-    position: "absolute",
-    top: 120,
-    left: -38,
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: "rgba(109,117,136,0.08)",
-  },
-  heroCard: {
-    backgroundColor: "#FFFFFF",
-    padding: 22,
-    gap: 16,
-    shadowColor: "#0F172A",
-    shadowOpacity: 0.06,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 3,
-  },
-  pillRow: {
+  greetingRow: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  statusPill: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+  greeting: {
+    fontSize: 28,
+    fontFamily: Fonts.semibold,
+    color: "#1F2937",
+  },
+  streakBadge: {
+    backgroundColor: "#FFE4B5",
     borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
-  pillLive: {
-    backgroundColor: "rgba(16, 185, 129, 0.14)",
-  },
-  pillDemo: {
-    backgroundColor: "rgba(249, 115, 22, 0.14)",
-  },
-  statusText: {
-    fontSize: 12,
-  },
-  heroTitle: {
-    fontFamily: Fonts.sans,
-    fontSize: 32,
-    lineHeight: 38,
-  },
-  heroCopy: {
-    color: "#475569",
+  streakText: {
     fontSize: 16,
-    lineHeight: 24,
+    color: "#D97706",
   },
-  heroStatsRow: {
+
+  // Date Selector
+  dateSelector: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  dateItem: {
+    flex: 1,
+    alignItems: "center",
+    paddingVertical: 12,
+    borderRadius: 16,
+    backgroundColor: "#FFFFFF",
+  },
+  dateItemSelected: {
+    backgroundColor: "#C8FF1A",
+  },
+  dayText: {
+    fontSize: 12,
+    color: "#9CA3AF",
+    marginBottom: 4,
+  },
+  dayTextSelected: {
+    color: "#1C2011",
+  },
+  dateText: {
+    fontSize: 16,
+    color: "#374151",
+  },
+  dateTextSelected: {
+    color: "#1C2011",
+  },
+
+  // Cards Row
+  cardsRow: {
     flexDirection: "row",
     gap: 12,
   },
+  card: {
+    flex: 1,
+    borderRadius: 24,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
+  },
+  morningCard: {
+    backgroundColor: "#FFFFFF",
+  },
+  eveningCard: {
+    backgroundColor: "#FFFFFF",
+  },
+  cardContent: {
+    gap: 12,
+  },
+  cardIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 12,
+    backgroundColor: "#F3F4F6",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconEmoji: {
+    fontSize: 28,
+  },
+  cardLabel: {
+    fontSize: 12,
+    color: "#9CA3AF",
+    marginTop: 4,
+  },
+  cardTitle: {
+    fontSize: 16,
+    color: "#1F2937",
+    lineHeight: 22,
+  },
+  beginButton: {
+    backgroundColor: "#C8FF1A",
+    borderRadius: 999,
+    paddingVertical: 12,
+    alignItems: "center",
+    marginTop: 8,
+  },
+  buttonText: {
+    fontSize: 16,
+    color: "#1C2011",
+  },
+  
+  // Mood Options
+  moodButtons: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 4,
+  },
+  moodOption: {
+    alignItems: "center",
+    gap: 4,
+  },
+  moodEmoji: {
+    fontSize: 28,
+  },
+  moodText: {
+    fontSize: 12,
+    color: "#6B7280",
+  },
+  moreButton: {
+    backgroundColor: "#C8FF1A",
+    borderRadius: 999,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    alignSelf: "flex-start",
+    marginTop: 8,
+  },
+  moreText: {
+    fontSize: 12,
+    color: "#1C2011",
+  },
+
+  // Progress Card
+  progressCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 24,
+    padding: 20,
+    gap: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
+  },
+  progressLabel: {
+    fontSize: 12,
+    color: "#9CA3AF",
+    fontFamily: Fonts.semibold,
+  },
+  progressTitle: {
+    fontSize: 18,
+    color: "#1F2937",
+    fontFamily: Fonts.semibold,
+  },
+  progressSubtitle: {
+    fontSize: 14,
+    color: "#6B7280",
+    lineHeight: 20,
+  },
+  reflectButton: {
+    backgroundColor: "#C8FF1A",
+    borderRadius: 999,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    alignSelf: "flex-start",
+    marginTop: 8,
+  },
+  reflectButtonText: {
+    fontSize: 16,
+    color: "#1C2011",
+  },
+
+  // Unused Stats
   statCard: {
     flex: 1,
     borderRadius: 20,
@@ -380,242 +387,5 @@ const styles = StyleSheet.create({
   statLabel: {
     fontSize: 12,
     color: "#64748B",
-  },
-  connectionLabel: {
-    fontSize: 13,
-    color: "#334155",
-  },
-  sectionHeader: {
-    gap: 6,
-  },
-  sectionTitle: {
-    fontFamily: Fonts.rounded,
-  },
-  sectionSubtitle: {
-    color: "#64748B",
-    lineHeight: 22,
-  },
-  habitList: {
-    gap: 12,
-  },
-  habitCard: {
-    borderRadius: 24,
-    backgroundColor: "#FFFFFF",
-    padding: 16,
-    gap: 14,
-    shadowColor: "#0F172A",
-    shadowOpacity: 0.05,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 2,
-  },
-  cardPressed: {
-    transform: [{ scale: 0.99 }],
-    opacity: 0.96,
-  },
-  habitHeader: {
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "flex-start",
-  },
-  accentBar: {
-    width: 10,
-    borderRadius: 999,
-    minHeight: 56,
-  },
-  habitCopy: {
-    flex: 1,
-    gap: 6,
-  },
-  habitTitleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    flexWrap: "wrap",
-  },
-  habitTitle: {
-    fontSize: 18,
-  },
-  badge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-  },
-  badgeDone: {
-    backgroundColor: "rgba(16, 185, 129, 0.12)",
-  },
-  badgePending: {
-    backgroundColor: "rgba(249, 115, 22, 0.12)",
-  },
-  badgeText: {
-    fontSize: 12,
-  },
-  habitMeta: {
-    color: "#64748B",
-    fontSize: 13,
-  },
-  progressTrack: {
-    height: 10,
-    borderRadius: 999,
-    backgroundColor: "#E2E8F0",
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    borderRadius: 999,
-  },
-  habitFooter: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 12,
-  },
-  supporterText: {
-    color: "#64748B",
-    flex: 1,
-  },
-  progressText: {
-    color: "#0F172A",
-  },
-  gridRow: {
-    flexDirection: "row",
-    gap: 12,
-    flexWrap: "wrap",
-  },
-  sideCard: {
-    flex: 1,
-    minWidth: 280,
-    borderRadius: 24,
-    padding: 16,
-    gap: 14,
-    shadowColor: "#0F172A",
-    shadowOpacity: 0.05,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 2,
-  },
-  friendList: {
-    gap: 12,
-  },
-  friendRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarLive: {
-    backgroundColor: "rgba(16, 185, 129, 0.16)",
-  },
-  avatarIdle: {
-    backgroundColor: "rgba(100, 116, 139, 0.16)",
-  },
-  avatarText: {
-    fontSize: 15,
-  },
-  friendCopy: {
-    flex: 1,
-    gap: 3,
-  },
-  friendMeta: {
-    color: "#64748B",
-    fontSize: 12,
-  },
-  friendStatus: {
-    color: "#334155",
-    fontSize: 12,
-    flexBasis: "34%",
-    textAlign: "right",
-  },
-  activityList: {
-    gap: 12,
-  },
-  activityRow: {
-    flexDirection: "row",
-    gap: 10,
-    alignItems: "flex-start",
-  },
-  activityDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginTop: 6,
-  },
-  dotPositive: {
-    backgroundColor: "#10B981",
-  },
-  dotWarning: {
-    backgroundColor: "#F97316",
-  },
-  dotNeutral: {
-    backgroundColor: "#2563EB",
-  },
-  activityCopy: {
-    flex: 1,
-    gap: 4,
-  },
-  activityHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  activityTitle: {
-    flex: 1,
-    fontSize: 14,
-  },
-  activityTime: {
-    color: "#94A3B8",
-    fontSize: 12,
-  },
-  activityDetail: {
-    color: "#64748B",
-    fontSize: 13,
-    lineHeight: 18,
-  },
-  footerCard: {
-    borderRadius: 28,
-    padding: 20,
-    gap: 10,
-  },
-  footerLabel: {
-    color: "#93C5FD",
-    fontSize: 12,
-    textTransform: "uppercase",
-    letterSpacing: 1.2,
-  },
-  footerTitle: {
-    color: "#FFFFFF",
-    fontFamily: Fonts.rounded,
-    fontSize: 28,
-  },
-  footerCopy: {
-    color: "#CBD5E1",
-    lineHeight: 22,
-  },
-  ctaButton: {
-    marginTop: 12,
-    backgroundColor: Colors.light.accent,
-    borderRadius: 999,
-    paddingVertical: 14,
-    alignItems: "center",
-    shadowColor: "#1C2011",
-    shadowOpacity: 0.18,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 4,
-  },
-  ctaPressed: {
-    opacity: 0.92,
-    transform: [{ scale: 0.995 }],
-  },
-  ctaText: {
-    color: Colors.light.accentDark,
-    fontSize: 18,
-    fontFamily: Fonts.semibold,
   },
 });
