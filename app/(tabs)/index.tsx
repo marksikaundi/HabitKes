@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useMemo, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -49,6 +50,14 @@ export default function HomeScreen() {
   );
 
   const [selectedDate, setSelectedDate] = useState(() => new Date());
+
+  useFocusEffect(
+    useCallback(() => {
+      const now = new Date();
+      setVisibleMonth(startOfMonth(now));
+      setSelectedDate(now);
+    }, []),
+  );
 
   const shiftMonth = (delta: number) => {
     const next = new Date(
