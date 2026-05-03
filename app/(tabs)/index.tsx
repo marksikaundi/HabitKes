@@ -1,9 +1,9 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Colors, Fonts } from "@/constants/theme";
+import { Fonts } from "@/constants/theme";
 import { useAccountabilityBoard } from "@/lib/accountability-board";
 
 export default function HomeScreen() {
@@ -26,10 +26,7 @@ export default function HomeScreen() {
 
   return (
     <ScrollView
-      contentContainerStyle={[
-        styles.page,
-        { backgroundColor: "#F5F6FA" },
-      ]}
+      contentContainerStyle={[styles.page, { backgroundColor: "#F5F6FA" }]}
       showsVerticalScrollIndicator={false}
     >
       {/* Header Section */}
@@ -109,16 +106,12 @@ export default function HomeScreen() {
         </Pressable>
 
         {/* Evening Card */}
-        <Pressable
-          style={[styles.card, styles.eveningCard]}
-        >
+        <Pressable style={[styles.card, styles.eveningCard]}>
           <View style={styles.cardContent}>
             <View style={styles.cardIcon}>
               <ThemedText style={styles.iconEmoji}>🌙</ThemedText>
             </View>
-            <ThemedText style={styles.cardLabel}>
-              Evening complete.
-            </ThemedText>
+            <ThemedText style={styles.cardLabel}>Evening complete.</ThemedText>
             <View style={styles.moodButtons}>
               <View style={styles.moodOption}>
                 <ThemedText style={styles.moodEmoji}>😌</ThemedText>
@@ -139,7 +132,11 @@ export default function HomeScreen() {
       </View>
 
       {/* Progress Section */}
-      <ThemedView style={styles.progressCard} lightColor="#FFFFFF" darkColor="#15181C">
+      <ThemedView
+        style={styles.progressCard}
+        lightColor="#FFFFFF"
+        darkColor="#15181C"
+      >
         <ThemedText style={styles.progressLabel}>Day 5 of 7</ThemedText>
         <ThemedText type="defaultSemiBold" style={styles.progressTitle}>
           On Glowing reviews.
@@ -183,7 +180,7 @@ const styles = StyleSheet.create({
     gap: 20,
     backgroundColor: "#F5F6FA",
   },
-  
+
   // Header Section
   headerSection: {
     marginTop: 8,
@@ -297,7 +294,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#1C2011",
   },
-  
+
   // Mood Options
   moodButtons: {
     flexDirection: "row",
