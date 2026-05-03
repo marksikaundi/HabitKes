@@ -41,6 +41,7 @@ export type AccountabilityBoard = {
   servicesConfigured: boolean;
   toggleHabit: (habitId: string) => Promise<void>;
   addFriend: (name: string, focus: string) => Promise<void>;
+  addActivity: (payload: { title: string; detail?: string }) => Promise<void>;
   refreshBoard: () => Promise<void>;
 };
 
@@ -264,7 +265,9 @@ function useAccountabilityBoardState(): AccountabilityBoard {
   const [connectionLabel, setConnectionLabel] = useState(services ? 'Connecting to Appwrite realtime...' : defaultConnectionLabel);
 
   const pushActivity = useCallback((entry: Omit<Activity, 'id'>) => {
-    setActivity((current) => [{ ...entry, id: `${Date.now()}-${Math.random().toString(16).slice(2, 6)}` }, ...current].slice(0, 5));
+    setActivity((current) =>
+      [{ ...entry, id: `${Date.now()}-${Math.random().toString(16).slice(2, 6)}` }, ...current].slice(0, 40),
+    );
   }, []);
 
   const refreshBoard = useCallback(async () => {
@@ -411,6 +414,45 @@ function useAccountabilityBoardState(): AccountabilityBoard {
     [pushActivity, services],
   );
 
+  const addActivity = useCallback(
+    async (payload: { title: string; detail?: string }) => {
+      const trimmedTitle = normalizeTitle(payload.title);
+
+      if (!trimmedTitle) {
+        return;
+      }
+
+      const detail =
+        normalizeTitle(payload.detail ?? '') || 'Added from your journey.';
+
+      const entry: Omit<Activity, 'id'> = {
+        title: trimmedTitle,
+        detail,
+        time: 'Just now',
+        tone: 'neutral',
+      };
+
+      pushActivity(entry);
+
+      if (!services) {
+        return;
+      }
+
+      try {
+        await services.databases.createDocument(services.config.databaseId, services.config.activityCollectionId, ID.unique(), {
+          title: entry.title,
+          detail: entry.detail,
+          time: entry.time,
+          tone: entry.tone,
+        });
+      } catch {
+        setConnectionState('error');
+        setConnectionLabel('Activity saved locally; sync to Appwrite failed.');
+      }
+    },
+    [pushActivity, services],
+  );
+
   const addFriend = useCallback(
     async (name: string, focus: string) => {
       const trimmedName = normalizeTitle(name);
@@ -465,6 +507,7 @@ function useAccountabilityBoardState(): AccountabilityBoard {
     servicesConfigured: Boolean(services),
     toggleHabit,
     addFriend,
+    addActivity,
     refreshBoard,
   };
 }

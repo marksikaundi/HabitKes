@@ -1,4 +1,7 @@
-import { Tabs } from "expo-router";
+import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
+import { PlatformPressable } from "@react-navigation/elements";
+import { Tabs, useRouter } from "expo-router";
+import * as Haptics from "expo-haptics";
 import React from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -96,6 +99,7 @@ export default function TabLayout() {
         name="explore"
         options={{
           title: "",
+          tabBarButton: FabTabBarButton,
           tabBarIcon: () => (
             <View
               style={{
@@ -112,8 +116,7 @@ export default function TabLayout() {
                 shadowOffset: { width: 0, height: 8 },
                 elevation: 10,
               }}
-              accessibilityRole="button"
-              accessibilityLabel="Add"
+              accessibilityLabel="Add activity"
             >
               <ThemedText
                 type="defaultSemiBold"
@@ -177,5 +180,23 @@ function TabGlyph({
     <View style={{ alignItems: "center", opacity: focused ? 1 : 0.85 }}>
       {children}
     </View>
+  );
+}
+
+function FabTabBarButton(props: BottomTabBarButtonProps) {
+  const router = useRouter();
+
+  return (
+    <PlatformPressable
+      {...props}
+      accessibilityRole="button"
+      accessibilityLabel="Add activity"
+      onPress={() => {
+        if (process.env.EXPO_OS === "ios") {
+          void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }
+        router.push("/add-activity");
+      }}
+    />
   );
 }

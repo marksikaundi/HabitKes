@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useMemo, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -21,16 +22,34 @@ import {
   TEXT_SECONDARY,
 } from "@/constants/theme";
 import { useAccountabilityBoard } from "@/lib/accountability-board";
+import { getWeekContaining } from "@/lib/week-calendar";
+
+function greetingForNow(): string {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning.";
+  if (h < 17) return "Good afternoon.";
+  return "Good evening.";
+}
 
 export default function HomeScreen() {
   const { habits, toggleHabit } = useAccountabilityBoard();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
-  const [selectedDate, setSelectedDate] = useState(3);
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const dates = [9, 10, 11, 12, 13, 14, 15];
+  const [weekAnchor, setWeekAnchor] = useState(() => new Date());
+  const weekDays = useMemo(() => getWeekContaining(weekAnchor), [weekAnchor]);
 
+  const [selectedDayIndex, setSelectedDayIndex] = useState(
+    () => new Date().getDay(),
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      setWeekAnchor(new Date());
+    }, []),
+  );
+
+  const greeting = greetingForNow();
   const morningHabit = habits.find((h) => h.title.includes("Morning"));
 
   return (
@@ -50,7 +69,7 @@ export default function HomeScreen() {
             <View style={styles.profileAvatar}>
               <Text style={styles.avatarEmoji}>👤</Text>
             </View>
-            <Text style={styles.greeting}>Good afternoon.</Text>
+            <Text style={styles.greeting}>{greeting}</Text>
           </View>
           <View style={styles.streakBadge}>
             <Text style={styles.streakText}>🔥 10</Text>
@@ -64,31 +83,31 @@ export default function HomeScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.calendarStrip}
         >
-          {days.map((day, index) => (
+          {weekDays.map((slot, index) => (
             <Pressable
-              key={day}
-              onPress={() => setSelectedDate(index)}
+              key={`${slot.date.getFullYear()}-${slot.date.getMonth()}-${slot.date.getDate()}`}
+              onPress={() => setSelectedDayIndex(index)}
               style={[
                 styles.dateItem,
                 { minWidth: Math.min(52, (width - 56) / 7) },
-                selectedDate === index && styles.dateItemSelected,
+                selectedDayIndex === index && styles.dateItemSelected,
               ]}
             >
               <Text
                 style={[
                   styles.dayText,
-                  selectedDate === index && styles.dayTextSelected,
+                  selectedDayIndex === index && styles.dayTextSelected,
                 ]}
               >
-                {day}
+                {slot.weekdayShort}
               </Text>
               <Text
                 style={[
                   styles.dateNum,
-                  selectedDate === index && styles.dateNumSelected,
+                  selectedDayIndex === index && styles.dateNumSelected,
                 ]}
               >
-                {dates[index]}
+                {slot.dayOfMonth}
               </Text>
             </Pressable>
           ))}

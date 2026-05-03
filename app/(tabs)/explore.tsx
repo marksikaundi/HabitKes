@@ -3,16 +3,33 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Text,
   TextInput,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Colors, Fonts } from "@/constants/theme";
+import {
+  ACCENT_LIME,
+  ACCENT_ON_LIME,
+  BACKGROUND_PAGE,
+  BORDER_SUBTLE,
+  Fonts,
+  SURFACE_MUTED,
+  TEXT_PRIMARY,
+  TEXT_SECONDARY,
+} from "@/constants/theme";
+import type { Activity } from "@/lib/accountability-board";
 import { useAccountabilityBoard } from "@/lib/accountability-board";
 
+function toneAccent(tone: Activity["tone"]): string {
+  if (tone === "positive") return ACCENT_LIME;
+  if (tone === "warning") return "#F59E0B";
+  return BORDER_SUBTLE;
+}
+
 export default function CrewScreen() {
+  const insets = useSafeAreaInsets();
   const {
     friends,
     activity,
@@ -34,71 +51,105 @@ export default function CrewScreen() {
     <ScrollView
       contentContainerStyle={[
         styles.page,
-        { backgroundColor: Colors.light.background },
+        {
+          paddingTop: Math.max(insets.top, 16),
+          paddingBottom: Math.max(insets.bottom, 28),
+          backgroundColor: BACKGROUND_PAGE,
+        },
       ]}
       showsVerticalScrollIndicator={false}
     >
-      <ThemedView style={styles.hero} lightColor="#0F172A" darkColor="#0F172A">
-        <ThemedText type="defaultSemiBold" style={styles.heroEyebrow}>
-          Social accountability
-        </ThemedText>
-        <ThemedText type="title" style={styles.heroTitle}>
-          Bring friends into the streak.
-        </ThemedText>
-        <ThemedText style={styles.heroCopy}>
-          Appwrite keeps the board synced, so every check-in and nudge shows up
-          for the whole crew.
-        </ThemedText>
-
-        <View style={styles.setupRow}>
-          <View
-            style={[
-              styles.connectionPill,
-              connectionState === "live"
-                ? styles.connectionLive
-                : styles.connectionDemo,
-            ]}
-          >
-            <ThemedText type="defaultSemiBold" style={styles.connectionText}>
-              {connectionLabel}
-            </ThemedText>
-          </View>
-          <Pressable
-            onPress={() => void refreshBoard()}
-            style={({ pressed }) => [
-              styles.refreshButton,
-              pressed && styles.refreshPressed,
-            ]}
-          >
-            <ThemedText type="defaultSemiBold" style={styles.refreshText}>
-              Refresh board
-            </ThemedText>
-          </Pressable>
+      <View style={styles.pageHeader}>
+        <View>
+          <Text style={styles.screenTitle}>Activity</Text>
+          <Text style={styles.screenSubtitle}>
+            Everything you and your crew log shows up here.
+          </Text>
         </View>
-      </ThemedView>
+        <Pressable
+          onPress={() => void refreshBoard()}
+          style={({ pressed }) => [
+            styles.syncChip,
+            pressed && styles.syncChipPressed,
+          ]}
+        >
+          <Text style={styles.syncChipText}>Sync</Text>
+        </Pressable>
+      </View>
 
-      <ThemedView style={styles.card} lightColor="#FFFFFF" darkColor="#15181C">
-        <ThemedText type="subtitle" style={styles.sectionTitle}>
-          Invite a friend
-        </ThemedText>
-        <ThemedText style={styles.sectionCopy}>
-          Add someone to the accountability loop. Their invite will also sync to
-          the Appwrite database when the env vars are set.
-        </ThemedText>
+      <View style={styles.statusRow}>
+        <View
+          style={[
+            styles.liveDot,
+            connectionState === "live"
+              ? styles.liveDotOn
+              : styles.liveDotIdle,
+          ]}
+        />
+        <Text style={styles.statusText} numberOfLines={2}>
+          {connectionLabel}
+        </Text>
+      </View>
 
+      <Text style={styles.sectionHeading}>Recent</Text>
+      <View style={styles.activityPanel}>
+        {activity.length === 0 ? (
+          <Text style={styles.emptyText}>
+            No activity yet. Tap + to log something.
+          </Text>
+        ) : (
+          activity.map((entry, index) => (
+            <View
+              key={entry.id}
+              style={[
+                styles.activityRow,
+                index < activity.length - 1 && styles.activityRowBorder,
+              ]}
+            >
+              <View
+                style={[
+                  styles.toneStrip,
+                  { backgroundColor: toneAccent(entry.tone) },
+                ]}
+              />
+              <View style={styles.activityBody}>
+                <View style={styles.activityTop}>
+                  <Text style={styles.activityTitle} numberOfLines={2}>
+                    {entry.title}
+                  </Text>
+                  <Text style={styles.activityTime}>{entry.time}</Text>
+                </View>
+                <Text style={styles.activityDetail} numberOfLines={3}>
+                  {entry.detail}
+                </Text>
+              </View>
+            </View>
+          ))
+        )}
+      </View>
+
+      <Text style={[styles.sectionHeading, styles.sectionHeadingSpaced]}>
+        Crew
+      </Text>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Invite someone</Text>
+        <Text style={styles.cardHint}>
+          Optional — syncs when Appwrite env is configured.
+        </Text>
         <View style={styles.inputStack}>
           <TextInput
             value={name}
             onChangeText={setName}
-            placeholder="Friend name"
-            placeholderTextColor="#94A3B8"
+            placeholder="Name"
+            placeholderTextColor={TEXT_SECONDARY}
             style={styles.input}
           />
           <TextInput
             value={focus}
             onChangeText={setFocus}
             placeholder="Their focus"
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor={TEXT_SECONDARY}
             style={styles.input}
           />
           <Pressable
@@ -108,306 +159,325 @@ export default function CrewScreen() {
               pressed && styles.buttonPressed,
             ]}
           >
-            <ThemedText type="defaultSemiBold" style={styles.primaryButtonText}>
-              Add to crew
-            </ThemedText>
+            <Text style={styles.primaryButtonText}>Add to crew</Text>
           </Pressable>
         </View>
-      </ThemedView>
-
-      <View style={styles.gridRow}>
-        <ThemedView
-          style={styles.card}
-          lightColor="#FFFFFF"
-          darkColor="#15181C"
-        >
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Live members
-          </ThemedText>
-          <View style={styles.friendList}>
-            {friends.map((friend) => (
-              <View key={friend.id} style={styles.friendRow}>
-                <View
-                  style={[
-                    styles.avatar,
-                    friend.live ? styles.avatarLive : styles.avatarIdle,
-                  ]}
-                >
-                  <ThemedText type="defaultSemiBold" style={styles.avatarText}>
-                    {friend.avatar}
-                  </ThemedText>
-                </View>
-                <View style={styles.friendCopy}>
-                  <ThemedText type="defaultSemiBold">{friend.name}</ThemedText>
-                  <ThemedText style={styles.friendMeta}>
-                    {friend.focus}
-                  </ThemedText>
-                </View>
-                <View
-                  style={[
-                    styles.liveDot,
-                    friend.live ? styles.liveDotOn : styles.liveDotOff,
-                  ]}
-                />
-              </View>
-            ))}
-          </View>
-        </ThemedView>
-
-        <ThemedView
-          style={styles.card}
-          lightColor="#FFFFFF"
-          darkColor="#15181C"
-        >
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Realtime notes
-          </ThemedText>
-          <View style={styles.noteList}>
-            {activity.map((entry) => (
-              <View key={entry.id} style={styles.noteRow}>
-                <ThemedText type="defaultSemiBold" style={styles.noteTitle}>
-                  {entry.title}
-                </ThemedText>
-                <ThemedText style={styles.noteDetail}>
-                  {entry.detail}
-                </ThemedText>
-                <ThemedText style={styles.noteTime}>{entry.time}</ThemedText>
-              </View>
-            ))}
-          </View>
-        </ThemedView>
       </View>
 
-      <ThemedView
-        style={styles.footerCard}
-        lightColor="#F97316"
-        darkColor="#F97316"
-      >
-        <ThemedText type="defaultSemiBold" style={styles.footerLabel}>
-          Appwrite setup
-        </ThemedText>
-        <ThemedText type="title" style={styles.footerTitle}>
-          Use database + realtime collections
-        </ThemedText>
-        <ThemedText style={styles.footerCopy}>
-          Set the Expo public env vars for endpoint, project, database, and the
-          habits, friends, and activity collection IDs. Once they are in place,
-          the board switches from demo mode to live sync.
-        </ThemedText>
-      </ThemedView>
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Members</Text>
+        <View style={styles.friendList}>
+          {friends.map((friend, index) => (
+            <View
+              key={friend.id}
+              style={[
+                styles.friendRow,
+                index < friends.length - 1 && styles.friendRowSep,
+              ]}
+            >
+              <View
+                style={[
+                  styles.avatar,
+                  friend.live ? styles.avatarLive : styles.avatarIdle,
+                ]}
+              >
+                <Text style={styles.avatarText}>{friend.avatar}</Text>
+              </View>
+              <View style={styles.friendCopy}>
+                <Text style={styles.friendName}>{friend.name}</Text>
+                <Text style={styles.friendMeta}>{friend.focus}</Text>
+              </View>
+              <View
+                style={[
+                  styles.presenceDot,
+                  friend.live ? styles.presenceOn : styles.presenceOff,
+                ]}
+              />
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.metaCard}>
+        <Text style={styles.metaTitle}>Appwrite</Text>
+        <Text style={styles.metaCopy}>
+          Add Expo public env vars for habits, friends, and activity collections
+          to enable cloud sync and realtime updates.
+        </Text>
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   page: {
-    padding: 20,
-    gap: 16,
-    backgroundColor: "#F3F7FB",
+    paddingHorizontal: 20,
+    gap: 0,
   },
-  hero: {
-    borderRadius: 28,
-    padding: 22,
-    gap: 14,
-    shadowColor: "#0F172A",
-    shadowOpacity: 0.08,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 3,
-    backgroundColor: Colors.light.accentDark,
-  },
-  heroEyebrow: {
-    color: Colors.light.accent,
-    textTransform: "uppercase",
-    letterSpacing: 1.3,
-    fontSize: 12,
-  },
-  heroTitle: {
-    color: "#FFFFFF",
-    fontFamily: Fonts.sans,
-    fontSize: 32,
-  },
-  heroCopy: {
-    color: "#CBD5E1",
-    lineHeight: 22,
-  },
-  setupRow: {
+
+  pageHeader: {
     flexDirection: "row",
-    gap: 10,
-    flexWrap: "wrap",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: 16,
+    marginBottom: 16,
   },
-  connectionPill: {
+  screenTitle: {
+    fontSize: 28,
+    fontFamily: Fonts.bold,
+    color: TEXT_PRIMARY,
+    letterSpacing: -0.5,
+  },
+  screenSubtitle: {
+    marginTop: 6,
+    fontSize: 15,
+    color: TEXT_SECONDARY,
+    lineHeight: 21,
+    maxWidth: 260,
+  },
+  syncChip: {
+    marginTop: 2,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
     borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    backgroundColor: SURFACE_MUTED,
+    borderWidth: 1,
+    borderColor: BORDER_SUBTLE,
   },
-  connectionLive: {
-    backgroundColor: "rgba(16, 185, 129, 0.18)",
+  syncChipPressed: {
+    opacity: 0.85,
   },
-  connectionDemo: {
-    backgroundColor: "rgba(249, 115, 22, 0.18)",
-  },
-  connectionText: {
-    color: "#FFFFFF",
-    fontSize: 12,
-  },
-  refreshButton: {
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: "rgba(255, 255, 255, 0.12)",
-  },
-  refreshPressed: {
-    opacity: 0.86,
-  },
-  refreshText: {
-    color: "#FFFFFF",
-    fontSize: 12,
-  },
-  card: {
-    flex: 1,
-    minWidth: 280,
-    borderRadius: 24,
-    padding: 16,
-    gap: 14,
-    shadowColor: "#0F172A",
-    shadowOpacity: 0.05,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 2,
-  },
-  sectionTitle: {
+  syncChipText: {
+    fontSize: 13,
     fontFamily: Fonts.semibold,
+    color: TEXT_PRIMARY,
   },
-  sectionCopy: {
-    color: "#64748B",
+
+  statusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 22,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    backgroundColor: SURFACE_MUTED,
+    borderRadius: 16,
+  },
+  liveDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  liveDotOn: {
+    backgroundColor: ACCENT_LIME,
+  },
+  liveDotIdle: {
+    backgroundColor: TEXT_SECONDARY,
+    opacity: 0.5,
+  },
+  statusText: {
+    flex: 1,
+    fontSize: 13,
+    fontFamily: Fonts.medium,
+    color: TEXT_SECONDARY,
+    lineHeight: 18,
+  },
+
+  sectionHeading: {
+    fontSize: 13,
+    fontFamily: Fonts.semibold,
+    color: TEXT_SECONDARY,
+    letterSpacing: 0.3,
+    textTransform: "uppercase",
+    marginBottom: 10,
+  },
+  sectionHeadingSpaced: {
+    marginTop: 28,
+  },
+
+  activityPanel: {
+    backgroundColor: BACKGROUND_PAGE,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: BORDER_SUBTLE,
+    overflow: "hidden",
+  },
+  emptyText: {
+    padding: 22,
+    fontSize: 15,
+    color: TEXT_SECONDARY,
+    textAlign: "center",
     lineHeight: 22,
+  },
+  activityRow: {
+    flexDirection: "row",
+    minHeight: 72,
+  },
+  activityRowBorder: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: BORDER_SUBTLE,
+  },
+  toneStrip: {
+    width: 4,
+  },
+  activityBody: {
+    flex: 1,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    paddingLeft: 12,
+    gap: 6,
+  },
+  activityTop: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  activityTitle: {
+    flex: 1,
+    fontSize: 16,
+    fontFamily: Fonts.semibold,
+    color: TEXT_PRIMARY,
+    lineHeight: 22,
+  },
+  activityTime: {
+    fontSize: 12,
+    fontFamily: Fonts.medium,
+    color: TEXT_SECONDARY,
+    marginTop: 2,
+  },
+  activityDetail: {
+    fontSize: 14,
+    color: TEXT_SECONDARY,
+    lineHeight: 20,
+  },
+
+  card: {
+    marginTop: 12,
+    borderRadius: 24,
+    padding: 18,
+    backgroundColor: BACKGROUND_PAGE,
+    borderWidth: 1,
+    borderColor: BORDER_SUBTLE,
+  },
+  cardTitle: {
+    fontSize: 17,
+    fontFamily: Fonts.semibold,
+    color: TEXT_PRIMARY,
+    marginBottom: 6,
+  },
+  cardHint: {
+    fontSize: 13,
+    color: TEXT_SECONDARY,
+    lineHeight: 19,
+    marginBottom: 14,
   },
   inputStack: {
     gap: 10,
   },
   input: {
-    borderRadius: 18,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#CBD5E1",
-    backgroundColor: "#F8FAFC",
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    borderColor: BORDER_SUBTLE,
+    backgroundColor: SURFACE_MUTED,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     fontSize: 16,
-    color: "#0F172A",
+    fontFamily: Fonts.sans,
+    color: TEXT_PRIMARY,
   },
   primaryButton: {
-    backgroundColor: Colors.light.accent,
-    borderRadius: 18,
+    backgroundColor: ACCENT_LIME,
+    borderRadius: 999,
     paddingVertical: 14,
     alignItems: "center",
-    shadowColor: Colors.light.accentDark,
-    shadowOpacity: 0.16,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 4,
-  },
-  footerCard: {
-    borderRadius: 28,
-    padding: 20,
-    gap: 10,
-    backgroundColor: Colors.light.background,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 2,
+    marginTop: 4,
   },
   buttonPressed: {
-    opacity: 0.9,
-    transform: [{ scale: 0.99 }],
+    opacity: 0.92,
   },
   primaryButtonText: {
-    color: "#FFFFFF",
+    fontSize: 16,
+    fontFamily: Fonts.semibold,
+    color: ACCENT_ON_LIME,
   },
-  gridRow: {
-    flexDirection: "row",
-    gap: 12,
-    flexWrap: "wrap",
-  },
+
   friendList: {
-    gap: 12,
+    gap: 0,
+    marginTop: 4,
   },
   friendRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+    paddingVertical: 12,
+  },
+  friendRowSep: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: BORDER_SUBTLE,
   },
   avatar: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
   },
   avatarLive: {
-    backgroundColor: "rgba(16, 185, 129, 0.16)",
+    backgroundColor: "rgba(199, 244, 50, 0.35)",
   },
   avatarIdle: {
-    backgroundColor: "rgba(100, 116, 139, 0.16)",
+    backgroundColor: SURFACE_MUTED,
   },
   avatarText: {
-    fontSize: 14,
+    fontSize: 15,
+    fontFamily: Fonts.semibold,
+    color: TEXT_PRIMARY,
   },
   friendCopy: {
     flex: 1,
-    gap: 4,
+    gap: 3,
+  },
+  friendName: {
+    fontSize: 16,
+    fontFamily: Fonts.semibold,
+    color: TEXT_PRIMARY,
   },
   friendMeta: {
-    color: "#64748B",
-    fontSize: 12,
+    fontSize: 13,
+    color: TEXT_SECONDARY,
   },
-  liveDot: {
+  presenceDot: {
     width: 10,
     height: 10,
     borderRadius: 5,
   },
-  liveDotOn: {
-    backgroundColor: "#10B981",
+  presenceOn: {
+    backgroundColor: ACCENT_LIME,
   },
-  liveDotOff: {
-    backgroundColor: "#94A3B8",
+  presenceOff: {
+    backgroundColor: BORDER_SUBTLE,
   },
-  noteList: {
-    gap: 12,
+
+  metaCard: {
+    marginTop: 24,
+    padding: 16,
+    borderRadius: 20,
+    backgroundColor: SURFACE_MUTED,
+    borderWidth: 1,
+    borderColor: BORDER_SUBTLE,
   },
-  noteRow: {
-    gap: 4,
-    paddingBottom: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#E2E8F0",
-  },
-  noteTitle: {
-    fontSize: 14,
-  },
-  noteDetail: {
-    color: "#64748B",
-    lineHeight: 20,
-  },
-  noteTime: {
-    color: "#94A3B8",
+  metaTitle: {
     fontSize: 12,
-  },
-  footerLabel: {
-    color: "#FFFFFF",
-    fontSize: 12,
-    letterSpacing: 1.2,
+    fontFamily: Fonts.semibold,
+    color: TEXT_SECONDARY,
+    letterSpacing: 0.4,
     textTransform: "uppercase",
+    marginBottom: 8,
   },
-  footerTitle: {
-    color: "#FFFFFF",
-    fontFamily: Fonts.bold,
-    fontSize: 28,
-    lineHeight: 34,
-  },
-  footerCopy: {
-    color: "rgba(255, 255, 255, 0.92)",
-    lineHeight: 22,
-    fontSize: 15,
+  metaCopy: {
+    fontSize: 13,
+    color: TEXT_SECONDARY,
+    lineHeight: 19,
   },
 });
