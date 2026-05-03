@@ -1,193 +1,181 @@
 import { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+  Text,
+  useWindowDimensions,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Fonts } from "@/constants/theme";
+import {
+  ACCENT_LIME,
+  ACCENT_ON_LIME,
+  BACKGROUND_PAGE,
+  BORDER_SUBTLE,
+  Fonts,
+  SURFACE_MUTED,
+  TEXT_PRIMARY,
+  TEXT_SECONDARY,
+} from "@/constants/theme";
 import { useAccountabilityBoard } from "@/lib/accountability-board";
 
 export default function HomeScreen() {
-  const {
-    habits,
-    friends,
-    activity,
-    connectionLabel,
-    connectionState,
-    toggleHabit,
-  } = useAccountabilityBoard();
+  const { habits, toggleHabit } = useAccountabilityBoard();
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
 
-  const [selectedDate, setSelectedDate] = useState(3); // Wednesday (12)
+  const [selectedDate, setSelectedDate] = useState(3);
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const dates = [9, 10, 11, 12, 13, 14, 15];
-  const currentDay = new Date().getDay();
 
   const morningHabit = habits.find((h) => h.title.includes("Morning"));
-  const eveningHabit = habits.find((h) => h.title.includes("Evening"));
 
   return (
     <ScrollView
-      contentContainerStyle={[styles.page, { backgroundColor: "#F5F6FA" }]}
+      contentContainerStyle={[
+        styles.page,
+        {
+          paddingTop: Math.max(insets.top, 16),
+          backgroundColor: BACKGROUND_PAGE,
+        },
+      ]}
       showsVerticalScrollIndicator={false}
     >
-      {/* Header Section */}
       <View style={styles.headerSection}>
         <View style={styles.greetingRow}>
           <View style={styles.avatarGreeting}>
             <View style={styles.profileAvatar}>
-              <ThemedText style={styles.avatarEmoji}>👤</ThemedText>
+              <Text style={styles.avatarEmoji}>👤</Text>
             </View>
-            <ThemedText type="defaultSemiBold" style={styles.greeting}>
-              Good afternoon.
-            </ThemedText>
+            <Text style={styles.greeting}>Good afternoon.</Text>
           </View>
           <View style={styles.streakBadge}>
-            <ThemedText type="defaultSemiBold" style={styles.streakText}>
-              🔥 10
-            </ThemedText>
+            <Text style={styles.streakText}>🔥 10</Text>
           </View>
         </View>
       </View>
 
-      {/* Date Selector */}
-      <View style={styles.dateSelector}>
-        {days.map((day, index) => (
-          <Pressable
-            key={index}
-            onPress={() => setSelectedDate(index)}
-            style={[
-              styles.dateItem,
-              selectedDate === index && styles.dateItemSelected,
-            ]}
-          >
-            <ThemedText
+      <View style={styles.calendarShell}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.calendarStrip}
+        >
+          {days.map((day, index) => (
+            <Pressable
+              key={day}
+              onPress={() => setSelectedDate(index)}
               style={[
-                styles.dayText,
-                selectedDate === index && styles.dayTextSelected,
+                styles.dateItem,
+                { minWidth: Math.min(52, (width - 56) / 7) },
+                selectedDate === index && styles.dateItemSelected,
               ]}
             >
-              {day}
-            </ThemedText>
-            <ThemedText
-              type="defaultSemiBold"
-              style={[
-                styles.dateText,
-                selectedDate === index && styles.dateTextSelected,
-              ]}
-            >
-              {dates[index]}
-            </ThemedText>
-          </Pressable>
-        ))}
+              <Text
+                style={[
+                  styles.dayText,
+                  selectedDate === index && styles.dayTextSelected,
+                ]}
+              >
+                {day}
+              </Text>
+              <Text
+                style={[
+                  styles.dateNum,
+                  selectedDate === index && styles.dateNumSelected,
+                ]}
+              >
+                {dates[index]}
+              </Text>
+            </Pressable>
+          ))}
+        </ScrollView>
       </View>
 
-      {/* Cards Row */}
       <View style={styles.cardsRow}>
-        {/* Morning Card */}
         <Pressable
           onPress={() => morningHabit && toggleHabit(morningHabit.id)}
-          style={[styles.card, styles.morningCard]}
+          style={[styles.card, styles.cardOutlined]}
         >
-          <View style={styles.cardContent}>
-            <View style={styles.cardIcon}>
-              <ThemedText style={styles.iconEmoji}>🌱</ThemedText>
+          <View style={styles.illustrationRow}>
+            <View style={styles.limeDisc}>
+              <Text style={styles.illEmoji}>☀️</Text>
             </View>
-            <ThemedText style={styles.cardLabel}>
-              Morning Preparation
-            </ThemedText>
-            <ThemedText type="defaultSemiBold" style={styles.cardTitle}>
-              Ready to take on the day?
-            </ThemedText>
-            <Pressable
-              style={styles.beginButton}
-              onPress={() => morningHabit && toggleHabit(morningHabit.id)}
-            >
-              <ThemedText type="defaultSemiBold" style={styles.buttonText}>
-                Begin
-              </ThemedText>
-            </Pressable>
+            <View style={styles.limeDisc}>
+              <Text style={styles.illEmoji}>🌳</Text>
+            </View>
           </View>
+          <ThemedText style={styles.cardEyebrow}>Morning Preparation</ThemedText>
+          <Text style={styles.cardHeadline}>Ready to take on the day?</Text>
+          <Pressable
+            style={styles.primaryCta}
+            onPress={() => morningHabit && toggleHabit(morningHabit.id)}
+          >
+            <Text style={styles.primaryCtaLabel}>Begin</Text>
+          </Pressable>
         </Pressable>
 
-        {/* Evening Card */}
-        <Pressable style={[styles.card, styles.eveningCard]}>
-          <View style={styles.cardContent}>
-            <View style={styles.cardIcon}>
-              <ThemedText style={styles.iconEmoji}>🌙</ThemedText>
+        <View style={[styles.card, styles.cardOutlined]}>
+          <View style={styles.illustrationRow}>
+            <View style={styles.limeDisc}>
+              <Text style={styles.illEmoji}>🌙</Text>
             </View>
-            <ThemedText style={styles.cardLabel}>Evening complete.</ThemedText>
-            <View style={styles.moodButtons}>
-              <View style={styles.moodOption}>
-                <ThemedText style={styles.moodEmoji}>😌</ThemedText>
-                <ThemedText style={styles.moodText}>Satisfied</ThemedText>
-              </View>
-              <View style={styles.moodOption}>
-                <ThemedText style={styles.moodEmoji}>😊</ThemedText>
-                <ThemedText style={styles.moodText}>Happy</ThemedText>
-              </View>
+            <View style={styles.limeDisc}>
+              <Text style={styles.illEmoji}>☁️</Text>
             </View>
-            <Pressable style={styles.moreButton}>
-              <ThemedText type="defaultSemiBold" style={styles.moreText}>
-                +3More
-              </ThemedText>
-            </Pressable>
           </View>
-        </Pressable>
+          <ThemedText style={styles.cardEyebrow}>Evening complete.</ThemedText>
+          <View style={styles.moodRow}>
+            <View style={styles.moodPill}>
+              <Text style={styles.moodPillText}>😌 Satisfied</Text>
+            </View>
+            <View style={styles.moodPill}>
+              <Text style={styles.moodPillText}>😊 Happy</Text>
+            </View>
+          </View>
+          <Text style={styles.moreHint}>+3More</Text>
+        </View>
       </View>
 
-      {/* Progress Section */}
-      <ThemedView
-        style={styles.progressCard}
-        lightColor="#FFFFFF"
-        darkColor="#15181C"
-      >
-        <ThemedText style={styles.progressLabel}>Day 5 of 7</ThemedText>
-        <ThemedText type="defaultSemiBold" style={styles.progressTitle}>
-          On Glowing reviews.
-        </ThemedText>
-        <ThemedText style={styles.progressSubtitle}>
-          Was there a time you could've said something nice but didn&apos;t?
-        </ThemedText>
-        <Pressable style={styles.reflectButton}>
-          <ThemedText type="defaultSemiBold" style={styles.reflectButtonText}>
-            Reflect
-          </ThemedText>
-        </Pressable>
-      </ThemedView>
+      <View style={styles.reflectShell}>
+        <View style={styles.reflectTop}>
+          <View style={styles.dayPill}>
+            <Text style={styles.dayPillText}>Day 5 of 7</Text>
+          </View>
+        </View>
+        <View style={styles.reflectBody}>
+          <View style={styles.reflectCopy}>
+            <Text style={styles.reflectTitle}>On Glowing reviews.</Text>
+            <ThemedText style={styles.reflectSubtitle}>
+              Was there a time you could&apos;ve said something nice but
+              didn&apos;t?
+            </ThemedText>
+            <Pressable style={styles.primaryCta}>
+              <Text style={styles.primaryCtaLabel}>Reflect</Text>
+            </Pressable>
+          </View>
+          <View style={styles.reflectArt}>
+            <Text style={styles.starsBubble}>✨ ✨ ✨</Text>
+            <Text style={styles.bearEmoji}>🐻</Text>
+          </View>
+        </View>
+      </View>
     </ScrollView>
-  );
-}
-
-function StatCard({
-  label,
-  value,
-  accent,
-}: {
-  label: string;
-  value: string;
-  accent: string;
-}) {
-  return (
-    <View style={styles.statCard}>
-      <View style={[styles.statAccent, { backgroundColor: accent }]} />
-      <ThemedText type="defaultSemiBold" style={styles.statValue}>
-        {value}
-      </ThemedText>
-      <ThemedText style={styles.statLabel}>{label}</ThemedText>
-    </View>
   );
 }
 
 const styles = StyleSheet.create({
   page: {
-    padding: 20,
+    paddingHorizontal: 20,
     gap: 20,
-    backgroundColor: "#F5F6FA",
-    paddingBottom: 120,
+    paddingBottom: 140,
   },
 
-  // Header Section
   headerSection: {
-    marginTop: 8,
+    marginTop: 4,
   },
   greetingRow: {
     flexDirection: "row",
@@ -204,206 +192,211 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#C8FF1A",
+    backgroundColor: ACCENT_LIME,
     alignItems: "center",
     justifyContent: "center",
   },
   avatarEmoji: {
-    fontSize: 24,
+    fontSize: 22,
   },
   greeting: {
     fontSize: 22,
-    fontFamily: Fonts.semibold,
-    color: "#1F2937",
+    fontFamily: Fonts.bold,
+    color: TEXT_PRIMARY,
+    letterSpacing: -0.3,
   },
   streakBadge: {
-    backgroundColor: "#FFE4B5",
+    backgroundColor: SURFACE_MUTED,
     borderRadius: 999,
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingVertical: 8,
   },
   streakText: {
-    fontSize: 16,
-    color: "#D97706",
+    fontSize: 15,
+    fontFamily: Fonts.semibold,
+    color: TEXT_PRIMARY,
   },
 
-  // Date Selector
-  dateSelector: {
+  calendarShell: {
+    backgroundColor: SURFACE_MUTED,
+    borderRadius: 28,
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+  },
+  calendarStrip: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 10,
+    gap: 8,
+    paddingHorizontal: 4,
   },
   dateItem: {
-    flex: 1,
     alignItems: "center",
-    paddingVertical: 12,
-    borderRadius: 16,
-    backgroundColor: "#FFFFFF",
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderRadius: 18,
+    backgroundColor: BACKGROUND_PAGE,
   },
   dateItemSelected: {
-    backgroundColor: "#C8FF1A",
+    backgroundColor: ACCENT_LIME,
   },
   dayText: {
     fontSize: 12,
-    color: "#9CA3AF",
+    fontFamily: Fonts.sans,
+    color: TEXT_SECONDARY,
     marginBottom: 4,
   },
   dayTextSelected: {
-    color: "#1C2011",
+    color: ACCENT_ON_LIME,
+    fontFamily: Fonts.semibold,
   },
-  dateText: {
+  dateNum: {
     fontSize: 16,
-    color: "#374151",
+    fontFamily: Fonts.semibold,
+    color: TEXT_PRIMARY,
   },
-  dateTextSelected: {
-    color: "#1C2011",
+  dateNumSelected: {
+    color: ACCENT_ON_LIME,
   },
 
-  // Cards Row
   cardsRow: {
     flexDirection: "row",
     gap: 12,
+    alignItems: "stretch",
   },
   card: {
     flex: 1,
-    borderRadius: 24,
+    borderRadius: 28,
     padding: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
+    minHeight: 220,
   },
-  morningCard: {
-    backgroundColor: "#FFFFFF",
+  cardOutlined: {
+    backgroundColor: BACKGROUND_PAGE,
+    borderWidth: 1,
+    borderColor: BORDER_SUBTLE,
   },
-  eveningCard: {
-    backgroundColor: "#FFFFFF",
+  illustrationRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 8,
   },
-  cardContent: {
-    gap: 12,
-  },
-  cardIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 12,
-    backgroundColor: "#F3F4F6",
+  limeDisc: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    backgroundColor: "rgba(199, 244, 50, 0.35)",
     alignItems: "center",
     justifyContent: "center",
   },
-  iconEmoji: {
-    fontSize: 28,
+  illEmoji: {
+    fontSize: 26,
   },
-  cardLabel: {
+  cardEyebrow: {
     fontSize: 12,
-    color: "#9CA3AF",
+    color: TEXT_SECONDARY,
     marginTop: 4,
+    marginBottom: 6,
   },
-  cardTitle: {
+  cardHeadline: {
     fontSize: 16,
-    color: "#1F2937",
+    fontFamily: Fonts.semibold,
+    color: TEXT_PRIMARY,
     lineHeight: 22,
+    letterSpacing: -0.2,
+    flex: 1,
   },
-  beginButton: {
-    backgroundColor: "#C8FF1A",
+  primaryCta: {
+    backgroundColor: ACCENT_LIME,
     borderRadius: 999,
     paddingVertical: 12,
     alignItems: "center",
-    marginTop: 8,
+    marginTop: "auto",
   },
-  buttonText: {
+  primaryCtaLabel: {
     fontSize: 16,
-    color: "#1C2011",
+    fontFamily: Fonts.semibold,
+    color: ACCENT_ON_LIME,
   },
 
-  // Mood Options
-  moodButtons: {
+  moodRow: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
-    marginTop: 4,
-  },
-  moodOption: {
-    alignItems: "center",
-    gap: 4,
-  },
-  moodEmoji: {
-    fontSize: 28,
-  },
-  moodText: {
-    fontSize: 12,
-    color: "#6B7280",
-  },
-  moreButton: {
-    backgroundColor: "#C8FF1A",
-    borderRadius: 999,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    alignSelf: "flex-start",
     marginTop: 8,
   },
-  moreText: {
+  moodPill: {
+    borderWidth: 1,
+    borderColor: BORDER_SUBTLE,
+    borderRadius: 999,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: BACKGROUND_PAGE,
+  },
+  moodPillText: {
     fontSize: 12,
-    color: "#1C2011",
+    fontFamily: Fonts.sans,
+    color: TEXT_PRIMARY,
+  },
+  moreHint: {
+    marginTop: 12,
+    fontSize: 13,
+    fontFamily: Fonts.semibold,
+    color: ACCENT_LIME,
   },
 
-  // Progress Card
-  progressCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 24,
-    padding: 20,
-    gap: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
+  reflectShell: {
+    backgroundColor: SURFACE_MUTED,
+    borderRadius: 28,
+    padding: 18,
+    gap: 14,
   },
-  progressLabel: {
+  reflectTop: {
+    flexDirection: "row",
+  },
+  dayPill: {
+    alignSelf: "flex-start",
+    backgroundColor: BACKGROUND_PAGE,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: BORDER_SUBTLE,
+  },
+  dayPillText: {
     fontSize: 12,
-    color: "#9CA3AF",
     fontFamily: Fonts.semibold,
+    color: TEXT_SECONDARY,
   },
-  progressTitle: {
+  reflectBody: {
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "flex-end",
+  },
+  reflectCopy: {
+    flex: 1,
+    gap: 10,
+  },
+  reflectTitle: {
     fontSize: 18,
-    color: "#1F2937",
     fontFamily: Fonts.semibold,
+    color: TEXT_PRIMARY,
+    letterSpacing: -0.3,
   },
-  progressSubtitle: {
+  reflectSubtitle: {
     fontSize: 14,
-    color: "#6B7280",
+    color: TEXT_SECONDARY,
     lineHeight: 20,
   },
-  reflectButton: {
-    backgroundColor: "#C8FF1A",
-    borderRadius: 999,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    alignSelf: "flex-start",
-    marginTop: 8,
+  reflectArt: {
+    alignItems: "center",
+    justifyContent: "flex-end",
+    width: 88,
   },
-  reflectButtonText: {
-    fontSize: 16,
-    color: "#1C2011",
+  starsBubble: {
+    fontSize: 11,
+    color: ACCENT_LIME,
+    marginBottom: 4,
+    textAlign: "center",
   },
-
-  // Unused Stats
-  statCard: {
-    flex: 1,
-    borderRadius: 20,
-    backgroundColor: "rgba(15, 23, 42, 0.04)",
-    padding: 14,
-    gap: 4,
-  },
-  statAccent: {
-    width: 40,
-    height: 4,
-    borderRadius: 999,
-  },
-  statValue: {
-    fontSize: 24,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: "#64748B",
+  bearEmoji: {
+    fontSize: 52,
   },
 });

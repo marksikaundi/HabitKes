@@ -1,45 +1,62 @@
 import { Tabs } from "expo-router";
 import React from "react";
-import { View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HapticTab } from "@/components/haptic-tab";
 import { ThemedText } from "@/components/themed-text";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { Colors } from "@/constants/theme";
+import {
+  ACCENT_LIME,
+  ACCENT_ON_LIME,
+  BACKGROUND_PAGE,
+  BORDER_SUBTLE,
+  Colors,
+  Fonts,
+  TEXT_SECONDARY,
+} from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const insets = useSafeAreaInsets();
+  const palette = Colors[colorScheme ?? "light"];
+
+  const tabBarHeight = 56 + Math.max(insets.bottom, 12);
+  const fabLift = 28;
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        tabBarInactiveTintColor: "#9CA3AF",
+        tabBarActiveTintColor: palette.tabIconSelected,
+        tabBarInactiveTintColor: TEXT_SECONDARY,
         headerShown: false,
         tabBarButton: HapticTab,
+        tabBarShowLabel: true,
         tabBarStyle: {
           position: "absolute",
-          bottom: 16,
-          left: 16,
-          right: 16,
-          height: 70,
-          borderRadius: 999,
-          backgroundColor: "#FFFFFF",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: tabBarHeight,
+          paddingBottom: Math.max(insets.bottom, 10),
+          paddingTop: 10,
+          backgroundColor: BACKGROUND_PAGE,
+          borderTopWidth: StyleSheet.hairlineWidth,
+          borderTopColor: BORDER_SUBTLE,
+          elevation: 8,
           shadowColor: "#000",
-          shadowOpacity: 0.1,
-          shadowRadius: 20,
-          shadowOffset: { width: 0, height: 8 },
-          borderTopWidth: 0,
-          flexDirection: "row",
-          justifyContent: "space-around",
-          alignItems: "center",
-          paddingBottom: 8,
+          shadowOpacity: 0.06,
+          shadowRadius: 12,
+          shadowOffset: { width: 0, height: -2 },
         },
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: "600",
-          marginTop: 4,
+          fontFamily:
+            Platform.OS === "web"
+              ? undefined
+              : (Fonts?.medium as string | undefined),
+          color: TEXT_SECONDARY,
         },
       }}
     >
@@ -48,14 +65,14 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <View style={{ alignItems: "center" }}>
+            <TabGlyph focused={focused}>
               <IconSymbol
-                size={focused ? 28 : 24}
+                size={focused ? 26 : 22}
                 name="house.fill"
                 color={color}
                 weight={focused ? "bold" : "regular"}
               />
-            </View>
+            </TabGlyph>
           ),
         }}
       />
@@ -64,14 +81,14 @@ export default function TabLayout() {
         options={{
           title: "Inspirations",
           tabBarIcon: ({ color, focused }) => (
-            <View style={{ alignItems: "center" }}>
+            <TabGlyph focused={focused}>
               <IconSymbol
-                size={focused ? 28 : 24}
+                size={focused ? 26 : 22}
                 name="lightbulb.fill"
                 color={color}
                 weight={focused ? "bold" : "regular"}
               />
-            </View>
+            </TabGlyph>
           ),
         }}
       />
@@ -79,25 +96,33 @@ export default function TabLayout() {
         name="explore"
         options={{
           title: "",
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: () => (
             <View
               style={{
-                width: 60,
-                height: 60,
-                borderRadius: 30,
-                backgroundColor: "#C8FF1A",
+                width: 56,
+                height: 56,
+                borderRadius: 28,
+                backgroundColor: ACCENT_LIME,
                 alignItems: "center",
                 justifyContent: "center",
-                marginBottom: 20,
-                shadowColor: "#1C2011",
-                shadowOpacity: 0.2,
-                shadowRadius: 12,
-                shadowOffset: { width: 0, height: 6 },
+                marginBottom: fabLift,
+                shadowColor: ACCENT_ON_LIME,
+                shadowOpacity: 0.22,
+                shadowRadius: 14,
+                shadowOffset: { width: 0, height: 8 },
+                elevation: 10,
               }}
+              accessibilityRole="button"
+              accessibilityLabel="Add"
             >
               <ThemedText
                 type="defaultSemiBold"
-                style={{ fontSize: 32, color: "#1C2011" }}
+                style={{
+                  fontSize: 28,
+                  lineHeight: 32,
+                  color: ACCENT_ON_LIME,
+                  marginTop: -2,
+                }}
               >
                 +
               </ThemedText>
@@ -110,14 +135,14 @@ export default function TabLayout() {
         options={{
           title: "Library",
           tabBarIcon: ({ color, focused }) => (
-            <View style={{ alignItems: "center" }}>
+            <TabGlyph focused={focused}>
               <IconSymbol
-                size={focused ? 28 : 24}
-                name="books.vertical.fill"
+                size={focused ? 26 : 22}
+                name="safari.fill"
                 color={color}
                 weight={focused ? "bold" : "regular"}
               />
-            </View>
+            </TabGlyph>
           ),
         }}
       />
@@ -126,17 +151,31 @@ export default function TabLayout() {
         options={{
           title: "Journey",
           tabBarIcon: ({ color, focused }) => (
-            <View style={{ alignItems: "center" }}>
+            <TabGlyph focused={focused}>
               <IconSymbol
-                size={focused ? 28 : 24}
-                name="leaf.fill"
+                size={focused ? 26 : 22}
+                name="book.fill"
                 color={color}
                 weight={focused ? "bold" : "regular"}
               />
-            </View>
+            </TabGlyph>
           ),
         }}
       />
     </Tabs>
+  );
+}
+
+function TabGlyph({
+  children,
+  focused,
+}: {
+  children: React.ReactNode;
+  focused: boolean;
+}) {
+  return (
+    <View style={{ alignItems: "center", opacity: focused ? 1 : 0.85 }}>
+      {children}
+    </View>
   );
 }

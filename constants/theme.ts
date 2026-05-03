@@ -1,57 +1,66 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Design tokens — lime accent, charcoal text, Outfit (loaded in app/_layout).
  */
 
 import { Platform } from "react-native";
 
-// New palette inspired by user's design
-const ACCENT_LIME = "#C8FF1A";
-const ACCENT_DARK = "#1C2011";
-const BACKGROUND_LIGHT = "#F5F6FA";
-const MUTED_BLUE = "#6D7588";
+/** Primary lime from UI mockups (~#C7F432 / neon lime) */
+export const ACCENT_LIME = "#C7F432";
+export const ACCENT_ON_LIME = "#1C2011";
+export const TEXT_PRIMARY = "#1C2011";
+export const TEXT_SECONDARY = "#6D7588";
+export const BACKGROUND_PAGE = "#FFFFFF";
+export const SURFACE_MUTED = "#F5F6FA";
+export const BORDER_SUBTLE = "#E8EAEF";
 
 export const Colors = {
   light: {
-    text: "#11181C",
-    background: BACKGROUND_LIGHT,
-    bold: "Outfit_700Bold",
-    rounded: "Outfit_600SemiBold",
-    icon: MUTED_BLUE,
-    tabIconDefault: MUTED_BLUE,
-    tabIconSelected: ACCENT_LIME,
+    text: TEXT_PRIMARY,
+    textSecondary: TEXT_SECONDARY,
+    background: BACKGROUND_PAGE,
+    tint: ACCENT_LIME,
     accent: ACCENT_LIME,
-    bold: "Outfit_700Bold",
-    rounded: "Outfit_600SemiBold",
+    accentForeground: ACCENT_ON_LIME,
+    accentDark: ACCENT_ON_LIME,
+    icon: TEXT_SECONDARY,
+    tabIconDefault: TEXT_SECONDARY,
+    tabIconSelected: ACCENT_LIME,
+    surfaceMuted: SURFACE_MUTED,
+    border: BORDER_SUBTLE,
   },
   dark: {
     text: "#ECEDEE",
-    rounded:
-      "Outfit, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+    textSecondary: "#9CA3AF",
     background: "#0F1112",
     tint: ACCENT_LIME,
-    icon: MUTED_BLUE,
-    tabIconDefault: MUTED_BLUE,
-    tabIconSelected: ACCENT_LIME,
     accent: ACCENT_LIME,
-    accentDark: ACCENT_DARK,
+    accentForeground: ACCENT_ON_LIME,
+    accentDark: ACCENT_ON_LIME,
+    icon: TEXT_SECONDARY,
+    tabIconDefault: "#9CA3AF",
+    tabIconSelected: ACCENT_LIME,
+    surfaceMuted: "#1A1D21",
+    border: "rgba(255,255,255,0.08)",
   },
 };
-
-// Platform font fallbacks left intentionally minimal; Outfit family is loaded at app startup.
 
 export const Fonts = Platform.select({
   ios: {
     sans: "Outfit_400Regular",
+    medium: "Outfit_500Medium",
     semibold: "Outfit_600SemiBold",
     bold: "Outfit_700Bold",
   },
   android: {
     sans: "Outfit_400Regular",
+    medium: "Outfit_500Medium",
     semibold: "Outfit_600SemiBold",
     bold: "Outfit_700Bold",
   },
   web: {
-    sans: "Outfit, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+    sans: "Outfit, system-ui, sans-serif",
+    medium: "Outfit, system-ui, sans-serif",
+    semibold: "Outfit, system-ui, sans-serif",
+    bold: "Outfit, system-ui, sans-serif",
   },
 });

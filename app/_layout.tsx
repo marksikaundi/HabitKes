@@ -11,6 +11,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { AccountabilityBoardProvider } from "@/lib/accountability-board";
 import {
   Outfit_400Regular,
+  Outfit_500Medium,
   Outfit_600SemiBold,
   Outfit_700Bold,
   useFonts,
@@ -24,6 +25,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [fontsLoaded] = useFonts({
     Outfit_400Regular,
+    Outfit_500Medium,
     Outfit_600SemiBold,
     Outfit_700Bold,
   });
