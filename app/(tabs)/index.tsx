@@ -32,7 +32,10 @@ export default function HomeScreen() {
       {/* Header Section */}
       <View style={styles.headerSection}>
         <View style={styles.greetingRow}>
-          <View>
+          <View style={styles.avatarGreeting}>
+            <View style={styles.profileAvatar}>
+              <ThemedText style={styles.avatarEmoji}>👤</ThemedText>
+            </View>
             <ThemedText type="defaultSemiBold" style={styles.greeting}>
               Good afternoon.
             </ThemedText>
@@ -179,6 +182,7 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 20,
     backgroundColor: "#F5F6FA",
+    paddingBottom: 120,
   },
 
   // Header Section
@@ -190,8 +194,25 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  avatarGreeting: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    flex: 1,
+  },
+  profileAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#C8FF1A",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  avatarEmoji: {
+    fontSize: 24,
+  },
   greeting: {
-    fontSize: 28,
+    fontSize: 22,
     fontFamily: Fonts.semibold,
     color: "#1F2937",
   },
