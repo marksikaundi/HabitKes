@@ -74,7 +74,7 @@ const QUOTES: InspirationQuote[] = [
   {
     id: "q3",
     text: "Small steps every day add up to pathways you never planned.",
-    author: "HabitKes",
+    author: "Habora",
   },
   {
     id: "q4",
