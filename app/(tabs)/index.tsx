@@ -100,43 +100,52 @@ export default function HomeScreen() {
           onPress={() => morningHabit && toggleHabit(morningHabit.id)}
           style={[styles.card, styles.cardOutlined]}
         >
-          <View style={styles.illustrationRow}>
-            <View style={styles.limeDisc}>
-              <Text style={styles.illEmoji}>☀️</Text>
+          <View style={styles.cardColumn}>
+            <View style={styles.illustrationRow}>
+              <View style={styles.limeDisc}>
+                <Text style={styles.illEmoji}>☀️</Text>
+              </View>
+              <View style={styles.limeDisc}>
+                <Text style={styles.illEmoji}>🌳</Text>
+              </View>
             </View>
-            <View style={styles.limeDisc}>
-              <Text style={styles.illEmoji}>🌳</Text>
-            </View>
+            <ThemedText style={styles.cardEyebrow}>
+              Morning Preparation
+            </ThemedText>
+            <Text style={[styles.cardHeadline, styles.cardHeadlineGrow]}>
+              Ready to take on the day?
+            </Text>
+            <Pressable
+              style={styles.primaryCta}
+              onPress={() => morningHabit && toggleHabit(morningHabit.id)}
+            >
+              <Text style={styles.primaryCtaLabel}>Begin</Text>
+            </Pressable>
           </View>
-          <ThemedText style={styles.cardEyebrow}>Morning Preparation</ThemedText>
-          <Text style={styles.cardHeadline}>Ready to take on the day?</Text>
-          <Pressable
-            style={styles.primaryCta}
-            onPress={() => morningHabit && toggleHabit(morningHabit.id)}
-          >
-            <Text style={styles.primaryCtaLabel}>Begin</Text>
-          </Pressable>
         </Pressable>
 
         <View style={[styles.card, styles.cardOutlined]}>
-          <View style={styles.illustrationRow}>
-            <View style={styles.limeDisc}>
-              <Text style={styles.illEmoji}>🌙</Text>
+          <View style={styles.cardColumn}>
+            <View style={styles.illustrationRow}>
+              <View style={styles.limeDisc}>
+                <Text style={styles.illEmoji}>🌙</Text>
+              </View>
+              <View style={styles.limeDisc}>
+                <Text style={styles.illEmoji}>☁️</Text>
+              </View>
             </View>
-            <View style={styles.limeDisc}>
-              <Text style={styles.illEmoji}>☁️</Text>
+            <ThemedText style={styles.cardEyebrow}>Evening complete.</ThemedText>
+            <View style={styles.moodRow}>
+              <View style={styles.moodPill}>
+                <Text style={styles.moodPillText}>😌 Satisfied</Text>
+              </View>
+              <View style={styles.moodPill}>
+                <Text style={styles.moodPillText}>😊 Happy</Text>
+              </View>
             </View>
+            <View style={styles.cardFlexFill} />
+            <Text style={styles.moreHint}>+3More</Text>
           </View>
-          <ThemedText style={styles.cardEyebrow}>Evening complete.</ThemedText>
-          <View style={styles.moodRow}>
-            <View style={styles.moodPill}>
-              <Text style={styles.moodPillText}>😌 Satisfied</Text>
-            </View>
-            <View style={styles.moodPill}>
-              <Text style={styles.moodPillText}>😊 Happy</Text>
-            </View>
-          </View>
-          <Text style={styles.moreHint}>+3More</Text>
         </View>
       </View>
 
@@ -268,6 +277,11 @@ const styles = StyleSheet.create({
     padding: 16,
     minHeight: 220,
   },
+  cardColumn: {
+    flex: 1,
+    gap: 10,
+    justifyContent: "flex-start",
+  },
   cardOutlined: {
     backgroundColor: BACKGROUND_PAGE,
     borderWidth: 1,
@@ -301,14 +315,13 @@ const styles = StyleSheet.create({
     color: TEXT_PRIMARY,
     lineHeight: 22,
     letterSpacing: -0.2,
-    flex: 1,
   },
   primaryCta: {
     backgroundColor: ACCENT_LIME,
     borderRadius: 999,
     paddingVertical: 12,
     alignItems: "center",
-    marginTop: "auto",
+    marginTop: 8,
   },
   primaryCtaLabel: {
     fontSize: 16,
