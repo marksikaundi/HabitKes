@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { HomeAnalyticsChart } from "@/components/home-analytics-chart";
 import FocusSvg from "@/assets/undraw/focus.svg";
 import JourneySvg from "@/assets/undraw/journey.svg";
 import MeditationSvg from "@/assets/undraw/meditation.svg";
@@ -42,7 +43,12 @@ function greetingForNow(): string {
 }
 
 export default function HomeScreen() {
-  const { habits, toggleHabit } = useAccountabilityBoard();
+  const {
+    habits,
+    toggleHabit,
+    weekCheckInSeries,
+    weekCheckInSeriesLoaded,
+  } = useAccountabilityBoard();
   const { loaded: streakLoaded, snapshot: streak } = useStreakGamification();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
@@ -179,6 +185,12 @@ export default function HomeScreen() {
           })}
         </ScrollView>
       </View>
+
+      <HomeAnalyticsChart
+        habits={habits}
+        weekCheckInSeries={weekCheckInSeries}
+        weekCheckInSeriesLoaded={weekCheckInSeriesLoaded}
+      />
 
       <View style={styles.cardsRow}>
         <Pressable

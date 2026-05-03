@@ -1,6 +1,11 @@
 import { createContext, createElement, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { Client, Databases, ID } from 'appwrite';
 
+import {
+  persistTodayAndBuildWeekSeries,
+  type CheckInChartDay,
+} from '@/lib/daily-checkin-history';
+
 export type ConnectionState = 'demo' | 'connecting' | 'live' | 'error';
 
 export type Habit = {
@@ -39,6 +44,9 @@ export type AccountabilityBoard = {
   connectionState: ConnectionState;
   connectionLabel: string;
   servicesConfigured: boolean;
+  /** Last 7 days (oldest → newest) for home analytics line chart */
+  weekCheckInSeries: CheckInChartDay[];
+  weekCheckInSeriesLoaded: boolean;
   toggleHabit: (habitId: string) => Promise<void>;
   addFriend: (name: string, focus: string) => Promise<void>;
   addActivity: (payload: { title: string; detail?: string }) => Promise<void>;
@@ -261,8 +269,34 @@ function useAccountabilityBoardState(): AccountabilityBoard {
   const [habits, setHabits] = useState(seedHabits);
   const [friends, setFriends] = useState(seedFriends);
   const [activity, setActivity] = useState(seedActivity);
+  const [weekCheckInSeries, setWeekCheckInSeries] = useState<CheckInChartDay[]>([]);
+  const [weekCheckInSeriesLoaded, setWeekCheckInSeriesLoaded] = useState(false);
   const [connectionState, setConnectionState] = useState<ConnectionState>(services ? 'connecting' : 'demo');
   const [connectionLabel, setConnectionLabel] = useState(services ? 'Connecting to Appwrite realtime...' : defaultConnectionLabel);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const run = async () => {
+      try {
+        const series = await persistTodayAndBuildWeekSeries(habits);
+        if (!cancelled) {
+          setWeekCheckInSeries(series);
+          setWeekCheckInSeriesLoaded(true);
+        }
+      } catch {
+        if (!cancelled) {
+          setWeekCheckInSeriesLoaded(true);
+        }
+      }
+    };
+
+    void run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [habits]);
 
   const pushActivity = useCallback((entry: Omit<Activity, 'id'>) => {
     setActivity((current) =>
@@ -505,6 +539,8 @@ function useAccountabilityBoardState(): AccountabilityBoard {
     connectionState,
     connectionLabel,
     servicesConfigured: Boolean(services),
+    weekCheckInSeries,
+    weekCheckInSeriesLoaded,
     toggleHabit,
     addFriend,
     addActivity,
