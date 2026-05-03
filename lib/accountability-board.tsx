@@ -62,7 +62,7 @@ type Services = {
 const seedHabits: Habit[] = [
   {
     id: 'morning-run',
-    title: 'Morning run',
+    title: 'Morning Preparation',
     cadence: 'Daily',
     streak: 12,
     bestStreak: 18,
@@ -320,7 +320,9 @@ function useAccountabilityBoardState(): AccountabilityBoard {
             void refreshBoard();
           });
 
-          subscriptions.push(subscription);
+          subscriptions.push(
+            subscription as unknown as { unsubscribe: () => Promise<void> },
+          );
         } catch {
           setConnectionState('error');
           setConnectionLabel('Realtime subscription failed, staying on local data');
@@ -344,7 +346,7 @@ function useAccountabilityBoardState(): AccountabilityBoard {
 
   const toggleHabit = useCallback(
     async (habitId: string) => {
-      let updatedHabit: Habit | null = null;
+      let changed: Habit | undefined;
 
       setHabits((current) =>
         current.map((habit) => {
@@ -355,7 +357,7 @@ function useAccountabilityBoardState(): AccountabilityBoard {
           const completedToday = !habit.completedToday;
           const streak = completedToday ? habit.streak + 1 : Math.max(habit.streak - 1, 0);
 
-          updatedHabit = {
+          const next: Habit = {
             ...habit,
             completedToday,
             streak,
@@ -363,19 +365,20 @@ function useAccountabilityBoardState(): AccountabilityBoard {
             progress: Math.min(100, Math.max(10, completedToday ? habit.progress + 5 : habit.progress - 8)),
           };
 
-          return updatedHabit;
+          changed = next;
+          return next;
         }),
       );
 
-      if (!updatedHabit) {
+      if (!changed) {
         return;
       }
 
       pushActivity({
-        title: `${updatedHabit.title} ${updatedHabit.completedToday ? 'checked in' : 'reopened'}`,
-        detail: `${updatedHabit.streak} day streak now syncing with the crew.`,
+        title: `${changed.title} ${changed.completedToday ? 'checked in' : 'reopened'}`,
+        detail: `${changed.streak} day streak now syncing with the crew.`,
         time: 'Just now',
-        tone: updatedHabit.completedToday ? 'positive' : 'warning',
+        tone: changed.completedToday ? 'positive' : 'warning',
       });
 
       if (!services) {
@@ -384,21 +387,21 @@ function useAccountabilityBoardState(): AccountabilityBoard {
 
       try {
         await services.databases.updateDocument(services.config.databaseId, services.config.habitsCollectionId, habitId, {
-          completedToday: updatedHabit.completedToday,
-          streak: updatedHabit.streak,
-          bestStreak: updatedHabit.bestStreak,
-          progress: updatedHabit.progress,
-          supporters: updatedHabit.supporters,
-          title: updatedHabit.title,
-          cadence: updatedHabit.cadence,
-          color: updatedHabit.color,
+          completedToday: changed.completedToday,
+          streak: changed.streak,
+          bestStreak: changed.bestStreak,
+          progress: changed.progress,
+          supporters: changed.supporters,
+          title: changed.title,
+          cadence: changed.cadence,
+          color: changed.color,
         });
 
         await services.databases.createDocument(services.config.databaseId, services.config.activityCollectionId, ID.unique(), {
-          title: `${updatedHabit.title} ${updatedHabit.completedToday ? 'completed' : 'needs another push'}`,
-          detail: `${updatedHabit.streak} day streak shared in realtime.`,
+          title: `${changed.title} ${changed.completedToday ? 'completed' : 'needs another push'}`,
+          detail: `${changed.streak} day streak shared in realtime.`,
           time: 'Just now',
-          tone: updatedHabit.completedToday ? 'positive' : 'warning',
+          tone: changed.completedToday ? 'positive' : 'warning',
         });
       } catch {
         setConnectionState('error');
