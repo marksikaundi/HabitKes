@@ -1,35 +1,49 @@
-/** Local week strip (Sun → Sat) containing each calendar day for the week that includes `reference`. */
+/** Calendar helpers — real local dates for any month. */
 
-export type WeekDaySlot = {
-  /** Short label e.g. Sun, Mon */
+export type CalendarDaySlot = {
   weekdayShort: string;
-  /** Calendar date 1–31 */
   dayOfMonth: number;
-  /** Start of that calendar day (local), noon used to reduce DST edge cases */
+  /** Calendar day at local midnight */
   date: Date;
 };
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export function getWeekContaining(reference: Date): WeekDaySlot[] {
-  const ref = new Date(reference);
-  ref.setHours(12, 0, 0, 0);
+/** Every day in `reference`'s month (1 … last day), with correct weekday labels. */
+export function getDaysInMonth(reference: Date): CalendarDaySlot[] {
+  const y = reference.getFullYear();
+  const m = reference.getMonth();
+  const lastDay = new Date(y, m + 1, 0).getDate();
+  const days: CalendarDaySlot[] = [];
 
-  const sunday = new Date(ref);
-  sunday.setDate(ref.getDate() - ref.getDay());
-  sunday.setHours(12, 0, 0, 0);
-
-  const days: WeekDaySlot[] = [];
-
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(sunday);
-    d.setDate(sunday.getDate() + i);
+  for (let d = 1; d <= lastDay; d++) {
+    const date = new Date(y, m, d);
     days.push({
-      weekdayShort: WEEKDAY_LABELS[d.getDay()],
-      dayOfMonth: d.getDate(),
-      date: new Date(d.getFullYear(), d.getMonth(), d.getDate()),
+      weekdayShort: WEEKDAY_LABELS[date.getDay()],
+      dayOfMonth: d,
+      date: new Date(y, m, d),
     });
   }
 
   return days;
+}
+
+/** First day of the month containing `reference`. */
+export function startOfMonth(reference: Date): Date {
+  return new Date(reference.getFullYear(), reference.getMonth(), 1);
+}
+
+export function isSameCalendarDay(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}
+
+export function formatMonthYear(reference: Date, locale?: string): string {
+  return reference.toLocaleDateString(locale, {
+    month: "long",
+    year: "numeric",
+  });
 }

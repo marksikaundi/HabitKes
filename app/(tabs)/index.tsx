@@ -1,5 +1,4 @@
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -22,7 +21,12 @@ import {
   TEXT_SECONDARY,
 } from "@/constants/theme";
 import { useAccountabilityBoard } from "@/lib/accountability-board";
-import { getWeekContaining } from "@/lib/week-calendar";
+import {
+  formatMonthYear,
+  getDaysInMonth,
+  isSameCalendarDay,
+  startOfMonth,
+} from "@/lib/week-calendar";
 
 function greetingForNow(): string {
   const h = new Date().getHours();
@@ -36,18 +40,25 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
-  const [weekAnchor, setWeekAnchor] = useState(() => new Date());
-  const weekDays = useMemo(() => getWeekContaining(weekAnchor), [weekAnchor]);
-
-  const [selectedDayIndex, setSelectedDayIndex] = useState(
-    () => new Date().getDay(),
+  const [visibleMonth, setVisibleMonth] = useState(() =>
+    startOfMonth(new Date()),
+  );
+  const monthDays = useMemo(
+    () => getDaysInMonth(visibleMonth),
+    [visibleMonth],
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      setWeekAnchor(new Date());
-    }, []),
-  );
+  const [selectedDate, setSelectedDate] = useState(() => new Date());
+
+  const shiftMonth = (delta: number) => {
+    const next = new Date(
+      visibleMonth.getFullYear(),
+      visibleMonth.getMonth() + delta,
+      1,
+    );
+    setVisibleMonth(next);
+    setSelectedDate(new Date(next.getFullYear(), next.getMonth(), 1));
+  };
 
   const greeting = greetingForNow();
   const morningHabit = habits.find((h) => h.title.includes("Morning"));
@@ -78,39 +89,67 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.calendarShell}>
+        <View style={styles.monthHeader}>
+          <Pressable
+            onPress={() => shiftMonth(-1)}
+            style={({ pressed }) => [
+              styles.monthNavBtn,
+              pressed && styles.monthNavBtnPressed,
+            ]}
+            accessibilityLabel="Previous month"
+          >
+            <Text style={styles.monthNavGlyph}>‹</Text>
+          </Pressable>
+          <Text style={styles.monthTitle}>
+            {formatMonthYear(visibleMonth)}
+          </Text>
+          <Pressable
+            onPress={() => shiftMonth(1)}
+            style={({ pressed }) => [
+              styles.monthNavBtn,
+              pressed && styles.monthNavBtnPressed,
+            ]}
+            accessibilityLabel="Next month"
+          >
+            <Text style={styles.monthNavGlyph}>›</Text>
+          </Pressable>
+        </View>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.calendarStrip}
         >
-          {weekDays.map((slot, index) => (
-            <Pressable
-              key={`${slot.date.getFullYear()}-${slot.date.getMonth()}-${slot.date.getDate()}`}
-              onPress={() => setSelectedDayIndex(index)}
-              style={[
-                styles.dateItem,
-                { minWidth: Math.min(52, (width - 56) / 7) },
-                selectedDayIndex === index && styles.dateItemSelected,
-              ]}
-            >
-              <Text
+          {monthDays.map((slot) => {
+            const selected = isSameCalendarDay(slot.date, selectedDate);
+            return (
+              <Pressable
+                key={`${slot.date.getFullYear()}-${slot.date.getMonth()}-${slot.date.getDate()}`}
+                onPress={() => setSelectedDate(slot.date)}
                 style={[
-                  styles.dayText,
-                  selectedDayIndex === index && styles.dayTextSelected,
+                  styles.dateItem,
+                  { minWidth: Math.min(48, (width - 48) / 7) },
+                  selected && styles.dateItemSelected,
                 ]}
               >
-                {slot.weekdayShort}
-              </Text>
-              <Text
-                style={[
-                  styles.dateNum,
-                  selectedDayIndex === index && styles.dateNumSelected,
-                ]}
-              >
-                {slot.dayOfMonth}
-              </Text>
-            </Pressable>
-          ))}
+                <Text
+                  style={[
+                    styles.dayText,
+                    selected && styles.dayTextSelected,
+                  ]}
+                >
+                  {slot.weekdayShort}
+                </Text>
+                <Text
+                  style={[
+                    styles.dateNum,
+                    selected && styles.dateNumSelected,
+                  ]}
+                >
+                  {slot.dayOfMonth}
+                </Text>
+              </Pressable>
+            );
+          })}
         </ScrollView>
       </View>
 
@@ -243,6 +282,39 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: Fonts.semibold,
     color: TEXT_PRIMARY,
+  },
+
+  monthHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 4,
+    marginBottom: 12,
+  },
+  monthNavBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: BACKGROUND_PAGE,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: BORDER_SUBTLE,
+  },
+  monthNavBtnPressed: {
+    opacity: 0.85,
+  },
+  monthNavGlyph: {
+    fontSize: 22,
+    fontFamily: Fonts.bold,
+    color: TEXT_PRIMARY,
+    marginTop: -2,
+  },
+  monthTitle: {
+    fontSize: 17,
+    fontFamily: Fonts.semibold,
+    color: TEXT_PRIMARY,
+    letterSpacing: -0.2,
   },
 
   calendarShell: {
