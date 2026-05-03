@@ -43,6 +43,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "785d61c8-41a1-40ad-92b6-771f59f7aa20"
+      }
+    },
+    "owner": "luplegstudios"
   }
 }
