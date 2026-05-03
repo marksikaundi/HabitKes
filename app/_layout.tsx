@@ -7,8 +7,10 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
+import { StreakRewardModal } from "@/components/streak-reward-modal";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { AccountabilityBoardProvider } from "@/lib/accountability-board";
+import { StreakGamificationProvider } from "@/lib/streak-gamification";
 import {
   Outfit_400Regular,
   Outfit_500Medium,
@@ -34,23 +36,26 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <AccountabilityBoardProvider>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="add-activity"
-            options={{
-              presentation: "modal",
-              title: "Add activity",
-              headerShown: true,
-            }}
-          />
-          <Stack.Screen
-            name="modal"
-            options={{ presentation: "modal", title: "Modal" }}
-          />
-        </Stack>
-      </AccountabilityBoardProvider>
+      <StreakGamificationProvider>
+        <AccountabilityBoardProvider>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="add-activity"
+              options={{
+                presentation: "modal",
+                title: "Add activity",
+                headerShown: true,
+              }}
+            />
+            <Stack.Screen
+              name="modal"
+              options={{ presentation: "modal", title: "Modal" }}
+            />
+          </Stack>
+        </AccountabilityBoardProvider>
+        <StreakRewardModal />
+      </StreakGamificationProvider>
       <StatusBar style="auto" />
     </ThemeProvider>
   );

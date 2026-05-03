@@ -26,6 +26,7 @@ import {
   TEXT_SECONDARY,
 } from "@/constants/theme";
 import { useAccountabilityBoard } from "@/lib/accountability-board";
+import { useStreakGamification } from "@/lib/streak-gamification";
 import {
   formatMonthYear,
   getDaysInMonth,
@@ -42,6 +43,7 @@ function greetingForNow(): string {
 
 export default function HomeScreen() {
   const { habits, toggleHabit } = useAccountabilityBoard();
+  const { loaded: streakLoaded, snapshot: streak } = useStreakGamification();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
@@ -97,7 +99,18 @@ export default function HomeScreen() {
             <Text style={styles.greeting}>{greeting}</Text>
           </View>
           <View style={styles.streakBadge}>
-            <Text style={styles.streakText}>🔥 10</Text>
+            <Text style={styles.streakMain}>
+              🔥{" "}
+              {streakLoaded
+                ? `${streak.currentStreak} day${streak.currentStreak === 1 ? "" : "s"}`
+                : "—"}
+            </Text>
+            <Text style={styles.streakSub}>
+              Spark {streakLoaded ? streak.sparkPoints : "—"}
+              {streakLoaded && streak.bestStreak > 0
+                ? ` · Best ${streak.bestStreak}`
+                : ""}
+            </Text>
           </View>
         </View>
       </View>
@@ -275,14 +288,23 @@ const styles = StyleSheet.create({
   },
   streakBadge: {
     backgroundColor: SURFACE_MUTED,
-    borderRadius: 999,
+    borderRadius: 20,
     paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingVertical: 10,
+    alignItems: "flex-end",
+    gap: 2,
   },
-  streakText: {
+  streakMain: {
     fontSize: 15,
     fontFamily: Fonts.semibold,
     color: TEXT_PRIMARY,
+  },
+  streakSub: {
+    fontSize: 12,
+    fontFamily: Fonts.medium,
+    color: TEXT_SECONDARY,
+    maxWidth: 160,
+    textAlign: "right",
   },
 
   monthHeader: {
