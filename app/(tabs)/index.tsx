@@ -10,6 +10,10 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import FocusSvg from "@/assets/undraw/focus.svg";
+import JourneySvg from "@/assets/undraw/journey.svg";
+import MeditationSvg from "@/assets/undraw/meditation.svg";
+import ReadingSvg from "@/assets/undraw/reading.svg";
 import { ThemedText } from "@/components/themed-text";
 import {
   ACCENT_LIME,
@@ -71,6 +75,7 @@ export default function HomeScreen() {
 
   const greeting = greetingForNow();
   const morningHabit = habits.find((h) => h.title.includes("Morning"));
+  const cardArtWidth = Math.max(96, (width - 40 - 12) / 2 - 36);
 
   return (
     <ScrollView
@@ -87,7 +92,7 @@ export default function HomeScreen() {
         <View style={styles.greetingRow}>
           <View style={styles.avatarGreeting}>
             <View style={styles.profileAvatar}>
-              <Text style={styles.avatarEmoji}>👤</Text>
+              <ReadingSvg width={42} height={42} />
             </View>
             <Text style={styles.greeting}>{greeting}</Text>
           </View>
@@ -168,13 +173,8 @@ export default function HomeScreen() {
           style={[styles.card, styles.cardOutlined]}
         >
           <View style={styles.cardColumn}>
-            <View style={styles.illustrationRow}>
-              <View style={styles.limeDisc}>
-                <Text style={styles.illEmoji}>☀️</Text>
-              </View>
-              <View style={styles.limeDisc}>
-                <Text style={styles.illEmoji}>🌳</Text>
-              </View>
+            <View style={styles.cardIllustration}>
+              <FocusSvg width={cardArtWidth} height={72} />
             </View>
             <ThemedText style={styles.cardEyebrow}>
               Morning Preparation
@@ -193,13 +193,8 @@ export default function HomeScreen() {
 
         <View style={[styles.card, styles.cardOutlined]}>
           <View style={styles.cardColumn}>
-            <View style={styles.illustrationRow}>
-              <View style={styles.limeDisc}>
-                <Text style={styles.illEmoji}>🌙</Text>
-              </View>
-              <View style={styles.limeDisc}>
-                <Text style={styles.illEmoji}>☁️</Text>
-              </View>
+            <View style={styles.cardIllustration}>
+              <MeditationSvg width={cardArtWidth} height={72} />
             </View>
             <ThemedText style={styles.cardEyebrow}>Evening complete.</ThemedText>
             <View style={styles.moodRow}>
@@ -234,8 +229,7 @@ export default function HomeScreen() {
             </Pressable>
           </View>
           <View style={styles.reflectArt}>
-            <Text style={styles.starsBubble}>✨ ✨ ✨</Text>
-            <Text style={styles.bearEmoji}>🐻</Text>
+            <JourneySvg width={88} height={72} />
           </View>
         </View>
       </View>
@@ -271,9 +265,7 @@ const styles = StyleSheet.create({
     backgroundColor: ACCENT_LIME,
     alignItems: "center",
     justifyContent: "center",
-  },
-  avatarEmoji: {
-    fontSize: 22,
+    overflow: "hidden",
   },
   greeting: {
     fontSize: 22,
@@ -387,21 +379,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: BORDER_SUBTLE,
   },
-  illustrationRow: {
-    flexDirection: "row",
-    gap: 10,
-    marginBottom: 8,
-  },
-  limeDisc: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
-    backgroundColor: "rgba(199, 244, 50, 0.35)",
+  cardIllustration: {
     alignItems: "center",
-    justifyContent: "center",
-  },
-  illEmoji: {
-    fontSize: 26,
+    marginBottom: 8,
+    overflow: "hidden",
+    borderRadius: 16,
+    backgroundColor: "rgba(199, 244, 50, 0.2)",
   },
   cardEyebrow: {
     fontSize: 12,
@@ -509,14 +492,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
     width: 88,
-  },
-  starsBubble: {
-    fontSize: 11,
-    color: ACCENT_LIME,
-    marginBottom: 4,
-    textAlign: "center",
-  },
-  bearEmoji: {
-    fontSize: 52,
   },
 });

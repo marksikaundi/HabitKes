@@ -1,3 +1,4 @@
+import type { ComponentType } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -5,16 +6,14 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
+import type { SvgProps } from "react-native-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import {
-  Heart,
-  Leaf,
-  Lightning,
-  Quotes,
-  Sparkle,
-  SunHorizon,
-} from "phosphor-react-native";
 
+import FocusSvg from "@/assets/undraw/focus.svg";
+import JourneySvg from "@/assets/undraw/journey.svg";
+import MeditationSvg from "@/assets/undraw/meditation.svg";
+import ReadingSvg from "@/assets/undraw/reading.svg";
+import TeamSvg from "@/assets/undraw/team.svg";
 import {
   ACCENT_LIME,
   ACCENT_ON_LIME,
@@ -36,27 +35,28 @@ type SparkCard = {
   id: string;
   title: string;
   caption: string;
-  Icon: typeof Sparkle;
+  Illustration: ComponentType<SvgProps>;
 };
 
+/** Illustrations from [unDraw](https://undraw.co/) — bundled SVGs, primary tint matches app lime. */
 const DAILY_SPARKS: SparkCard[] = [
   {
     id: "1",
     title: "One breath before you begin",
     caption: "Pause for a single slow inhale before your next task.",
-    Icon: Leaf,
+    Illustration: FocusSvg,
   },
   {
     id: "2",
     title: "Two-minute rule",
     caption: "If it takes less than two minutes, do it now.",
-    Icon: Lightning,
+    Illustration: ReadingSvg,
   },
   {
     id: "3",
     title: "Gratitude tap",
     caption: "Name one thing that went okay today out loud.",
-    Icon: Heart,
+    Illustration: JourneySvg,
   },
 ];
 
@@ -87,6 +87,8 @@ export default function InspirationsScreen() {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const sparkWidth = Math.min(280, width - 72);
+  const heroW = Math.min(340, width - 56);
+  const heroH = heroW * (618 / 818) * 0.42;
 
   return (
     <ScrollView
@@ -108,13 +110,12 @@ export default function InspirationsScreen() {
         </Text>
       </View>
 
-      {/* Hero gradient strip (brand lime → soft neutral, no extra deps) */}
       <View style={styles.heroOuter}>
         <View style={styles.heroLime} />
         <View style={styles.heroFade} />
         <View style={styles.heroInner}>
-          <View style={styles.heroIconWrap}>
-            <SunHorizon color={ACCENT_ON_LIME} size={28} weight="duotone" />
+          <View style={styles.heroIllustration}>
+            <MeditationSvg width={heroW} height={heroH} />
           </View>
           <Text style={styles.heroTitle}>Today is enough</Text>
           <Text style={styles.heroBody}>
@@ -133,14 +134,17 @@ export default function InspirationsScreen() {
         snapToAlignment="start"
       >
         {DAILY_SPARKS.map((item) => {
-          const Icon = item.Icon;
+          const Illustration = item.Illustration;
           return (
             <View
               key={item.id}
               style={[styles.sparkCard, { width: sparkWidth }]}
             >
-              <View style={styles.sparkIconCircle}>
-                <Icon color={ACCENT_ON_LIME} size={22} weight="duotone" />
+              <View style={styles.sparkIllustration}>
+                <Illustration
+                  width={Math.min(200, sparkWidth - 32)}
+                  height={92}
+                />
               </View>
               <Text style={styles.sparkTitle}>{item.title}</Text>
               <Text style={styles.sparkCaption}>{item.caption}</Text>
@@ -156,12 +160,11 @@ export default function InspirationsScreen() {
             key={q.id}
             style={[styles.quoteCard, index === 0 && styles.quoteCardFeatured]}
           >
-            <Quotes
-              color={index === 0 ? ACCENT_ON_LIME : TEXT_SECONDARY}
-              size={22}
-              weight="duotone"
-              style={styles.quoteMark}
-            />
+            {index === 0 ? (
+              <View style={styles.quoteFeaturedArt}>
+                <ReadingSvg width={52} height={40} />
+              </View>
+            ) : null}
             <Text
               style={[
                 styles.quoteText,
@@ -176,9 +179,9 @@ export default function InspirationsScreen() {
       </View>
 
       <View style={styles.footerHint}>
-        <Sparkle color={ACCENT_LIME} size={20} weight="fill" />
+        <TeamSvg width={36} height={28} />
         <Text style={styles.footerHintText}>
-          Come back anytime—you&apos;ll see fresh sparks in future updates.
+          Illustrations from unDraw · customize colors anytime at undraw.co
         </Text>
       </View>
     </ScrollView>
@@ -225,7 +228,6 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     overflow: "hidden",
     marginBottom: 28,
-    minHeight: 168,
     backgroundColor: SURFACE_MUTED,
   },
   heroLime: {
@@ -239,19 +241,12 @@ const styles = StyleSheet.create({
     opacity: 0.55,
   },
   heroInner: {
-    padding: 22,
-    paddingTop: 24,
+    padding: 20,
+    paddingTop: 18,
   },
-  heroIconWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
-    backgroundColor: "rgba(255,255,255,0.65)",
+  heroIllustration: {
     alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 14,
-    borderWidth: 1,
-    borderColor: "rgba(28,32,17,0.06)",
+    marginBottom: 8,
   },
   heroTitle: {
     fontSize: 22,
@@ -265,7 +260,7 @@ const styles = StyleSheet.create({
     color: ACCENT_ON_LIME,
     opacity: 0.92,
     lineHeight: 24,
-    maxWidth: 300,
+    maxWidth: 320,
   },
 
   sectionLabel: {
@@ -285,7 +280,7 @@ const styles = StyleSheet.create({
   },
   sparkCard: {
     borderRadius: 24,
-    padding: 18,
+    padding: 16,
     backgroundColor: BACKGROUND_PAGE,
     borderWidth: 1,
     borderColor: BORDER_SUBTLE,
@@ -295,14 +290,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     elevation: 2,
   },
-  sparkIconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    backgroundColor: "rgba(199, 244, 50, 0.35)",
+  sparkIllustration: {
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 12,
+    marginBottom: 10,
+    minHeight: 96,
   },
   sparkTitle: {
     fontSize: 17,
@@ -326,15 +318,18 @@ const styles = StyleSheet.create({
     backgroundColor: SURFACE_MUTED,
     borderWidth: 1,
     borderColor: BORDER_SUBTLE,
+    overflow: "hidden",
   },
   quoteCardFeatured: {
     backgroundColor: BACKGROUND_PAGE,
     borderColor: ACCENT_LIME,
     borderWidth: 1.5,
   },
-  quoteMark: {
-    marginBottom: 10,
-    opacity: 0.9,
+  quoteFeaturedArt: {
+    position: "absolute",
+    top: 14,
+    right: 14,
+    opacity: 0.95,
   },
   quoteText: {
     fontSize: 16,
@@ -347,6 +342,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.semibold,
     fontSize: 17,
     lineHeight: 26,
+    paddingRight: 56,
   },
   quoteAuthor: {
     marginTop: 12,
@@ -358,7 +354,7 @@ const styles = StyleSheet.create({
   footerHint: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 10,
+    gap: 12,
     marginTop: 28,
     padding: 16,
     borderRadius: 18,
@@ -366,8 +362,8 @@ const styles = StyleSheet.create({
   },
   footerHintText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 13,
     color: TEXT_SECONDARY,
-    lineHeight: 20,
+    lineHeight: 19,
   },
 });
