@@ -68,34 +68,81 @@ export default function JourneyScreen() {
 
       <Text style={styles.sectionTitle}>Milestone bonuses</Text>
       <Text style={styles.sectionCopy}>
-        Each tier pays Spark points the first time you reach it in a streak
-        run. Miss a day and your streak resets—but you can earn these again on a
-        fresh run.
+        Each tier pays Spark the first time you reach it in a streak run. Cards
+        glow when you&apos;ve unlocked them at least once.
       </Text>
 
       <View style={styles.milestoneList}>
-        {STREAK_MILESTONES.map((m) => {
-          const unlocked =
-            loaded && snapshot.bestStreak >= m.days ? true : false;
+        {STREAK_MILESTONES.map((m, index) => {
+          const unlocked = loaded && snapshot.bestStreak >= m.days;
+          const daysToGo =
+            loaded && !unlocked
+              ? Math.max(0, m.days - snapshot.currentStreak)
+              : null;
+
           return (
             <View
               key={m.days}
-              style={[styles.milestoneRow, !unlocked && styles.milestoneMuted]}
+              style={[
+                styles.bonusCard,
+                unlocked ? styles.bonusCardUnlocked : styles.bonusCardLocked,
+              ]}
             >
-              <View style={styles.milestoneLeft}>
-                <Text style={styles.milestoneDays}>{m.days} days</Text>
-                <Text style={styles.milestoneTitle}>{m.title}</Text>
+              <View
+                style={[
+                  styles.bonusAccent,
+                  unlocked && styles.bonusAccentOn,
+                ]}
+              />
+
+              <View style={styles.bonusMain}>
+                <View style={styles.bonusTopRow}>
+                  <View style={styles.dayPill}>
+                    <Text style={styles.dayPillText}>{m.days} days</Text>
+                  </View>
+                  {unlocked ? (
+                    <View style={styles.earnedPill}>
+                      <Text style={styles.earnedPillText}>✓ Earned</Text>
+                    </View>
+                  ) : loaded && daysToGo !== null && daysToGo > 0 ? (
+                    <Text style={styles.toGoText}>
+                      {daysToGo} day{daysToGo === 1 ? "" : "s"} to go
+                    </Text>
+                  ) : null}
+                </View>
+
+                <Text style={styles.bonusTitle}>{m.title}</Text>
+                <Text style={styles.bonusSubtitle}>{m.subtitle}</Text>
               </View>
-              <View style={styles.milestoneRight}>
+
+              <View
+                style={[
+                  styles.sparkPanel,
+                  unlocked ? styles.sparkPanelOn : styles.sparkPanelOff,
+                ]}
+              >
                 <Text
                   style={[
-                    styles.milestonePts,
-                    unlocked ? styles.milestonePtsOn : styles.milestonePtsOff,
+                    styles.sparkAmount,
+                    unlocked ? styles.sparkAmountOn : styles.sparkAmountOff,
                   ]}
                 >
                   +{m.sparkBonus}
                 </Text>
-                <Text style={styles.milestoneSpark}>Spark</Text>
+                <Text
+                  style={[
+                    styles.sparkLabel,
+                    unlocked ? styles.sparkLabelOn : styles.sparkLabelOff,
+                  ]}
+                >
+                  Spark
+                </Text>
+                <Text
+                  style={styles.sparkSparkle}
+                  importantForAccessibility="no"
+                >
+                  {index === 3 ? "🏆" : "✨"}
+                </Text>
               </View>
             </View>
           );
@@ -184,58 +231,153 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: TEXT_SECONDARY,
     lineHeight: 20,
-    marginBottom: 8,
+    marginBottom: 6,
   },
 
   milestoneList: {
-    gap: 10,
-    marginBottom: 24,
+    gap: 14,
+    marginBottom: 28,
   },
-  milestoneRow: {
+
+  bonusCard: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    borderRadius: 18,
+    borderRadius: 26,
+    overflow: "hidden",
+    minHeight: 132,
     backgroundColor: BACKGROUND_PAGE,
+    borderWidth: 1,
+    shadowColor: ACCENT_ON_LIME,
+    shadowOpacity: 0.07,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 3,
+  },
+  bonusCardUnlocked: {
+    borderColor: ACCENT_LIME,
+    borderWidth: 1.5,
+    backgroundColor: "rgba(199, 244, 50, 0.08)",
+  },
+  bonusCardLocked: {
+    borderColor: BORDER_SUBTLE,
+    opacity: 0.96,
+  },
+
+  bonusAccent: {
+    width: 5,
+    backgroundColor: BORDER_SUBTLE,
+  },
+  bonusAccentOn: {
+    backgroundColor: ACCENT_LIME,
+  },
+
+  bonusMain: {
+    flex: 1,
+    paddingVertical: 16,
+    paddingLeft: 14,
+    paddingRight: 10,
+    justifyContent: "center",
+    gap: 6,
+  },
+  bonusTopRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 2,
+  },
+  dayPill: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 999,
+    backgroundColor: SURFACE_MUTED,
     borderWidth: 1,
     borderColor: BORDER_SUBTLE,
   },
-  milestoneMuted: {
-    opacity: 0.72,
-  },
-  milestoneLeft: {
-    flex: 1,
-    gap: 4,
-    paddingRight: 12,
-  },
-  milestoneDays: {
+  dayPillText: {
     fontSize: 12,
-    fontFamily: Fonts.semibold,
-    color: ACCENT_LIME,
-    letterSpacing: 0.3,
-  },
-  milestoneTitle: {
-    fontSize: 16,
-    fontFamily: Fonts.semibold,
-    color: TEXT_PRIMARY,
-  },
-  milestoneRight: {
-    alignItems: "flex-end",
-    gap: 2,
-  },
-  milestonePts: {
-    fontSize: 18,
     fontFamily: Fonts.bold,
+    color: TEXT_PRIMARY,
+    letterSpacing: 0.2,
   },
-  milestonePtsOn: {
+  earnedPill: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 999,
+    backgroundColor: "rgba(199, 244, 50, 0.45)",
+    borderWidth: 1,
+    borderColor: ACCENT_LIME,
+  },
+  earnedPillText: {
+    fontSize: 11,
+    fontFamily: Fonts.semibold,
     color: ACCENT_ON_LIME,
   },
-  milestonePtsOff: {
+  toGoText: {
+    fontSize: 12,
+    fontFamily: Fonts.medium,
     color: TEXT_SECONDARY,
   },
-  milestoneSpark: {
-    fontSize: 11,
+  bonusTitle: {
+    fontSize: 18,
+    fontFamily: Fonts.bold,
+    color: TEXT_PRIMARY,
+    letterSpacing: -0.3,
+  },
+  bonusSubtitle: {
+    fontSize: 14,
     color: TEXT_SECONDARY,
+    lineHeight: 20,
+  },
+
+  sparkPanel: {
+    width: 108,
+    marginVertical: 10,
+    marginRight: 10,
+    borderRadius: 22,
+    paddingVertical: 14,
+    paddingHorizontal: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 2,
+  },
+  sparkPanelOn: {
+    backgroundColor: ACCENT_LIME,
+    borderWidth: 1,
+    borderColor: "rgba(28, 32, 17, 0.08)",
+  },
+  sparkPanelOff: {
+    backgroundColor: SURFACE_MUTED,
+    borderWidth: 1,
+    borderColor: BORDER_SUBTLE,
+  },
+  sparkAmount: {
+    fontSize: 26,
+    fontFamily: Fonts.bold,
+    letterSpacing: -0.8,
+  },
+  sparkAmountOn: {
+    color: ACCENT_ON_LIME,
+  },
+  sparkAmountOff: {
+    color: TEXT_PRIMARY,
+    opacity: 0.55,
+  },
+  sparkLabel: {
+    fontSize: 12,
+    fontFamily: Fonts.semibold,
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+  },
+  sparkLabelOn: {
+    color: ACCENT_ON_LIME,
+    opacity: 0.85,
+  },
+  sparkLabelOff: {
+    color: TEXT_SECONDARY,
+  },
+  sparkSparkle: {
+    marginTop: 4,
+    fontSize: 16,
+    opacity: 0.9,
   },
 });
