@@ -31,11 +31,15 @@ import {
   TEXT_SECONDARY,
 } from "@/constants/theme";
 
-if (
+// On New Architecture this API is a no-op and logs a warning; only enable on legacy bridge.
+const shouldUseLegacyAndroidLayoutAnimationFlag =
   Platform.OS === "android" &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
+  typeof UIManager.setLayoutAnimationEnabledExperimental === "function" &&
+  // Fabric is present when New Architecture is on
+  (global as { nativeFabricUIManager?: unknown }).nativeFabricUIManager == null;
+
+if (shouldUseLegacyAndroidLayoutAnimationFlag) {
+  UIManager.setLayoutAnimationEnabledExperimental!(true);
 }
 
 type CollectionItem = {
