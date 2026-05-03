@@ -44,23 +44,29 @@ export const Colors = {
   },
 };
 
+export type AppFonts = {
+  sans: string;
+  medium: string;
+  semibold: string;
+  bold: string;
+};
+
+const outfitNative: AppFonts = {
+  sans: "Outfit_400Regular",
+  medium: "Outfit_500Medium",
+  semibold: "Outfit_600SemiBold",
+  bold: "Outfit_700Bold",
+};
+
+const outfitWeb: AppFonts = {
+  sans: "Outfit, system-ui, sans-serif",
+  medium: "Outfit, system-ui, sans-serif",
+  semibold: "Outfit, system-ui, sans-serif",
+  bold: "Outfit, system-ui, sans-serif",
+};
+
 export const Fonts = Platform.select({
-  ios: {
-    sans: "Outfit_400Regular",
-    medium: "Outfit_500Medium",
-    semibold: "Outfit_600SemiBold",
-    bold: "Outfit_700Bold",
-  },
-  android: {
-    sans: "Outfit_400Regular",
-    medium: "Outfit_500Medium",
-    semibold: "Outfit_600SemiBold",
-    bold: "Outfit_700Bold",
-  },
-  web: {
-    sans: "Outfit, system-ui, sans-serif",
-    medium: "Outfit, system-ui, sans-serif",
-    semibold: "Outfit, system-ui, sans-serif",
-    bold: "Outfit, system-ui, sans-serif",
-  },
-});
+  ios: outfitNative,
+  android: outfitNative,
+  web: outfitWeb,
+}) as AppFonts;

@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   sectionTitle: {
-    fontFamily: Fonts.rounded,
+    fontFamily: Fonts.semibold,
   },
   sectionCopy: {
     color: "#64748B",
@@ -393,5 +393,21 @@ const styles = StyleSheet.create({
     color: "#94A3B8",
     fontSize: 12,
   },
-  /* footer styles are defined earlier (merged) */
+  footerLabel: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    letterSpacing: 1.2,
+    textTransform: "uppercase",
+  },
+  footerTitle: {
+    color: "#FFFFFF",
+    fontFamily: Fonts.bold,
+    fontSize: 28,
+    lineHeight: 34,
+  },
+  footerCopy: {
+    color: "rgba(255, 255, 255, 0.92)",
+    lineHeight: 22,
+    fontSize: 15,
+  },
 });

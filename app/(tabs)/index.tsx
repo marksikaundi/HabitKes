@@ -316,6 +316,13 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     letterSpacing: -0.2,
   },
+  cardHeadlineGrow: {
+    flexGrow: 1,
+  },
+  cardFlexFill: {
+    flexGrow: 1,
+    minHeight: 4,
+  },
   primaryCta: {
     backgroundColor: ACCENT_LIME,
     borderRadius: 999,
