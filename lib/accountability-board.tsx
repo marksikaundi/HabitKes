@@ -262,6 +262,12 @@ function getErrorMessage(error: unknown) {
   return 'Unknown Appwrite error';
 }
 
+function getUnknownAttribute(error: unknown) {
+  const message = getErrorMessage(error);
+  const match = message.match(/Unknown attribute:\s*"([^"]+)"/i);
+  return match?.[1] ?? null;
+}
+
 export function AccountabilityBoardProvider({ children }: { children: ReactNode }) {
   const board = useAccountabilityBoardState();
 
@@ -514,12 +520,41 @@ function useAccountabilityBoardState(): AccountabilityBoard {
       }
 
       try {
-        await services.databases.createDocument(services.config.databaseId, services.config.activityCollectionId, ID.unique(), {
+        const documentData: Record<string, string> = {
           title: entry.title,
           detail: entry.detail,
           time: entry.time,
           tone: entry.tone,
-        });
+        };
+        let saved = false;
+        let lastError = '';
+
+        // Retry by removing unknown attributes so existing Appwrite schemas still accept writes.
+        while (!saved) {
+          try {
+            await services.databases.createDocument(
+              services.config.databaseId,
+              services.config.activityCollectionId,
+              ID.unique(),
+              documentData,
+            );
+            saved = true;
+          } catch (error: unknown) {
+            const unknownAttribute = getUnknownAttribute(error);
+            if (!unknownAttribute || !(unknownAttribute in documentData)) {
+              lastError = getErrorMessage(error);
+              break;
+            }
+            delete documentData[unknownAttribute];
+          }
+        }
+
+        if (!saved) {
+          setConnectionState('error');
+          setConnectionLabel(`Activity save failed: ${lastError || 'Unknown Appwrite error'}`);
+          return { ok: false, error: lastError || 'Unknown Appwrite error' };
+        }
+
         pushActivity(entry);
         return { ok: true };
       } catch (error: unknown) {
