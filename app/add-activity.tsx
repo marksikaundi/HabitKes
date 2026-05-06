@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -38,8 +39,18 @@ export default function AddActivityScreen() {
     }
     setSubmitting(true);
     try {
-      await addActivity({ title: trimmed, detail: detail.trim() || undefined });
-      router.back();
+      const result = await addActivity({
+        title: trimmed,
+        detail: detail.trim() || undefined,
+      });
+      if (result.ok) {
+        router.back();
+        return;
+      }
+      Alert.alert(
+        "Couldn't save activity",
+        result.error ?? "Check your Appwrite connection and try again."
+      );
     } finally {
       setSubmitting(false);
     }

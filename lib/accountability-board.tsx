@@ -49,7 +49,7 @@ export type AccountabilityBoard = {
   weekCheckInSeriesLoaded: boolean;
   toggleHabit: (habitId: string) => Promise<void>;
   addFriend: (name: string, focus: string) => Promise<void>;
-  addActivity: (payload: { title: string; detail?: string }) => Promise<void>;
+  addActivity: (payload: { title: string; detail?: string }) => Promise<{ ok: boolean; error?: string }>;
   refreshBoard: () => Promise<void>;
 };
 
@@ -57,8 +57,8 @@ type AppwriteConfig = {
   endpoint: string;
   projectId: string;
   databaseId: string;
-  habitsCollectionId: string;
-  friendsCollectionId: string;
+  habitsCollectionId: string | null;
+  friendsCollectionId: string | null;
   activityCollectionId: string;
 };
 
@@ -166,7 +166,7 @@ function readConfig(): AppwriteConfig | null {
   const friendsCollectionId = process.env.EXPO_PUBLIC_APPWRITE_FRIENDS_COLLECTION_ID ?? '';
   const activityCollectionId = process.env.EXPO_PUBLIC_APPWRITE_ACTIVITY_COLLECTION_ID ?? '';
 
-  if (!endpoint || !projectId || !databaseId || !habitsCollectionId || !friendsCollectionId || !activityCollectionId) {
+  if (!endpoint || !projectId || !databaseId || !activityCollectionId) {
     return null;
   }
 
@@ -174,8 +174,8 @@ function readConfig(): AppwriteConfig | null {
     endpoint,
     projectId,
     databaseId,
-    habitsCollectionId,
-    friendsCollectionId,
+    habitsCollectionId: habitsCollectionId || null,
+    friendsCollectionId: friendsCollectionId || null,
     activityCollectionId,
   };
 }
@@ -194,6 +194,10 @@ function createServices(): Services | null {
     databases: new Databases(client),
     config,
   };
+}
+
+function shouldEnableRealtime() {
+  return process.env.EXPO_PUBLIC_APPWRITE_ENABLE_REALTIME === 'true';
 }
 
 function normalizeArray(value: unknown): string[] {
@@ -248,6 +252,16 @@ function normalizeTitle(title: string) {
   return title.trim();
 }
 
+function getErrorMessage(error: unknown) {
+  if (error && typeof error === 'object' && 'message' in error) {
+    const message = (error as { message?: unknown }).message;
+    if (typeof message === 'string' && message.trim()) {
+      return message;
+    }
+  }
+  return 'Unknown Appwrite error';
+}
+
 export function AccountabilityBoardProvider({ children }: { children: ReactNode }) {
   const board = useAccountabilityBoardState();
 
@@ -266,13 +280,20 @@ export function useAccountabilityBoard(): AccountabilityBoard {
 
 function useAccountabilityBoardState(): AccountabilityBoard {
   const services = useState(() => createServices())[0];
+  const realtimeEnabled = shouldEnableRealtime();
   const [habits, setHabits] = useState(seedHabits);
   const [friends, setFriends] = useState(seedFriends);
   const [activity, setActivity] = useState(seedActivity);
   const [weekCheckInSeries, setWeekCheckInSeries] = useState<CheckInChartDay[]>([]);
   const [weekCheckInSeriesLoaded, setWeekCheckInSeriesLoaded] = useState(false);
   const [connectionState, setConnectionState] = useState<ConnectionState>(services ? 'connecting' : 'demo');
-  const [connectionLabel, setConnectionLabel] = useState(services ? 'Connecting to Appwrite realtime...' : defaultConnectionLabel);
+  const [connectionLabel, setConnectionLabel] = useState(
+    services
+      ? realtimeEnabled
+        ? 'Connecting to Appwrite realtime...'
+        : 'Connecting to Appwrite database...'
+      : defaultConnectionLabel,
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -311,16 +332,28 @@ function useAccountabilityBoardState(): AccountabilityBoard {
 
     try {
       const [habitResponse, friendResponse, activityResponse] = await Promise.all([
-        services.databases.listDocuments(services.config.databaseId, services.config.habitsCollectionId),
-        services.databases.listDocuments(services.config.databaseId, services.config.friendsCollectionId),
+        services.config.habitsCollectionId
+          ? services.databases.listDocuments(services.config.databaseId, services.config.habitsCollectionId)
+          : Promise.resolve(null),
+        services.config.friendsCollectionId
+          ? services.databases.listDocuments(services.config.databaseId, services.config.friendsCollectionId)
+          : Promise.resolve(null),
         services.databases.listDocuments(services.config.databaseId, services.config.activityCollectionId),
       ]);
 
-      setHabits(habitResponse.documents.length > 0 ? habitResponse.documents.map(mapHabit) : seedHabits);
-      setFriends(friendResponse.documents.length > 0 ? friendResponse.documents.map(mapFriend) : seedFriends);
+      if (habitResponse) {
+        setHabits(habitResponse.documents.length > 0 ? habitResponse.documents.map(mapHabit) : seedHabits);
+      }
+      if (friendResponse) {
+        setFriends(friendResponse.documents.length > 0 ? friendResponse.documents.map(mapFriend) : seedFriends);
+      }
       setActivity(activityResponse.documents.length > 0 ? activityResponse.documents.map(mapActivity) : seedActivity);
       setConnectionState('live');
-      setConnectionLabel('Appwrite database and realtime connected');
+      setConnectionLabel(
+        realtimeEnabled
+          ? 'Appwrite database and realtime connected'
+          : 'Appwrite database connected',
+      );
     } catch {
       setConnectionState('error');
       setConnectionLabel('Appwrite unavailable, using local demo data');
@@ -328,10 +361,10 @@ function useAccountabilityBoardState(): AccountabilityBoard {
       setFriends(seedFriends);
       setActivity(seedActivity);
     }
-  }, [services]);
+  }, [realtimeEnabled, services]);
 
   useEffect(() => {
-    if (!services) {
+    if (!services || !realtimeEnabled) {
       return;
     }
 
@@ -346,10 +379,18 @@ function useAccountabilityBoardState(): AccountabilityBoard {
       }
 
       const channels = [
-        `databases.${services.config.databaseId}.collections.${services.config.habitsCollectionId}.documents`,
-        `databases.${services.config.databaseId}.collections.${services.config.friendsCollectionId}.documents`,
         `databases.${services.config.databaseId}.collections.${services.config.activityCollectionId}.documents`,
       ];
+      if (services.config.habitsCollectionId) {
+        channels.push(
+          `databases.${services.config.databaseId}.collections.${services.config.habitsCollectionId}.documents`,
+        );
+      }
+      if (services.config.friendsCollectionId) {
+        channels.push(
+          `databases.${services.config.databaseId}.collections.${services.config.friendsCollectionId}.documents`,
+        );
+      }
 
       for (const channel of channels) {
         try {
@@ -379,7 +420,7 @@ function useAccountabilityBoardState(): AccountabilityBoard {
         void subscription.unsubscribe();
       });
     };
-  }, [refreshBoard, services]);
+  }, [realtimeEnabled, refreshBoard, services]);
 
   const toggleHabit = useCallback(
     async (habitId: string) => {
@@ -418,7 +459,7 @@ function useAccountabilityBoardState(): AccountabilityBoard {
         tone: changed.completedToday ? 'positive' : 'warning',
       });
 
-      if (!services) {
+      if (!services || !services.config.habitsCollectionId) {
         return;
       }
 
@@ -453,7 +494,7 @@ function useAccountabilityBoardState(): AccountabilityBoard {
       const trimmedTitle = normalizeTitle(payload.title);
 
       if (!trimmedTitle) {
-        return;
+        return { ok: false, error: 'Activity title is required.' };
       }
 
       const detail =
@@ -466,10 +507,10 @@ function useAccountabilityBoardState(): AccountabilityBoard {
         tone: 'neutral',
       };
 
-      pushActivity(entry);
-
       if (!services) {
-        return;
+        setConnectionState('error');
+        setConnectionLabel('Appwrite is not configured. Activity was not saved.');
+        return { ok: false, error: 'Appwrite is not configured.' };
       }
 
       try {
@@ -479,9 +520,13 @@ function useAccountabilityBoardState(): AccountabilityBoard {
           time: entry.time,
           tone: entry.tone,
         });
-      } catch {
+        pushActivity(entry);
+        return { ok: true };
+      } catch (error: unknown) {
+        const message = getErrorMessage(error);
         setConnectionState('error');
-        setConnectionLabel('Activity saved locally; sync to Appwrite failed.');
+        setConnectionLabel(`Activity save failed: ${message}`);
+        return { ok: false, error: message };
       }
     },
     [pushActivity, services],
@@ -512,7 +557,7 @@ function useAccountabilityBoardState(): AccountabilityBoard {
         tone: 'positive',
       });
 
-      if (!services) {
+      if (!services || !services.config.friendsCollectionId) {
         return;
       }
 
