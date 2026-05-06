@@ -34,6 +34,7 @@ export type Activity = {
   title: string;
   detail: string;
   time: string;
+  createdAtISO: string;
   tone: 'positive' | 'warning' | 'neutral';
 };
 
@@ -137,6 +138,7 @@ const seedActivity: Activity[] = [
     title: 'Maya hit her run',
     detail: 'Shared a new morning streak update with the group.',
     time: '2 min ago',
+    createdAtISO: new Date(Date.now() - 2 * 60_000).toISOString(),
     tone: 'positive',
   },
   {
@@ -144,6 +146,7 @@ const seedActivity: Activity[] = [
     title: 'Deep work reminder sent',
     detail: 'The board nudged Jules before his focus block.',
     time: '14 min ago',
+    createdAtISO: new Date(Date.now() - 14 * 60_000).toISOString(),
     tone: 'warning',
   },
   {
@@ -151,6 +154,7 @@ const seedActivity: Activity[] = [
     title: 'Hydration streak locked',
     detail: 'Three friends reacted to the latest check-in.',
     time: '28 min ago',
+    createdAtISO: new Date(Date.now() - 28 * 60_000).toISOString(),
     tone: 'neutral',
   },
 ];
@@ -239,11 +243,17 @@ function mapFriend(document: any): Friend {
 }
 
 function mapActivity(document: any): Activity {
+  const createdAtISO =
+    typeof document.$createdAt === 'string' && document.$createdAt
+      ? document.$createdAt
+      : new Date().toISOString();
+
   return {
     id: document.$id,
     title: String(document.title ?? 'Accountability event'),
     detail: String(document.detail ?? 'Realtime update received.'),
     time: String(document.time ?? 'Just now'),
+    createdAtISO,
     tone: document.tone === 'warning' || document.tone === 'neutral' ? document.tone : 'positive',
   };
 }
@@ -462,6 +472,7 @@ function useAccountabilityBoardState(): AccountabilityBoard {
         title: `${changed.title} ${changed.completedToday ? 'checked in' : 'reopened'}`,
         detail: `${changed.streak} day streak now syncing with the crew.`,
         time: 'Just now',
+        createdAtISO: new Date().toISOString(),
         tone: changed.completedToday ? 'positive' : 'warning',
       });
 
@@ -510,6 +521,7 @@ function useAccountabilityBoardState(): AccountabilityBoard {
         title: trimmedTitle,
         detail,
         time: 'Just now',
+        createdAtISO: new Date().toISOString(),
         tone: 'neutral',
       };
 
@@ -589,6 +601,7 @@ function useAccountabilityBoardState(): AccountabilityBoard {
         title: `${nextFriend.name} joined the board`,
         detail: `${nextFriend.focus} is now part of the streak loop.`,
         time: 'Just now',
+        createdAtISO: new Date().toISOString(),
         tone: 'positive',
       });
 

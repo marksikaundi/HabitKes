@@ -104,7 +104,7 @@ export function HomeAnalyticsChart({
   if (habits.length === 0) {
     return (
       <View style={styles.shell} accessibilityRole="summary">
-        <Text style={styles.title}>Analytics</Text>
+        <Text style={styles.title}>Calendar</Text>
         <Text style={styles.subtitle}>Habit progress</Text>
         <Text style={styles.empty}>Add habits to see your chart.</Text>
       </View>
@@ -119,7 +119,7 @@ export function HomeAnalyticsChart({
   return (
     <View style={styles.shell} accessibilityRole="summary">
       <View style={styles.headerBlock}>
-        <Text style={styles.title}>Analytics</Text>
+        <Text style={styles.title}>Calendar</Text>
         <Text style={styles.subtitle}>Habit progress this period</Text>
       </View>
 
