@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { HomeActivityCalendar } from "@/components/home-activity-calendar";
 import { MonthlyHeatmap } from "@/components/monthly-heatmap";
 import { TodayDashboard } from "@/components/today-dashboard";
 import { WeeklyReviewCard } from "@/components/weekly-review-card";
@@ -46,7 +45,6 @@ function greetingForNow(): string {
 export default function HomeScreen() {
   const {
     habits,
-    activity,
     weekCheckInSeries,
     toggleHabit,
   } = useAccountabilityBoard();
@@ -184,11 +182,6 @@ export default function HomeScreen() {
           })}
         </ScrollView>
       </View>
-
-      <HomeActivityCalendar
-        activity={activity}
-        selectedDate={selectedDate}
-      />
 
       <TodayDashboard
         habits={habits}

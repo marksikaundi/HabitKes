@@ -31,7 +31,15 @@ const R = 44;
 const CIRC = 2 * Math.PI * R;
 const STREAK_MILESTONE = 14;
 
-if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+const isNewArchitecture = Boolean(
+  (globalThis as { nativeFabricUIManager?: unknown }).nativeFabricUIManager,
+);
+
+if (
+  Platform.OS === "android" &&
+  !isNewArchitecture &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
