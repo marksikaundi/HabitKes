@@ -11,9 +11,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HomeActivityCalendar } from "@/components/home-activity-calendar";
-import FocusSvg from "@/assets/undraw/focus.svg";
+import { TodayDashboard } from "@/components/today-dashboard";
 import JourneySvg from "@/assets/undraw/journey.svg";
-import MeditationSvg from "@/assets/undraw/meditation.svg";
 import ReadingSvg from "@/assets/undraw/reading.svg";
 import { ThemedText } from "@/components/themed-text";
 import {
@@ -81,8 +80,6 @@ export default function HomeScreen() {
   };
 
   const greeting = greetingForNow();
-  const morningHabit = habits.find((h) => h.title.includes("Morning"));
-  const cardArtWidth = Math.max(96, (width - 40 - 12) / 2 - 36);
 
   return (
     <ScrollView
@@ -190,49 +187,12 @@ export default function HomeScreen() {
         selectedDate={selectedDate}
       />
 
-      <View style={styles.cardsRow}>
-        <Pressable
-          onPress={() => morningHabit && toggleHabit(morningHabit.id)}
-          style={[styles.card, styles.cardOutlined]}
-        >
-          <View style={styles.cardColumn}>
-            <View style={styles.cardIllustration}>
-              <FocusSvg width={cardArtWidth} height={72} />
-            </View>
-            <ThemedText style={styles.cardEyebrow}>
-              Morning Preparation
-            </ThemedText>
-            <Text style={[styles.cardHeadline, styles.cardHeadlineGrow]}>
-              Ready to take on the day?
-            </Text>
-            <Pressable
-              style={styles.primaryCta}
-              onPress={() => morningHabit && toggleHabit(morningHabit.id)}
-            >
-              <Text style={styles.primaryCtaLabel}>Begin</Text>
-            </Pressable>
-          </View>
-        </Pressable>
-
-        <View style={[styles.card, styles.cardOutlined]}>
-          <View style={styles.cardColumn}>
-            <View style={styles.cardIllustration}>
-              <MeditationSvg width={cardArtWidth} height={72} />
-            </View>
-            <ThemedText style={styles.cardEyebrow}>Evening complete.</ThemedText>
-            <View style={styles.moodRow}>
-              <View style={styles.moodPill}>
-                <Text style={styles.moodPillText}>😌 Satisfied</Text>
-              </View>
-              <View style={styles.moodPill}>
-                <Text style={styles.moodPillText}>😊 Happy</Text>
-              </View>
-            </View>
-            <View style={styles.cardFlexFill} />
-            <Text style={styles.moreHint}>+3More</Text>
-          </View>
-        </View>
-      </View>
+      <TodayDashboard
+        habits={habits}
+        toggleHabit={toggleHabit}
+        streakLoaded={streakLoaded}
+        streak={streak}
+      />
 
       <View style={styles.reflectShell}>
         <View style={styles.reflectTop}>
@@ -390,54 +350,6 @@ const styles = StyleSheet.create({
     color: ACCENT_ON_LIME,
   },
 
-  cardsRow: {
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "stretch",
-  },
-  card: {
-    flex: 1,
-    borderRadius: 28,
-    padding: 16,
-    minHeight: 220,
-  },
-  cardColumn: {
-    flex: 1,
-    gap: 10,
-    justifyContent: "flex-start",
-  },
-  cardOutlined: {
-    backgroundColor: BACKGROUND_PAGE,
-    borderWidth: 1,
-    borderColor: BORDER_SUBTLE,
-  },
-  cardIllustration: {
-    alignItems: "center",
-    marginBottom: 8,
-    overflow: "hidden",
-    borderRadius: 16,
-    backgroundColor: "rgba(199, 244, 50, 0.2)",
-  },
-  cardEyebrow: {
-    fontSize: 12,
-    color: TEXT_SECONDARY,
-    marginTop: 4,
-    marginBottom: 6,
-  },
-  cardHeadline: {
-    fontSize: 16,
-    fontFamily: Fonts.semibold,
-    color: TEXT_PRIMARY,
-    lineHeight: 22,
-    letterSpacing: -0.2,
-  },
-  cardHeadlineGrow: {
-    flexGrow: 1,
-  },
-  cardFlexFill: {
-    flexGrow: 1,
-    minHeight: 4,
-  },
   primaryCta: {
     backgroundColor: ACCENT_LIME,
     borderRadius: 999,
@@ -449,32 +361,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: Fonts.semibold,
     color: ACCENT_ON_LIME,
-  },
-
-  moodRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-    marginTop: 8,
-  },
-  moodPill: {
-    borderWidth: 1,
-    borderColor: BORDER_SUBTLE,
-    borderRadius: 999,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: BACKGROUND_PAGE,
-  },
-  moodPillText: {
-    fontSize: 12,
-    fontFamily: Fonts.sans,
-    color: TEXT_PRIMARY,
-  },
-  moreHint: {
-    marginTop: 12,
-    fontSize: 13,
-    fontFamily: Fonts.semibold,
-    color: ACCENT_LIME,
   },
 
   reflectShell: {
