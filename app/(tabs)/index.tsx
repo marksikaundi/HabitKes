@@ -188,7 +188,6 @@ export default function HomeScreen() {
       <HomeActivityCalendar
         activity={activity}
         selectedDate={selectedDate}
-        onSelectedDateChange={setSelectedDate}
       />
 
       <View style={styles.cardsRow}>
