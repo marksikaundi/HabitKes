@@ -36,6 +36,9 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarShowLabel: true,
+        tabBarItemStyle: {
+          overflow: "visible",
+        },
         tabBarStyle: {
           position: "absolute",
           bottom: 0,
@@ -199,12 +202,15 @@ function TabGlyph({
     <Animated.View
       style={{
         alignItems: "center",
+        justifyContent: "center",
         opacity: focused ? 1 : 0.85,
         transform: [{ scale }],
         backgroundColor: focused ? "rgba(199, 244, 50, 0.25)" : "transparent",
         borderRadius: 999,
-        paddingHorizontal: 10,
-        paddingVertical: 4,
+        minWidth: 34,
+        minHeight: 30,
+        paddingHorizontal: focused ? 8 : 0,
+        paddingVertical: focused ? 4 : 0,
       }}
     >
       {children}

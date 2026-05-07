@@ -23,7 +23,7 @@ type IconSymbolName =
  */
 const MAPPING = {
   "house.fill": "home",
-  "lightbulb.fill": "lightbulb",
+  "lightbulb.fill": "emoji-objects",
   "safari.fill": "explore",
   "book.fill": "auto-stories",
   "chevron.left": "chevron-left",

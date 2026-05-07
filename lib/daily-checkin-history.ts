@@ -198,9 +198,10 @@ export async function buildMonthlyHeatmap(
     );
     const key = localDateKey(day);
     const snap = store.days[key];
+    const isFuture = key > todayKey;
     const inMonth = day.getMonth() === month;
-    const completed = snap?.c ?? 0;
-    const total = snap?.t ?? 0;
+    const completed = isFuture ? 0 : (snap?.c ?? 0);
+    const total = isFuture ? 0 : (snap?.t ?? 0);
 
     return {
       id: `${year}-${month}-${idx}`,
