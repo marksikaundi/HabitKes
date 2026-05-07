@@ -11,7 +11,9 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HomeActivityCalendar } from "@/components/home-activity-calendar";
+import { MonthlyHeatmap } from "@/components/monthly-heatmap";
 import { TodayDashboard } from "@/components/today-dashboard";
+import { WeeklyReviewCard } from "@/components/weekly-review-card";
 import JourneySvg from "@/assets/undraw/journey.svg";
 import ReadingSvg from "@/assets/undraw/reading.svg";
 import { ThemedText } from "@/components/themed-text";
@@ -45,6 +47,7 @@ export default function HomeScreen() {
   const {
     habits,
     activity,
+    weekCheckInSeries,
     toggleHabit,
   } = useAccountabilityBoard();
   const { loaded: streakLoaded, snapshot: streak } = useStreakGamification();
@@ -193,6 +196,8 @@ export default function HomeScreen() {
         streakLoaded={streakLoaded}
         streak={streak}
       />
+      <WeeklyReviewCard week={weekCheckInSeries} />
+      <MonthlyHeatmap />
 
       <View style={styles.reflectShell}>
         <View style={styles.reflectTop}>

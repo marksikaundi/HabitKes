@@ -1,4 +1,4 @@
-import type { ComponentType } from "react";
+import { useMemo, type ComponentType } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -24,6 +24,8 @@ import {
   TEXT_PRIMARY,
   TEXT_SECONDARY,
 } from "@/constants/theme";
+import { useAccountabilityBoard } from "@/lib/accountability-board";
+import { useStreakGamification } from "@/lib/streak-gamification";
 
 type InspirationQuote = {
   id: string;
@@ -86,9 +88,60 @@ const QUOTES: InspirationQuote[] = [
 export default function InspirationsScreen() {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const { habits, weekCheckInSeries } = useAccountabilityBoard();
+  const { snapshot } = useStreakGamification();
   const sparkWidth = Math.min(280, width - 72);
   const heroW = Math.min(340, width - 56);
   const heroH = heroW * (618 / 818) * 0.42;
+  const hour = new Date().getHours();
+
+  const focusDipAfterWednesday = useMemo(() => {
+    const week = weekCheckInSeries.filter((d) => d.hasSnapshot);
+    if (week.length < 4) return false;
+    const monToWed = week.slice(0, 3).reduce((a, d) => a + d.completed, 0);
+    const thuToSun = week.slice(3).reduce((a, d) => a + d.completed, 0);
+    const left = monToWed / 3;
+    const right = thuToSun / Math.max(1, week.length - 3);
+    return right + 0.3 < left;
+  }, [weekCheckInSeries]);
+
+  const dynamicHero = useMemo(() => {
+    if (snapshot.currentStreak >= 10) {
+      return {
+        title: "Momentum compounds",
+        body: "You're in a high-streak zone. Protect your consistency today.",
+      };
+    }
+    if (focusDipAfterWednesday) {
+      return {
+        title: "Refocus gently",
+        body: "Your focus dipped after Wednesday. Reset with one easy ritual.",
+      };
+    }
+    if (hour < 12) {
+      return {
+        title: "Morning reset",
+        body: "One completed ritual this morning can set the tone for the day.",
+      };
+    }
+    if (hour > 19) {
+      return {
+        title: "Quiet consistency",
+        body: "Evening check-ins are where streaks are protected.",
+      };
+    }
+    return {
+      title: "Today is enough",
+      body: "You don't need a perfect week—only an honest next choice.",
+    };
+  }, [focusDipAfterWednesday, hour, snapshot.currentStreak]);
+
+  const dynamicQuote = useMemo(() => {
+    const completed = habits.filter((h) => h.completedToday).length;
+    if (completed === 0) return "Consistency grows quietly.";
+    if (snapshot.currentStreak >= 7) return "Momentum compounds.";
+    return "Small steps every day add up to pathways you never planned.";
+  }, [habits, snapshot.currentStreak]);
 
   return (
     <ScrollView
@@ -106,7 +159,7 @@ export default function InspirationsScreen() {
         <Text style={styles.kicker}>Inspirations</Text>
         <Text style={styles.headline}>Fuel for the next small step</Text>
         <Text style={styles.lede}>
-          Gentle prompts, quotes, and ideas—styled to match your streak energy.
+          Gentle prompts and quotes tuned to your streak rhythm and time of day.
         </Text>
       </View>
 
@@ -117,9 +170,9 @@ export default function InspirationsScreen() {
           <View style={styles.heroIllustration}>
             <MeditationSvg width={heroW} height={heroH} />
           </View>
-          <Text style={styles.heroTitle}>Today is enough</Text>
+          <Text style={styles.heroTitle}>{dynamicHero.title}</Text>
           <Text style={styles.heroBody}>
-            You don&apos;t need a perfect week—only an honest next choice.
+            {dynamicHero.body}
           </Text>
         </View>
       </View>
@@ -171,7 +224,7 @@ export default function InspirationsScreen() {
                 index === 0 && styles.quoteTextFeatured,
               ]}
             >
-              {q.text}
+              {index === 0 ? dynamicQuote : q.text}
             </Text>
             <Text style={styles.quoteAuthor}>— {q.author}</Text>
           </View>

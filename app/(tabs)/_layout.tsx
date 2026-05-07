@@ -2,8 +2,8 @@ import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { PlatformPressable } from "@react-navigation/elements";
 import { Tabs, useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
-import React from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { Animated, Platform, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HapticTab } from "@/components/haptic-tab";
@@ -26,7 +26,7 @@ export default function TabLayout() {
   const palette = Colors[colorScheme ?? "light"];
 
   const tabBarHeight = 56 + Math.max(insets.bottom, 12);
-  const fabLift = 28;
+  const fabLift = 20;
 
   return (
     <Tabs
@@ -67,6 +67,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
+          tabBarLabel: ({ focused }) => <TabLabel focused={focused} label="Home" />,
           tabBarIcon: ({ color, focused }) => (
             <TabGlyph focused={focused}>
               <IconSymbol
@@ -83,6 +84,9 @@ export default function TabLayout() {
         name="inspirations"
         options={{
           title: "Inspirations",
+          tabBarLabel: ({ focused }) => (
+            <TabLabel focused={focused} label="Inspirations" />
+          ),
           tabBarIcon: ({ color, focused }) => (
             <TabGlyph focused={focused}>
               <IconSymbol
@@ -103,9 +107,9 @@ export default function TabLayout() {
           tabBarIcon: () => (
             <View
               style={{
-                width: 56,
-                height: 56,
-                borderRadius: 28,
+                width: 50,
+                height: 50,
+                borderRadius: 25,
                 backgroundColor: ACCENT_LIME,
                 alignItems: "center",
                 justifyContent: "center",
@@ -137,6 +141,9 @@ export default function TabLayout() {
         name="library"
         options={{
           title: "Library",
+          tabBarLabel: ({ focused }) => (
+            <TabLabel focused={focused} label="Rituals" />
+          ),
           tabBarIcon: ({ color, focused }) => (
             <TabGlyph focused={focused}>
               <IconSymbol
@@ -153,6 +160,7 @@ export default function TabLayout() {
         name="journey"
         options={{
           title: "Journey",
+          tabBarLabel: ({ focused }) => <TabLabel focused={focused} label="Journey" />,
           tabBarIcon: ({ color, focused }) => (
             <TabGlyph focused={focused}>
               <IconSymbol
@@ -176,10 +184,46 @@ function TabGlyph({
   children: React.ReactNode;
   focused: boolean;
 }) {
+  const scale = useRef(new Animated.Value(focused ? 1 : 0.95)).current;
+  useEffect(() => {
+    Animated.spring(scale, {
+      toValue: focused ? 1 : 0.95,
+      useNativeDriver: true,
+      stiffness: 260,
+      damping: 18,
+      mass: 0.7,
+    }).start();
+  }, [focused, scale]);
+
   return (
-    <View style={{ alignItems: "center", opacity: focused ? 1 : 0.85 }}>
+    <Animated.View
+      style={{
+        alignItems: "center",
+        opacity: focused ? 1 : 0.85,
+        transform: [{ scale }],
+        backgroundColor: focused ? "rgba(199, 244, 50, 0.25)" : "transparent",
+        borderRadius: 999,
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+      }}
+    >
       {children}
-    </View>
+    </Animated.View>
+  );
+}
+
+function TabLabel({ focused, label }: { focused: boolean; label: string }) {
+  return (
+    <Text
+      style={{
+        fontSize: focused ? 11 : 10,
+        fontFamily: focused ? Fonts.semibold : Fonts.medium,
+        color: focused ? "#202411" : TEXT_SECONDARY,
+        marginTop: 1,
+      }}
+    >
+      {label}
+    </Text>
   );
 }
 

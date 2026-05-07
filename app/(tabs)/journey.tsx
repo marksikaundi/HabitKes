@@ -19,6 +19,13 @@ import {
 export default function JourneyScreen() {
   const insets = useSafeAreaInsets();
   const { loaded, snapshot } = useStreakGamification();
+  const unlocks = [
+    { days: 14, reward: "Night Mode theme", icon: "🌙" },
+    { days: 30, reward: "Focus Avatar", icon: "🧠" },
+    { days: 45, reward: "Ocean theme", icon: "🌊" },
+    { days: 60, reward: "Streak Freeze x1", icon: "🧊" },
+  ];
+  const nextUnlock = unlocks.find((u) => !loaded || snapshot.currentStreak < u.days);
 
   return (
     <ScrollView
@@ -33,12 +40,26 @@ export default function JourneyScreen() {
       showsVerticalScrollIndicator={false}
     >
       <Text style={styles.kicker}>Journey</Text>
-      <Text style={styles.headline}>Your streak & rewards</Text>
+      <Text style={styles.headline}>Your momentum journey</Text>
       <Text style={styles.lede}>
-        Open the app once each day to grow your streak. Hit milestones to earn
-        Spark points you can treat as bragging rights—or your own rule for what
-        they unlock later.
+        Keep showing up each day to grow momentum. Unlock rewards, themes, and
+        companion upgrades as your streak compounds.
       </Text>
+
+      <View style={styles.previewCard}>
+        <Text style={styles.previewEyebrow}>Next unlock</Text>
+        <Text style={styles.previewTitle}>
+          {nextUnlock
+            ? `${nextUnlock.icon} Reach ${nextUnlock.days} days for ${nextUnlock.reward}`
+            : "🏆 All current unlocks earned"}
+        </Text>
+        {nextUnlock && loaded ? (
+          <Text style={styles.previewCopy}>
+            {Math.max(0, nextUnlock.days - snapshot.currentStreak)} day
+            {Math.max(0, nextUnlock.days - snapshot.currentStreak) === 1 ? "" : "s"} to go.
+          </Text>
+        ) : null}
+      </View>
 
       <View style={styles.statsCard}>
         <View style={styles.statCell}>
@@ -66,7 +87,7 @@ export default function JourneyScreen() {
         </View>
       </View>
 
-      <Text style={styles.sectionTitle}>Milestone bonuses</Text>
+      <Text style={styles.sectionTitle}>Momentum rewards</Text>
       <Text style={styles.sectionCopy}>
         Each tier pays Spark the first time you reach it in a streak run. Cards
         glow when you&apos;ve unlocked them at least once.
@@ -148,6 +169,27 @@ export default function JourneyScreen() {
           );
         })}
       </View>
+
+      <Text style={styles.sectionTitle}>Locked rewards</Text>
+      <Text style={styles.sectionCopy}>
+        Future unlocks give you a target to chase before your next streak tier.
+      </Text>
+      <View style={styles.lockedList}>
+        {unlocks.map((item) => {
+          const unlocked = loaded && snapshot.bestStreak >= item.days;
+          return (
+            <View key={item.days} style={[styles.lockedCard, unlocked && styles.lockedCardOn]}>
+              <Text style={styles.lockedIcon}>{item.icon}</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.lockedTitle}>{item.reward}</Text>
+                <Text style={styles.lockedMeta}>
+                  {item.days}-day unlock {unlocked ? "· unlocked" : "· locked"}
+                </Text>
+              </View>
+            </View>
+          );
+        })}
+      </View>
     </ScrollView>
   );
 }
@@ -180,6 +222,33 @@ const styles = StyleSheet.create({
     color: TEXT_SECONDARY,
     lineHeight: 22,
     marginBottom: 12,
+  },
+  previewCard: {
+    borderRadius: 22,
+    padding: 16,
+    backgroundColor: "rgba(199, 244, 50, 0.16)",
+    borderWidth: 1,
+    borderColor: ACCENT_LIME,
+    marginBottom: 8,
+    gap: 6,
+  },
+  previewEyebrow: {
+    fontSize: 11,
+    fontFamily: Fonts.semibold,
+    letterSpacing: 0.7,
+    textTransform: "uppercase",
+    color: ACCENT_ON_LIME,
+  },
+  previewTitle: {
+    fontSize: 17,
+    fontFamily: Fonts.semibold,
+    color: TEXT_PRIMARY,
+    lineHeight: 23,
+  },
+  previewCopy: {
+    fontSize: 13,
+    color: TEXT_SECONDARY,
+    fontFamily: Fonts.medium,
   },
 
   statsCard: {
@@ -236,7 +305,39 @@ const styles = StyleSheet.create({
 
   milestoneList: {
     gap: 14,
-    marginBottom: 28,
+    marginBottom: 16,
+  },
+  lockedList: {
+    gap: 10,
+    marginBottom: 24,
+  },
+  lockedCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: SURFACE_MUTED,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: BORDER_SUBTLE,
+    padding: 12,
+  },
+  lockedCardOn: {
+    borderColor: ACCENT_LIME,
+    backgroundColor: "rgba(199, 244, 50, 0.12)",
+  },
+  lockedIcon: {
+    fontSize: 22,
+  },
+  lockedTitle: {
+    fontSize: 15,
+    fontFamily: Fonts.semibold,
+    color: TEXT_PRIMARY,
+  },
+  lockedMeta: {
+    fontSize: 12,
+    fontFamily: Fonts.medium,
+    color: TEXT_SECONDARY,
+    marginTop: 2,
   },
 
   bonusCard: {
