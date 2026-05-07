@@ -24,17 +24,6 @@ export function HomeActivityCalendar({ activity, selectedDate }: Props) {
 
   return (
     <View style={styles.shell}>
-      <View style={styles.selectedHeader}>
-        <Text style={styles.selectedTitle}>
-          Created tasks on{" "}
-          {selectedDate.toLocaleDateString(undefined, {
-            weekday: "short",
-            month: "short",
-            day: "numeric",
-          })}
-        </Text>
-      </View>
-
       {selectedActivities.length === 0 ? (
         <Text style={styles.emptyText}>No tasks created for this date.</Text>
       ) : (
@@ -58,14 +47,6 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     paddingVertical: 14,
     paddingHorizontal: 12,
-  },
-  selectedHeader: {
-    marginTop: 4,
-  },
-  selectedTitle: {
-    fontSize: 14,
-    fontFamily: Fonts.semibold,
-    color: TEXT_PRIMARY,
   },
   emptyText: {
     marginTop: 8,

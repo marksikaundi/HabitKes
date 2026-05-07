@@ -57,8 +57,8 @@ export function MonthlyHeatmap() {
       </View>
 
       <View style={styles.weekHeader}>
-        {WEEK.map((d) => (
-          <Text key={d} style={styles.weekLabel}>
+        {WEEK.map((d, idx) => (
+          <Text key={`${d}-${idx}`} style={styles.weekLabel}>
             {d}
           </Text>
         ))}
