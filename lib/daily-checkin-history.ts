@@ -26,6 +26,17 @@ export type CheckInChartDay = {
   hasSnapshot: boolean;
 };
 
+export type MonthHeatmapCell = {
+  id: string;
+  date: Date | null;
+  dateKey: string | null;
+  level: 0 | 1 | 2 | 3 | 4;
+  completed: number;
+  total: number;
+  isToday: boolean;
+  inMonth: boolean;
+};
+
 type StoreV1 = {
   v: 1;
   days: Record<string, DaySnapshot>;
@@ -144,6 +155,62 @@ export async function persistTodayAndBuildWeekSeries(
       completed: hasSnapshot ? snap.c : 0,
       total: hasSnapshot ? snap.t : currentTotal,
       hasSnapshot,
+    };
+  });
+}
+
+function intensityLevel(completed: number, total: number): 0 | 1 | 2 | 3 | 4 {
+  if (total <= 0 || completed <= 0) return 0;
+  const ratio = completed / total;
+  if (ratio < 0.25) return 1;
+  if (ratio < 0.5) return 2;
+  if (ratio < 0.8) return 3;
+  return 4;
+}
+
+export async function buildMonthlyHeatmap(
+  reference: Date,
+): Promise<MonthHeatmapCell[]> {
+  let store = emptyStore;
+  try {
+    const raw = await AsyncStorage.getItem(STORAGE_KEY);
+    store = parseStore(raw);
+  } catch {
+    store = emptyStore;
+  }
+
+  const year = reference.getFullYear();
+  const month = reference.getMonth();
+  const first = new Date(year, month, 1);
+  const offset = first.getDay();
+  const gridStart = new Date(year, month, 1 - offset, 12, 0, 0, 0);
+  const todayKey = localDateKey(new Date());
+
+  return Array.from({ length: 42 }, (_, idx) => {
+    const day = new Date(
+      gridStart.getFullYear(),
+      gridStart.getMonth(),
+      gridStart.getDate() + idx,
+      12,
+      0,
+      0,
+      0,
+    );
+    const key = localDateKey(day);
+    const snap = store.days[key];
+    const inMonth = day.getMonth() === month;
+    const completed = snap?.c ?? 0;
+    const total = snap?.t ?? 0;
+
+    return {
+      id: `${year}-${month}-${idx}`,
+      date: day,
+      dateKey: key,
+      level: intensityLevel(completed, total),
+      completed,
+      total,
+      isToday: key === todayKey,
+      inMonth,
     };
   });
 }
