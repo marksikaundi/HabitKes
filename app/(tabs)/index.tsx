@@ -185,7 +185,11 @@ export default function HomeScreen() {
         </ScrollView>
       </View>
 
-      <HomeActivityCalendar activity={activity} />
+      <HomeActivityCalendar
+        activity={activity}
+        selectedDate={selectedDate}
+        onSelectedDateChange={setSelectedDate}
+      />
 
       <View style={styles.cardsRow}>
         <Pressable

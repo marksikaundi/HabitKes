@@ -56,13 +56,27 @@ function formatMonthYear(reference: Date) {
 
 type Props = {
   activity: Activity[];
+  selectedDate?: Date;
+  onSelectedDateChange?: (date: Date) => void;
 };
 
-export function HomeActivityCalendar({ activity }: Props) {
+export function HomeActivityCalendar({
+  activity,
+  selectedDate: selectedDateProp,
+  onSelectedDateChange,
+}: Props) {
   const [visibleMonth, setVisibleMonth] = useState(
     () => new Date(new Date().getFullYear(), new Date().getMonth(), 1)
   );
-  const [selectedDate, setSelectedDate] = useState(() => new Date());
+  const [selectedDateState, setSelectedDateState] = useState(() => new Date());
+  const selectedDate = selectedDateProp ?? selectedDateState;
+
+  const setSelectedDate = (date: Date) => {
+    if (!selectedDateProp) {
+      setSelectedDateState(date);
+    }
+    onSelectedDateChange?.(date);
+  };
 
   const cells = useMemo(() => monthCells(visibleMonth), [visibleMonth]);
   const selectedActivities = useMemo(() => {
